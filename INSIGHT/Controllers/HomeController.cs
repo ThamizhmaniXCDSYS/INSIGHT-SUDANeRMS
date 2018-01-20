@@ -380,6 +380,11 @@ namespace INSIGHT.Controllers
         public ActionResult KeepAlive() {
             return View();
         }
+
+        public ActionResult Test()
+        {
+            return null;
+        }
     }
 }
 
