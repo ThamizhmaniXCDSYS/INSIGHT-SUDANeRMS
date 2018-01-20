@@ -1,0 +1,52 @@
+﻿@{
+    ViewBag.Title = "InvoiceCountReport";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<h3>
+    Invoice Count Report</h3>
+<script type="text/javascript">
+    $(document).ready(function () {
+        jQuery("#InvoiceCountReport").jqGrid({
+            url: '@Url.Content("~/Reports/InvoiceCountReportJqGrid")',
+            datatype: 'json',
+            mtype: 'GET',
+            colNames: ['Invoice Id', 'Invoice Items Count'],
+            colModel:
+[
+            //            { name: 'Id', index: 'Id', hidden: true },
+{name: 'InvoiceId', index: 'InvoiceId' },
+{ name: 'Count', index: 'Count' },
+],
+            pager: '#InvoiceCountReportPager',
+            rowNum: '10',
+            rowList: [5, 10, 20, 50],
+            sortname: 'Id',
+            sortorder: 'Desc',
+            height: '200',
+            width: 750, // autowidth: true, // shrinkToFit: true, 
+            viewrecords: true,
+            caption: 'Invoice Count Report',
+            forceFit: true
+        });
+        $("#InvoiceCountReport").navGrid('#InvoiceCountReportPager',
+            { add: false, edit: false, del: false, search: false, refresh: false });
+
+        $("#InvoiceCountReport").jqGrid('navButtonAdd', '#InvoiceCountReportPager', {
+            caption: "Export To Excel",
+            onClickButton: function () {
+                var ExptType = 'Excel';
+                window.open("InvoiceCountReportJqGrid" + '?rows=9999' + '&ExptType=' + ExptType);
+            }
+        });
+        $("#InvoiceCountReport").jqGrid('filterToolbar', { stringResult: false, searchOnEnter: true, beforeSearch:
+            function () {
+                $('#InvoiceCountReport').clearGridData();
+                return false;
+            }
+        });
+    });
+</script>
+<table id="InvoiceCountReport">
+</table>
+<div id="InvoiceCountReportPager">
+</div>

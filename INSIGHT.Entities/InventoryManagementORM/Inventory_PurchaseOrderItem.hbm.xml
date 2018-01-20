@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.InventoryManagementEntities.Inventory_PurchaseOrderItem" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+	<class name="INSIGHT.Entities.InventoryManagementEntities.Inventory_PurchaseOrderItem, INSIGHT.Entities" table="Inventory_PurchaseOrderItem" lazy="false" >
+		<id name="POLineId" column="POLineId" type="Int64">
+			<generator class="identity" />
+		</id>
+		<!--<property name="PurchOrderId" column="PurchOrderId" type="Int64" />-->
+		<property name="UNCode" column="UNCode" type="Int64" />
+		<property name="Commodity" column="Commodity" type="string" />
+		<property name="OrderedQty" column="OrderedQty" type="decimal" />
+		<property name="POUnitPrice" column="POUnitPrice" type="decimal" />
+		<property name="POValue" column="POValue" type="decimal" />
+
+		<property name="CreatedDate" column="CreatedDate" type="datetime" />
+		<property name="CreatedBy" column="CreatedBy" type="string" />
+		<property name="ModifiedDate" column="ModifiedDate" type="datetime" />
+		<property name="ModifiedBy" column="ModifiedBy" type="string" />
+
+		<property name="RequestId" column="RequestId" type="Int64" />
+		<property name="InvoicedQty" column="InvoicedQty" type="decimal" />
+		<property name="RemainingQty" column="RemainingQty" type="decimal" />
+		<many-to-one name="Inventory_PurchaseOrder" column="PurchOrderId" class="INSIGHT.Entities.InventoryManagementEntities.Inventory_PurchaseOrder, INSIGHT.Entities" fetch="join"> </many-to-one>
+	</class>
+</hibernate-mapping>

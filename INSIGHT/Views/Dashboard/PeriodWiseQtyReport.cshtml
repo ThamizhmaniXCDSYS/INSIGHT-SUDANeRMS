@@ -1,0 +1,496 @@
+﻿@{
+    ViewBag.Title = "PeriodWiseQtyReport";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<style>
+    .ui-jqgrid tr.jqgrow td {
+        font-size: 10px;
+    }
+        
+
+        .CSSDropDownList {
+
+    width: 130px;
+}
+
+.left-col {
+    float: left;
+    width:33%;
+}
+.center-col {
+    float: left;
+    width: 33%;
+}
+.right-col {
+    float: left;
+    width: 33%;
+}
+
+
+    
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(function () {
+            $("#tabs").tabs();
+        });
+
+        $.ajax({
+            type: 'Get',
+            url: '@Url.Content("~/Dashboard/GetPeriodYearGraph")',
+            success: function (data) {
+
+                var chart = new FusionCharts('@Url.Content("~/Charts/FCF_MSColumn2D.swf")', "Period Year Details", "390", "320");
+                chart.setDataXML(data);
+                chart.render("PeriodYearGraph");
+             
+            },
+            async: false,
+            dataType: "text"
+        });
+        $('#periodwiseReportJqgrid').jqGrid({
+
+            url: '@Url.Content("~/Dashboard/PeriodWiseQtyValueReport")',
+            type: 'GET',
+            datatype: 'json',
+            width: 1190,
+            height: 200,
+            colNames: ['OrderId', 'ControlId', 'OrderQty', 'DeliveredQty', 'Inv Qty', 'Order Value', 'Inv Value'],
+            colModel: [
+                        { name: 'OrderId', index: 'OrderId', key: true, hidden: true, editable: true },
+                        { name: 'ControlId', index: 'ControlId', width: 400 },
+                        { name: 'OrderedQty', index: 'OrderedQty', search: false },
+                        { name: 'DeliveredQty', index: 'DeliveredQty', search: false },
+                        { name: 'AcceptedQty', index: 'AcceptedQty', search: false },
+                        { name: 'AmountOrdered', index: 'AmountOrdered', search: false },
+                        { name: 'AmountAccepted', index: 'AmountAccepted', search: false },
+
+            ],
+            pager: '#periodwiseReportJqgridPager',
+            rowNum: '10000',
+            sortname: 'OrderId',
+            sortorder: "Asc",
+            viewrecords: true,
+            footerrow: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Periodwise Qty Report',
+            loadComplete: function () {
+                debugger;
+                var $self = $(this),
+                  TotalOrderqty = parseFloat($self.jqGrid("getCol", "OrderedQty", false, "sum")).toFixed(2);
+                TotalDelqty = parseFloat($self.jqGrid("getCol", "DeliveredQty", false, "sum")).toFixed(2);
+                TotalInvqty = parseFloat($self.jqGrid("getCol", "AcceptedQty", false, "sum")).toFixed(2);
+                TotalOrderValue = parseFloat($self.jqGrid("getCol", "AmountOrdered", false, "sum")).toFixed(2);
+                TotalInvValue = parseFloat($self.jqGrid("getCol", "AmountAccepted", false, "sum")).toFixed(2);
+                //                discount = parseFloat($self.jqGrid("getCol", "Discount", false, "sum")).toFixed(2);
+                //                amtrcv = parseFloat($self.jqGrid("getCol", "AmountReceived", false, "sum")).toFixed(2);
+                //                balpay = parseFloat($self.jqGrid("getCol", "BalancePayable", false, "sum")).toFixed(2);
+                $self.jqGrid("footerData", "set", { ControlId: "Total", OrderedQty: TotalOrderqty, DeliveredQty: TotalDelqty, AcceptedQty: TotalInvqty, AmountOrdered: TotalOrderValue, AmountAccepted: TotalInvValue });
+            }
+
+        });
+        $("#periodwiseReportJqgrid").navGrid('#periodwiseReportJqgridPager', { add: false, edit: false, del: false, search: false, refresh: false });
+        $("#periodwiseReportJqgrid").jqGrid('navButtonAdd', '#periodwiseReportJqgridPager', {
+            caption: "Export To Excel",
+            onClickButton: function () {
+
+                var ExptType = 'Excel';
+                var searchItems = $('#Sector').val() + ',' + $('#Location').val() + ',' + $('#contingentType').val() + ',' + $('#Contingent').val() + ',' + $('#PeriodYear').val() + ',' + $('#Period').val() + ',' + $('#Week').val();
+                window.open("PeriodWiseQtyValueReport" + '?searchItems=' + searchItems + '&ExptType=' + ExptType + '&rows=9999' + '&sidx=' + '&sord=desc' + '&page=1');
+            }
+        });
+
+
+
+
+    });
+    $(function () {
+        FillSector();
+        FillContingent();
+        //FillPeriod();
+        FillLocation();
+        FillWeek();
+        FillPeriodYear();
+
+        $("#Sector").change(function () {
+            FillContingent($(this).val());
+        });
+        $("#Contingent").change(function () {
+            FillLocation($("#Sector").val(), $(this).val());
+
+            var Contigent = $("#Contingent").val();
+            if (Contigent != "") {
+                var result = Contigent.indexOf("FPU") > -1;
+                if (result == true) {
+                    $("#contingentType").val("FPU");
+                }
+                else
+                    $("#contingentType").val("MIL")
+            }
+        });
+        $("#PeriodYear").change(function () {
+            FillPeriod();
+        });
+        $("#Period").change(function () {
+            FillWeek($("#Period").val(), $("#PeriodYear").val());
+        });
+        //        $("#Week").change(function () {
+        //            FillPeriod($(this).val());
+        //        });
+    });
+    function FillSector() {
+        $.getJSON('@Url.Content("~/Masters/FillSectorbyUser/")',
+    function (modelData) {
+        var select = $("#Sector");
+        select.empty();
+        select.append($('<option/>',
+    {
+        value: "",
+        text: "Select Sector"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    function FillContingent(SectorCode) {
+        $.getJSON('@Url.Content("~/Masters/FillContingentbyUser/")?SectorCode=' + SectorCode,
+    function (modelData) {
+        var select = $("#Contingent");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Contingent"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillLocation(SectorCode, ContingentCode) {
+        $.getJSON('@Url.Content("~/Masters/FillLocationbyUser/")?SectorCode=' + SectorCode + '&ContingentCode=' + ContingentCode,
+    function (modelData) {
+        var select = $("#Location");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Location"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillPeriod() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriod/")',
+    function (modelData) {
+        var select = $("#Period");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Period"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillWeek(Period, PeriodYear) {
+
+        $.getJSON('@Url.Content("~/Masters/FillWeek/")?Period=' + Period + "&PeriodYear=" + PeriodYear,
+    function (modelData) {
+        var select = $("#Week");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Week"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    function OrderItemsSearch() {
+
+
+        var searchItems = $('#Sector').val() + ',' + $('#Location').val() + ',' + $('#contingentType').val() + ',' + $('#Contingent').val() + ',' + $('#PeriodYear').val() + ',' + $('#Period').val() + ',' + $('#Week').val();
+        $("#periodwiseReportJqgrid").setGridParam(
+            {
+                datatype: "json",
+                url: '@Url.Content("~/Dashboard/PeriodWiseQtyValueReport")?searchItems=' + searchItems,
+                //                url: '/Reports/ConsolidateInvoicejqGrid',
+                //                postData: { Sector: Sector, ContingentType: contingentType, Name: Contingent, Period: Period },
+                page: 0
+            }).trigger("reloadGrid");
+    }
+    function ResetSearch() {
+        var searchItems = "";
+        $('#Sector').val(0);
+        $('#Contingent').val(0);
+        $('#contingentType').val("");
+        $('#Period').val(0);
+        $('#Week').val(0);
+        $("#OrderItems").setGridParam(
+            {
+                datatype: "json",
+                url: '@Url.Content("~/Reports/OrderReportjqGrid")?searchItems=' + searchItems,
+                //                url: '/Reports/ConsolidateInvoicejqGrid',
+                postData: { Sector: Sector, ContingentType: contingentType, Name: Contingent, Period: Period, Week: Week },
+                page: 0
+            }).trigger("reloadGrid");
+    }
+
+    function FillPeriodYear() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriodYear")',
+    function (modelData) {
+        var select = $("#PeriodYear");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Year"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    function MCClickEvent(Periodyear) {
+        debugger;
+
+        $('#SectorSouth').hide();
+        $('#SectorWest').hide();
+        $('#SectorNorth').hide();
+        PeriodGraph(Periodyear);
+      
+
+        // PeriodGraph('13-14');
+
+
+    }
+    function PeriodGraph(Periodyear) {
+        debugger;
+        $.ajax({
+            type: 'Get',
+            url: '@Url.Content("~/Dashboard/GetPeriodGraph")?PeriodYear=' + Periodyear,
+            success: function (data) {
+
+                var chart = new FusionCharts('@Url.Content("~/Charts/FCF_MSColumn2D.swf")', "Period Graph Details", "780", "320");
+                chart.setDataXML(data);
+                chart.render("PeriodGraph");
+            },
+            async: false,
+            dataType: "text"
+        });
+    }
+    function PeriodSelection(Criteria) {
+        $('#SectorSouth').show();
+        $('#SectorWest').show();
+        $('#SectorNorth').show();
+      
+        SectorNorth_QtyGraph(Criteria);
+        SectorSouth_QtyGraph(Criteria);
+        SectorWest_QtyGraph(Criteria);
+       
+
+    }
+        
+    function SectorNorth_QtyGraph(Criteria) {
+
+        Criteria = Criteria.split(',');
+        $.ajax({
+            type: 'Get',
+            url: '@Url.Content("~/Dashboard/GetSectorGraph_QtyReport")?PeriodYear=' + Criteria[0] + '&Period=' + Criteria[1] + '&Sector=SN',
+            success: function (data) {
+
+                var chart = new FusionCharts('@Url.Content("~/Charts/FCF_MSBar2D.swf")', "Period Graph Details", "380", "320");
+                chart.setDataXML(data);
+                chart.render("SectorNorth");
+            },
+            async: false,
+            dataType: "text"
+        });
+    }
+
+    function SectorSouth_QtyGraph(Criteria) {
+
+        Criteria = Criteria.split(',');
+        $.ajax({
+            type: 'Get',
+            url: '@Url.Content("~/Dashboard/GetSectorGraph_QtyReport")?PeriodYear=' + Criteria[0] + '&Period=' + Criteria[1] + '&Sector=SS',
+            success: function (data) {
+
+                var chart = new FusionCharts('@Url.Content("~/Charts/FCF_MSBar2D.swf")', "Period Graph Details", "380", "320");
+                chart.setDataXML(data);
+                chart.render("SectorSouth");
+            },
+            async: false,
+            dataType: "text"
+        });
+    }
+
+    function SectorWest_QtyGraph(Criteria) {
+
+        Criteria = Criteria.split(',');
+        $.ajax({
+            type: 'Get',
+            url: '@Url.Content("~/Dashboard/GetSectorGraph_QtyReport")?PeriodYear=' + Criteria[0] + '&Period=' + Criteria[1] + '&Sector=SW',
+            success: function (data) {
+
+                var chart = new FusionCharts('@Url.Content("~/Charts/FCF_MSBar2D.swf")', "Period Graph Details", "380", "320");
+                chart.setDataXML(data);
+                chart.render("SectorWest");
+            },
+            async: false,
+            dataType: "text"
+        });
+    }
+</script>
+
+
+
+
+<div id="tabs">
+    <ul>
+        <li><a href="#ExportExcel">Quantity Excel Report</a></li>
+        <li><a href="#Graph">Graph</a></li>
+
+    </ul>
+    <div id="ExportExcel">
+        <table class="WithBorderOnly" width="100%">
+            <tr class="PanelHeading">
+                <td colspan="8" class="PanelHeading">
+                    <i class="icon-chevron-right"></i>&nbsp;Search&nbsp;
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="lblheader">
+                        Sector</label><br />
+                    @Html.DropDownList("Sector", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+                </td>
+                <td>
+                    <label class="lblheader">
+                        Location</label><br />
+                    @Html.DropDownList("Location", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+                </td>
+                <td>
+                    <label class="lblheader">
+                        Contingent Type</label><br />
+                    @Html.DropDownList("contingentType", new SelectList(new[]
+                                          {
+                                              new{Value="",Text="Select One"},
+                                              new{Value="FPU",Text="FPU"},
+                                              new{Value="MIL",Text="MIL"}
+                                          },
+          "Value", "Text", ""), new { @Class = "CSSDropDownList" })
+                </td>
+                <td>
+                    <label class="lblheader">
+                        Contingent</label><br />
+                    @Html.DropDownList("Contingent", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+                </td>
+                <td>
+                    <label class="lblheader">
+                        Period Year</label><br />
+                    @Html.DropDownList("PeriodYear", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+                </td>
+                <td>
+                    <label class="lblheader">
+                        Period</label><br />
+                    @Html.DropDownList("Period", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+                </td>
+                <td>
+                    <label class="lblheader">
+                        Week</label><br />
+                    @Html.DropDownList("Week", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+                </td>
+
+                <td>
+                    <input type="button" id="btnSearch" value="Search" onclick="OrderItemsSearch(); return false;" />
+                    @*<input type="reset" id="btnReset"
+                    value="Reset" onclick="ResetSearch(); return false;" />*@
+                    @*<input type="button" id="search" value="Search" />
+                    <input type="button" id="reset" value="Reset" />*@
+                </td>
+            </tr>
+        </table>
+
+
+        <table id="periodwiseReportJqgrid"></table>
+        <div id="periodwiseReportJqgridPager"></div>
+    </div>
+    <div id="Graph">
+        <table>
+            <tr>
+                <td colspan="1">
+
+                    <div id="PeriodYearGraph"></div>
+
+                </td>
+                <td colspan="2">
+                    <div id="PeriodGraph"></div>
+                </td>
+            </tr>
+  @*          <tr>
+                <td colspan="1">
+                    <div id="SectorNorth"></div>
+                   
+                   
+                </td>
+                <td colspan="1">
+                    <div id="SectorSouth"></div>
+                </td>
+                <td colspan="1">
+                     <div id="SectorWest"></div>
+                   
+                </td>
+            </tr>*@
+            <tr><td colspan="3">
+                <div class="left-col" id="SectorNorth"></div>
+<div class="center-col" id="SectorSouth"></div>
+<div class="right-col" id="SectorWest"></div>
+                </td>
+
+            </tr>
+        </table>
+    </div>
+</div>
+
+

@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.UNSectorConMapping" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.UNSectorConMapping, INSIGHT.Entities" table="UNSectorConMapping" lazy="false" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="identity" />
+    </id>
+    <property name="MappingCode" column="MappingCode" type="string" />
+    <property name="UNCode" column="UNCode" type="string" />
+
+    <property name="SectorCode" column="SectorCode" type="string"/>
+    <property name="UnitPrice" column="UnitPrice" type="decimal"/>
+    <property name="Commodity" column="Commodity" type="string"/>
+    <property name="DateCreated" column="DateCreated" type="datetime"/>
+    <property name="CreatedBy" column="CreatedBy" type="string"/>
+    <property name="DateModified" column="DateModified" type="datetime"/>
+    <property name="ModifiedBy" column="ModifiedBy" type="string"/>
+  </class>
+</hibernate-mapping>

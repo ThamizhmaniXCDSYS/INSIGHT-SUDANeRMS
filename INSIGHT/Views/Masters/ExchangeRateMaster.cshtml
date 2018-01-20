@@ -1,0 +1,74 @@
+﻿@{
+    ViewBag.Title = "ExchangeRateMaster";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+
+<table width="100%">
+    <tr>
+        <td>
+            <table id="ExchangeRateMasterList">
+            </table>
+            <div id="ExchangeRateMasterListPager">
+            </div>
+        </td>
+    </tr>
+</table>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#ExchangeRateMasterList').jqGrid({
+            url: '@Url.Content("~/Masters/ExchangeRateMasterJqGrid")',
+            datatype: 'Json',
+            type: 'GET',
+            autowidth: true,
+            height: 300,
+            colNames: ['Rate_Id',  'Currency', 'ExchangeRate', 'CreatedBy', 'CreatedDate'],
+            colModel: [
+            { name: 'Rate_Id', index: 'Rate_Id', hidden: true, key: true, editable: true },
+            { name: 'Inventory_CurrencyMaster.Currency_Id', index: 'Inventory_CurrencyMaster.Currency_Id', editable: true, edittype: 'select', editoptions: { dataUrl: '@Url.Content("~/Masters/currencyddl")', style: "width: 150px; height: 23px; font-size: 0.9em" }, editrules: { custom: true, custom_func: checkvalid }, sortable: true },
+            {
+                name: 'ExchangeRate', index: 'ExchangeRate', editable: true, editrules: { custom: true, custom_func: checkvalid, number: true }
+            },
+            { name: 'CreatedBy', index: 'CreatedBy', editable: false, search: false },
+             { name: 'CreatedDate', index: 'CreatedDate', editable: false, search: false },
+            ],
+            rowNum: 20000,
+            rowList: [], // disable page size dropdown
+            pgbuttons: false, // disable page control like next, back button
+            pgtext: null, // disable pager text like 'Page 0 of 10'
+            sortname: 'Rate_Id',
+            sortorder: 'Asc',
+            pager: '#ExchangeRateMasterListPager',
+            multiselect: true,
+            viewrecords: true,
+            shrinktofit: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;ExchangeRate List'
+
+        });
+        $('#ExchangeRateMasterList').jqGrid('filterToolbar', { searchOnEnter: true });
+        jQuery("#ExchangeRateMasterList").jqGrid('navGrid', '#ExchangeRateMasterListPager', { add: true, edit: false, del: true, search: false, refresh: true },
+          { width: 'auto', url: '@Url.Content("~/Masters/EditExchangeRateMaster/")', left: '10%', top: '10%', height: '50%', width: 400, modal: false },
+        //Add options
+            { width: 'auto', url: '@Url.Content("~/Masters/AddExchangeRateMaster/")', left: '10%', top: '10%', height: '50%', width: 400, modal: false },
+        //Delete options
+                               {
+                                   width: 'auto', url: '@Url.Content("~/Masters/DeleteExchangeRateMaster/")', left: '10%', top: '10%', height: '50%', width: 400,
+                                   beforeShowForm: function (params) { selectedrows = $("#ExchangeRateMasterList").jqGrid("getGridParam", "selarrrow"); return { Id: selectedrows } }
+                               });
+        $("#ExchangeRateMasterList").jqGrid('navButtonAdd', '#ExchangeRateMasterListPager', {
+            caption: "Export To Excel",
+            onClickButton: function () {
+                var ExptType = 'Excel';
+
+                window.open('ExchangeRateMasterJqGrid?ExptType=' + ExptType + '&rows=9999' + '&sidx=' + '&sord=desc' + '&page=1');
+            }
+        });
+        function checkvalid(value, column) {
+            if (value == '') {
+                return [false, column + ": Field is Required"];
+            }
+            else {
+                return [true];
+            }
+        }
+    });
+</script>

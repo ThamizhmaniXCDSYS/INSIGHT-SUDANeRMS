@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.InvQtyandInvValForOrderItems_vw" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.InvQtyandInvValForOrderItems_vw, INSIGHT.Entities" table="InvQtyandInvValForOrderItems_vw" lazy="false" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="identity" />
+    </id>
+    <property name="OrderId"  column="OrderId"  type="Int64" />
+    <property name="UNCode"  column="UNCode"  type="Int64" />
+    <property name="OQWithOutEggs"  column="OQWithOutEggs"  type="decimal" />
+    <property name="OQEggsOnly"  column="OQEggsOnly"  type="decimal" />
+    <property name="DQWithOutEggs"  column="DQWithOutEggs"  type="decimal" />
+    <property name="DQEggsOnly" column="DQEggsOnly" type="decimal" />
+
+    <property name="AQWithOutEggs"  column="AQWithOutEggs"  type="decimal" />
+    <property name="AQEggsOnly"  column="AQEggsOnly"  type="decimal" />
+    <property name="InvoiceQty"  column="InvoiceQty"  type="decimal" />
+    <property name="InvoiceValue" column="InvoiceValue" type="decimal" />
+
+  </class>
+</hibernate-mapping>

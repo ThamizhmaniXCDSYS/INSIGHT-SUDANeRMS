@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping assembly="INSIGHT.Entities.TicketingSystem" namespace="INSIGHT.Entities.TicketingSystem" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.TicketingSystem.TicketSystemActivity, INSIGHT.Entities.TicketingSystem" table="ACTIVITIES" lazy="true" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="native" />
+    </id>
+    <property name="ActivityName" column="ActivityName" type="string" not-null="false" />
+    <property name="ActivityFullName" column="ActivityFullName" type="string" not-null="false" />
+    <property name="TemplateId" column="TemplateId" type="Int64" not-null="false" />
+    <property name="Performer" column="Performer" type="string" not-null="false" />
+    <property name="Assigned" column="Assigned" type="bool" not-null="false" />
+    <property name="Available" column="Available" type="bool" not-null="false" />
+    <property name="Completed" column="Completed" type="bool" not-null="false" />
+    <property name="AppRole" column="AppRole" type="string" not-null="false" />
+    <property name="PreviousActOrder" column="PreviousActOrder" type="Int32" not-null="false" />
+    <property name="NextActOrder" column="NextActOrder" type="Int32" not-null="false" />
+    <property name="Waiting" column="Waiting" type="bool" not-null="false" />
+    <property name="Suspended" column="Suspended" type="bool" not-null="false" />
+    <property name="InstanceId" column="InstanceId" type="Int64" not-null="false" />
+    <property name="ActivityOrder" column="ActivityOrder" type="Int32" not-null="false" />
+    <property name="IsRejApplicable" column="IsRejApplicable" type="bool" not-null="false" />
+    <property name="WaitingFor" column="WaitingFor" type="Int64" not-null="false" />
+    <property name="ProcessRefId" column="ProcessRefId" type="Int64" not-null="false" />
+    <property name="CreatedDate" column="CreatedDate" type="datetime" />
+    <property name="BranchCode" column="BranchCode" type="string" not-null="false" />
+    <property name="DeptCode" column="DeptCode" type="string" not-null="false" />
+    <many-to-one lazy="false" name="TicketSystem" class="INSIGHT.Entities.TicketingSystem.TicketSystem, INSIGHT.Entities.TicketingSystem"
+                     column="ProcessRefId" cascade="none" />
+    <many-to-one lazy="false" name="ProcessInstance" column="InstanceId" class="INSIGHT.Entities.ProcessInstance, INSIGHT.Entities" cascade="none"/>
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,134 @@
+﻿@{
+    ViewBag.Title = "FinalFoodRequisitionReport";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+
+<table class="WithBorderOnly" width="100%">
+    <tr class="PanelHeading">
+        <td colspan="7" class="PanelHeading">
+            <i class="icon-chevron-right"></i>&nbsp;Search&nbsp;
+        </td>
+    </tr>
+    <tr>
+        <td width="10%">
+            <label class="lblheader">
+                Period</label><br />
+            @Html.DropDownList("Period", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+        </td>
+        <td width="10%">
+            <label class="lblheader">
+                Period Year</label><br />
+            @Html.DropDownList("PeriodYear", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+        </td>
+        <td colspan="4" width="50%">
+            <input type="button" id="btnSearch" value="Search" />
+            <input type="button" id="btnReset" value="Reset" />
+        </td>
+    </tr>
+</table>
+<table id="FinalFoodRequisitionReportjqGrid"></table>
+<div id="FinalFoodRequisitionReportPager"></div>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        //------------------------**** NOTE ****------------------------------------------//
+        //-- The below jqGrid method is already used for FinalFoodOrder Details Report.
+        //-- Here i just pass one string parameter for identifying the page ReportFlag in Search method.
+        //--------------------------------------------------------------------------------------//
+
+        $("#FinalFoodRequisitionReportjqGrid").jqGrid({
+            url: '@Url.Content("~/Reports/FinalFoodOrderReportjqGrid")',
+            width: 1200,
+            height: 250,
+            shrinkToFit: true,
+            datatype: 'json',
+            type: 'GET',
+            colNames: ['Id', 'Period', 'PeriodYear', 'Troops Strength', 'Total Amount', 'Total Weight', 'Download'],
+            colModel: [
+                { name: 'Id', index: 'Id', key: true, hidden: true },
+                { name: 'Period', index: 'Period' },
+                { name: 'PeriodYear', index: 'PeriodYear' },
+                { name: 'TroopsStrength', index: 'TroopsStrength' },
+                { name: 'TotalAmount', index: 'TotalAmount' },
+                { name: 'TotalWeight', index: 'TotalWeight' },
+                { width: 300, align: 'center' }
+            ],
+            pager: '#FinalFoodRequisitionReportPager',
+            rowNum: 100,
+            rowList: [100, 150, 200, 300, 400, 500],
+            sortName: 'Id',
+            sortOrder: 'Desc',
+            viewrecords: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Orders List'
+        });
+        FillPeriodYear();
+        FillPeriod();
+        $("#btnSearch").click(function () {
+            var PeriodYear = $("#PeriodYear").val();
+            var Period = $("#Period").val();
+            if ($('#PeriodYear').val() == "") {
+                ErrMsg("Please Select Period Year");
+                return false;
+            }
+            if ($('#Period').val() == "") {
+                ErrMsg("Please Select Period");
+                return false;
+            }
+            $("#FinalFoodRequisitionReportjqGrid").setGridParam(
+                    {
+                        datatype: "json",
+                        url: '@Url.Content("~/Reports/FinalFoodOrderReportjqGrid")?ReportFlag='+'Report-2',
+                        postData: { Period: Period, PeriodYear: PeriodYear },
+                        page: 1
+                    }).trigger("reloadGrid");
+        });
+
+
+        $("#btnReset").click(function () {
+
+            $("input[type=text], textarea, select").val("");
+            jQuery('#FinalFoodRequisitionReportjqGrid').jqGrid('clearGridData')
+.jqGrid('setGridParam', { data: data, page: 1 }).trigger('reloadGrid');
+        });
+    });
+    function FillPeriodYear() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriodYear")',
+    function (modelData) {
+        var select = $("#PeriodYear");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Year"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    function FillPeriod() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriod/")',
+    function (modelData) {
+        var select = $("#Period");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Period"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+</script>

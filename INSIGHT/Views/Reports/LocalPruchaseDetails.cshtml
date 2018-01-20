@@ -1,0 +1,225 @@
+﻿@{
+    ViewBag.Title = "LocalPruchaseDetails";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+
+<style>
+    #dvLoading {
+        /*background: url("../../../Images/Sun.gif") no-repeat center center;*/
+        background: url("../Images/Sun.gif") no-repeat center center;
+        height: 100%;
+        width: 100%;
+        position: fixed;
+        z-index: 1000;
+        left: 0%;
+        top: 15%;
+        margin: -25px 0 0 -25px;
+    }
+</style>
+<script type="text/javascript">
+    function GetExcelDocumentList() {
+        debugger;
+        $('#ExcelDocumentList').jqGrid('GridUnload');
+        jQuery("#GetLocalPurchaseDetailsListJqGrid").jqGrid({
+            url: '@Url.Content("~/Reports/GetLocalPurchaseDetailsListJqGrid")',
+            datatype: "json",
+            colNames: ['Id', 'Period', 'Period Year','Name', 'Document Data', 'Created By', 'Created Date', 'Modified By', 'Modified Date', 'Document Type'],
+            colModel: [
+                { name: 'Id', index: 'Id', hidden: true },
+                { name: 'Period', index: 'Period' },
+                { name: 'PeriodYear', index: 'PeriodYear' },
+                { name: 'DocumentName', index: 'DocumentName' },
+                { name: 'DocumentData', index: 'DocumentData' },
+                { name: 'CreatedBy', index: 'CreatedBy' },
+                { name: 'CreatedDate', index: 'CreatedDate' },
+                { name: 'ModifiedBy', index: 'ModifiedBy', hideen: true },
+                { name: 'ModifiedDate', index: 'ModifiedDate', hidden: true },
+                { name: 'DocumentType', index: 'DocumentType' }
+            ],
+            rowNum: 1000,
+            rowList: [10, 20, 30],
+            pager: "#GetLocalPurchaseDetailsListJqGridPager",
+            sortname: 'Id',
+            viewrecords: true,
+            sortorder: "Asc",
+            autowidth: true,
+            caption: "Local Purchase Details",
+            height: 300
+        });
+        jQuery("#GetLocalPurchaseDetailsListJqGrid").jqGrid('navGrid', "#GetLocalPurchaseDetailsListJqGridPager",
+            { edit: false, add: false, del: false, search: false, refresh: false }).navButtonAdd('#GetLocalPurchaseDetailsListJqGridPager', {
+                caption: "Download Zip",
+                buttonicon: "ui-icon-download",
+                onClickButton: function () {
+                    if ($('#Period').val()=="") {
+                        ErrMsg("Please Select Period");
+                        return false;
+                    }
+                    else if ($('#PeriodYear').val() == "") {
+                        ErrMsg("Please Select Period Year");
+                        return false;
+                    }
+                    else if ($('#DocumentType').val() == "") {
+                        ErrMsg("Please Select Document Type");
+                        return false;
+                    }
+                    else {
+                        window.open('@Url.Content("~/Reports/DownloadLocalPurchaseZip")?Period=' +$('#Period').val()  + '&PeriodYear=' + $('#PeriodYear').val() + '&DocumentType=' + $('#DocumentType').val());
+                    }
+                },
+                position: "last"
+            });
+        
+    }
+
+    $(function () {
+        $('#dvLoading').hide()
+            .ajaxStart(function () {
+                $(this).hide(); // show on any Ajax event.
+            })
+        GetExcelDocumentList();
+
+
+        FillPeriod();
+ 
+        FillPeriodYear();
+        //        $("#btnPDF").disable = "true";
+
+
+
+
+    function FillPeriod() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriod/")',
+    function (modelData) {
+        var select = $("#Period");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Period"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    $("#btnSearch").click(function () {
+        var Period = $("#Period").val();
+        var PeriodYear = $("#PeriodYear").val();
+        var DocumentType = $("#DocumentType").val();
+    
+        debugger;
+        jQuery("#GetLocalPurchaseDetailsListJqGrid").setGridParam(
+       {
+           datatype: "json",
+           url: '@Url.Content("~/Reports/GetLocalPurchaseDetailsListJqGrid/")',
+           postData: { Period: Period, PeriodYear: PeriodYear, DocumentType: DocumentType },
+           page: 1
+       }).trigger("reloadGrid");
+    });
+
+    $("#btnReset").click(function () {
+        $("input[type=text], textarea, select").val("");
+
+        jQuery("#GetLocalPurchaseDetailsListJqGrid").setGridParam(
+        {
+            datatype: "json",
+            url: '@Url.Content("~/Reports/GetLocalPurchaseDetailsListJqGrid/")',
+            postData: { Period: "", PeriodYear: "", DocumentType: "" },
+            page: 1
+        }).trigger("reloadGrid");
+    });
+    });
+    function FillPeriodYear() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriodYear")',
+    function (modelData) {
+        var select = $("#PeriodYear");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Year"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function ExcelDownload(Id) {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Content("~/ExcelGeneration/PeriodListCheck")?Period=' + Period + '&searchItems=' + searchItems,
+                  success: function (data) {
+                      if (data == true) {
+                          window.open('@Url.Content("~/PdfGeneration/InvoicePrint")?Period=' + Period + '&searchItems=' + searchItems, '_blank');
+                      }
+                      else {
+                          ErrMsg("The&nbsp;" + Period + "&nbsp;Period does Not contain Week&nbsp;" + data);
+                          $('#btnPDF').attr('disabled', true);
+                          return false;
+                      }
+                  },
+                  dataType: "json"
+              });
+          }
+</script>
+<div id="divDocuments">
+    <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="6" class="PanelHeading">
+                <i class="icon-chevron-right"></i>&nbsp;Excel Document Search&nbsp;
+            </td>
+        </tr>
+        <tr>
+          
+            <td width="20%">
+                <label class="lblheader">
+                    Period Year</label><br />
+                @Html.DropDownList("PeriodYear", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td width="20%">
+                <label class="lblheader">
+                    Period</label><br />
+                @Html.DropDownList("Period", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+              <td width="20%">
+                <label class="lblheader">
+                    Document Type</label><br />
+             @Html.DropDownList("DocumentType", new SelectList(new[]
+                                                    {
+                                                        new{Value="",Text="Select One"},
+                                                        new{Value="Excel-Single",Text="Excel-Single"},
+                                                        new{Value="Excel-Consol",Text="Excel-Consol"},
+                                                        new{Value="Transpt-Book",Text="Transpt-Book"},
+                                                        new{Value="PDF-Single",Text="PDF-Single"},
+                                                        new{Value="Revised-Book",Text="Revised-Book"}
+                                                    },
+                                                    "Value", "Text", ""), new { id = "DocumentType", @Class = "form-control height=20" })
+            </td>
+            <td colspan="3" width="400%">
+                <input type="button" id="btnSearch" value="Search" onclick="InvoiceSearch(); return false;" /><input
+                    type="reset" id="btnReset" value="Reset" onclick="ResetInvoiceSearch(); return false;" />
+                
+            </td>
+        </tr>
+    </table>
+</div>
+  <table id="GetLocalPurchaseDetailsListJqGrid">
+</table>
+            <div id="GetLocalPurchaseDetailsListJqGridPager">
+</div>
+
+<div id="dvLoading">
+</div>

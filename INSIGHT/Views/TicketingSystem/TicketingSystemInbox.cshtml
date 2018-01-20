@@ -1,0 +1,254 @@
+﻿@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+
+<script type="text/javascript">
+    $(function () {
+
+        function toProperCase(str) {
+            return str.replace(/\w\S*/g, function (txt) { return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(); });
+        }
+        if ($.trim($("#AlrtDskMsg").val()) != "") {
+            InfoMsg($("#AlrtDskMsg").val());
+        }
+
+        if ($('#isCreator').val() == true || $('#isCreator').val() == 'True') {
+            $('#btnNewTicket').show();
+        } else {
+            $('#btnNewTicket').hide();
+        }
+        
+        function buildDataforDrpDwn(VwData) {
+            //
+            //var objVwData=;
+            var SrlzdData = VwData;
+            var SlctData = ":All;";
+            for (var i = 0, l = SrlzdData.length; i < l; i++) {
+                SlctData += SrlzdData[i].Text + ":" + toProperCase(SrlzdData[i].Text) + ";";
+            }
+            return SlctData.substring(0, SlctData.length - 1);
+        }
+
+        //activityName,status,ActivityFullName
+        function formateadorLink(cellvalue, options, rowObject) {
+            return "<a href='@Url.Content("~/TicketingSystem/TicketingSystem")?Id=" + rowObject[1] + "&ActivityId=" + rowObject[0] + "&activityName=" + rowObject[3] + "&status=" + rowObject[13] + "&ActivityFullName=" + rowObject[4] + "'>" + cellvalue + "</a>";
+				}
+
+				//view-source:http://www.ok-soft-gmbh.com/jqGrid/ToolbarSearchValidation.htm
+				$("#TicketSystemList").jqGrid({
+				mtype: 'GET',
+				url: '@Url.Content("~/TicketingSystem/GetTicketingSystemInbox")',
+				datatype: 'json',
+				height: '275',
+				width: '1225',
+				shrinkToFit: false,
+				colNames: ['Id', 'TSId', 'Ticket No', 'Activity Name', 'Activity Name', 'Module', 'Ticket Type', 'Severity', 'Priority', 'Ticket Status',
+				'Reporter', 'Created Date', 'Assigned To', 'Status',
+				'History',
+				'SLA','Description'],
+				colModel: [
+				{ name: 'Id', index: 'Id', hidden: true, key: true }, //0
+				{name: 'TSId', index: 'TSId', hidden: true }, //1
+				{name: 'TicketNo', index: 'TicketNo', width: 70, formatter: formateadorLink, cellattr:function(rowId, val,rawObject){ return 'title="'+rawObject[16]+'"'} }, //2
+                 // {name: 'TicketNo', index: 'TicketNo', width: 70, formatter: formateadorLink },
+				{name: 'ActivityName', index: 'ActivityName', width: 130, hidden:true }, //3
+				{name: 'ActivityFullName', index: 'ActivityFullName', width: 140 }, //4
+				{name: 'Module', index: 'Module', width: 160, formatter: 'select', stype: 'select',
+				sorttype: function (cell) { return buildDataforDrpDwn(@Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Module)))[cell]; },
+				edittype: 'select', editoptions: { value: buildDataforDrpDwn(@Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Module))) },
+				searchoptions: { sopt: ['eq'] }
+				},//5
+				{name: 'TicketType', index: 'TicketType', width: 100, formatter: 'select', stype: 'select',
+				sorttype: function (cell) { return buildDataforDrpDwn(@Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.TicketType)))[cell]; },
+				edittype: 'select', editoptions: { value: buildDataforDrpDwn(@Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.TicketType))) },
+				searchoptions: { sopt: ['eq'] }
+				},//6
+				{name: 'Severity', index: 'Severity',hidden:true, width: 70 , formatter: 'select', stype: 'select',
+				sorttype: function (cell) { return buildDataforDrpDwn(@Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Severity)))[cell]; },
+				edittype: 'select', editoptions: { value: buildDataforDrpDwn(@Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Severity))) },
+				searchoptions: { sopt: ['eq'] }
+				},//7
+				//{name: 'Priority', index: 'Priority', width: 70, search: true, editable: true, stype: 'Select', searchoptions: { sopt: ['eq', 'ne'], value: "[0:Select;1:CRITICAL;2:HIGH;3:MEDIUM;4:LOW;]"} }, //8
+				{name: 'Priority', index: 'Priority', width: 90, formatter: 'select', stype: 'select',
+				sorttype: function (cell) { return buildDataforDrpDwn(@Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Priority)))[cell]; },
+				edittype: 'select', editoptions: { value: buildDataforDrpDwn(@Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Priority))) },
+				searchoptions: { sopt: ['eq'] }
+				},//8
+				{ name: 'TicketStatus', index: 'TicketStatus', width: 130, formatter: 'select', stype: 'select',
+				sorttype: function (cell) { return buildDataforDrpDwn(@Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.TicketStatus)))[cell]; },
+				edittype: 'select', editoptions: { value: buildDataforDrpDwn(@Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.TicketStatus))) },
+				searchoptions: { sopt: ['eq'] }
+				},//9
+				{name: 'Reporter', index: 'Reporter', width: 70 }, //10
+
+
+				//                          {name:'CreatedDate',index:'CreatedDate', width:120,editable:true,align:'center',
+				//                     sorttype:'date', formatter:'date', datefmt:'dd-M-YY',
+				//                     editoptions:{size:12,dataInit : function (elem) {
+				//                         setTimeout(function(){
+				//                             $(elem).datepicker({ showOn: 'button' });
+				//                         },100);
+				//                     } }}, //11
+                {name: 'CreatedDate', index: 'CreatedDate', width: 150},
+//				{name: 'CreatedDate', index: 'CreatedDate', width: 150,
+//				editable:true, formatter: 'date', editoptions:{
+//				dataInit : function (elem) {
+//				$(elem).datepicker({
+//				showOn: 'button',
+//				showButtonPanel: false,
+//				dateFormat:'d-M-y',
+//				onSelect: function() { //
+//				if (this.id === "gs_CreatedDate") {
+//				setTimeout(function(){
+//				$('#TicketSystemList')[0].triggerToolbar();
+//				}, 50);
+//				}
+//				}});
+//				}}},
+				{name: 'AssignedTo', index: 'AssignedTo', width: 90, hidden:true }, //12
+				{name: 'Status', index: 'Status', width: 100, formatter: 'select', stype: 'select',
+				sorttype: function (cell) { return "Available:Available;Assigned:Assigned;Sent:Sent;Completed:Completed"[cell]; },
+				edittype: 'select', editoptions: { value: "Available:Available;Assigned:Assigned;Sent:Sent;Completed:Completed" },
+				searchoptions: { sopt: ['eq'] }
+				},//13
+				{name: 'History', index: 'History', width: 70, align: 'center', sortable: false }, //14
+				{name: 'SLA', index: 'SLA', align: 'center', width: 40, sortable: false, formatter: statusimage},//15
+				{name:'Description',index:'Description', hidden:true}//16
+				],
+				pager: '#TicketSystemPage',
+				rowNum: '10',
+				sortname: 'Id',
+				sortorder: 'Desc',
+				rowList: [5, 10, 20, 50, 100, 150, 200 ],
+				multiselect: true,
+				viewrecords: true
+				});
+				$("#TicketSystemList").navGrid('#TicketSystemPage', { add: false, edit: false, del: false, search: false, refresh: false });
+				$("#TicketSystemList").jqGrid('navButtonAdd', '#TicketSystemPage', {
+				caption: "Export To Excel",
+				onClickButton: function () {
+				window.open("GetTicketingSystemInbox" + '?rows=9999' +
+				'&page=1'+
+                '&sidx=TicketNo'+
+                '&sord=desc'+
+                '&TicketStatus='+$('#gs_TicketStatus').val()+
+            '&fromDat='+$('#gs_CreatedDate').val()+
+            '&TicketNo='+$('#gs_TicketNo').val()+
+            '&Module='+$('#gs_Module').val()+
+            '&TicketType='+$('#gs_TicketType').val()+
+            '&Severity='+$('#gs_Severity').val()+
+            '&Priority='+$('#gs_Priority').val()+
+            '&Reporter='+$('#gs_Reporter').val()+
+            '&AssignedTo='+$('#gs_AssignedTo').val()+
+            '&ActivityFullName='+$('#gs_ActivityFullName').val()+
+            '&Status='+$('#gs_Status').val()+
+            '&ExportToXL=true'
+                );
+            }
+        });
+        $("#TicketSystemList").jqGrid('filterToolbar', { stringResult: false, searchOnEnter: true, beforeSearch: function () {
+            $('#TicketSystemList').clearGridData();
+            return false;
+        }
+        });
+
+
+        //        grid.jqGrid('filterToolbar', { stringResult: true, searchOnEnter: true, defaultSearch: "cn", beforeSearch: function () {
+        //            //alert("verifying the data");
+        //            var postData = grid.jqGrid('getGridParam', 'postData');
+        //            // we use `stringResult: true` so decoding of the search parameters are a little complex
+        //            var searchData = jQuery.parseJSON(postData.filters);
+        //            for (var iRule = 0; iRule < searchData.rules.length; iRule++) {
+        //                if (searchData.rules[iRule].field === "Name") {
+        //                    var valueToSearch = searchData.rules[iRule].data;
+        //                    if (valueToSearch.length != 5) {
+        //                        alert("The search string MUST de 5 charachters length!");
+        //                        return true;    // error
+        //                    }
+        //                }
+        //            }
+        //            return false;
+        //        }
+        //        });
+
+        function statusimage(cellvalue, options, rowObject) {
+            //
+            var i;
+            var cellValueInt = parseInt(cellvalue);
+            var cml = $("#TicketSystemList").jqGrid();
+            for (i = 0; i < cml.length; i++) {
+                if (rowObject[7] != "") {
+                    if (cellValueInt <= 24) {
+                        return '<img src="@Url.Content("~/Images/yellow.jpg")" height="10px" width="10px" alt=' + cellvalue + ' title=' + cellvalue + ' />'
+                    }
+                    else if (cellValueInt > 24 && cellValueInt <= 48) {
+                        return '<img src="@Url.Content("~/Images/orange.jpg")" height="10px" width="10px"  alt=' + cellvalue + ' title=' + cellvalue + ' />'
+                    }
+                    else if (cellValueInt > 48) {
+                        return '<img src="@Url.Content("~/Images/redblink3.gif")" height="10px" width="10px" alt=' + cellvalue + ' title=' + cellvalue + ' />'
+                    }
+                    else if (cellvalue == 'Completed') {
+                        return '<img src="@Url.Content("~/Images/green.jpg")" height="12px" width="12px" alt=' + cellvalue + ' title=' + cellvalue + ' />'
+                    }
+                }
+            }
+        }
+
+        $("#btnNewTicket").click(function () {
+            window.location.href = '@Url.Action("TicketingSystem", "TicketingSystem")';
+        });
+    });
+
+    function ShowComments(ActivityId) {
+        modalid = $('#Activities');
+        LoadPopupDynamicaly('@Url.Content("~/TicketingSystem/LoadUserControl/Activities")', modalid, function () {
+        $('#ActivitiesHstryList').clearGridData();
+        LoadSetGridParam($('#ActivitiesHstryList'), '@Url.Content("~/TicketingSystem/ActivitiesListJqGrid")?Id=' + ActivityId);
+        },"",800,440,"History");
+    }
+</script>
+<div id="TicketingSys">
+    <table width="100%" class="WithBorderOnly" id="TicketGridDtls">
+        <tr style="background-color: #B6B6B6; height: 25px; color: White;">
+            <td colspan="4">
+                Search Panel
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4">
+                <input type="button" id="btnNewTicket" value="New Ticket" name="New Ticket" />
+            </td>
+        </tr>
+        <tr>
+            @Html.Hidden("AlrtDskMsg", TempData["AlrtDskMsg"])
+            @Html.Hidden("isCreator")
+        </tr>
+        <tr>
+            <td colspan="4">
+                <table id="TicketSystemList">
+                </table>
+                <div id="TicketSystemPage">
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4" style="float: right;">
+                <img src='@Url.Content("~/Images/yellow.jpg")' alt="" height="10px" width="10px" /><label style="font-size: x-small">&nbsp
+                    Below 24 hrs
+                </label>
+                &nbsp&nbsp
+                <img src='@Url.Content("~/Images/orange.jpg")' alt="" height="10px" width="10px" /><label style="font-size: x-small">&nbsp
+                    24-48 hrs</label>
+                &nbsp&nbsp
+                <img src='@Url.Content("~/Images/redblink3.gif")' alt="" height="10px" width="10px" /><label
+                    style="font-size: x-small">&nbsp SLA Breached
+                </label>
+                &nbsp&nbsp
+                <img src='@Url.Content("~/Images/green.jpg")' alt="" height="12px" width="12px" /><label style="font-size: x-small">&nbsp
+                    Completed</label>
+            </td>
+        </tr>
+    </table>
+</div>
+<div id="Activities" title="Activity History"></div>

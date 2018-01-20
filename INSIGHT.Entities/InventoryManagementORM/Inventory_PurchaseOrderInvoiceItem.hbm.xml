@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.InventoryManagementEntities.Inventory_PurchaseOrderInvoiceItem" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+	<class name="INSIGHT.Entities.InventoryManagementEntities.Inventory_PurchaseOrderInvoiceItem, INSIGHT.Entities" table="Inventory_PurchaseOrderInvoiceItem" lazy="false" >
+		<id name="POInvoiceItemId" column="POInvoiceItemId" type="Int64">
+			<generator class="identity" />
+		</id>
+		<property name="POInvoiceId" column="POInvoiceId" type="Int64" />
+		<property name="PurchOrderId" column="PurchOrderId" type="Int64" />
+		<property name="POLineId" column="POLineId" type="Int64" />
+		<property name="OrderedQty" column="OrderedQty" type="decimal" />
+		<property name="InvoicedQty" column="InvoicedQty" type="decimal" />
+		<property name="InvoiceUnitPrice" column="InvoiceUnitPrice" type="decimal" />
+		<property name="InvoiceValue" column="InvoiceValue" type="decimal" />
+    <property name="Remarks" column="Remarks" type="string" />
+
+		<property name="CreatedDate" column="CreatedDate" type="datetime" />
+		<property name="CreatedBy" column="CreatedBy" type="string" />
+		<property name="ModifiedDate" column="ModifiedDate" type="datetime" />
+		<property name="ModifiedBy" column="ModifiedBy" type="string" />
+    <property name="IsDisconnect" column="IsDisconnect" type="bool" />
+    <property name="INVConfig_Id" column="INVConfig_Id" type="Int64" />
+	</class>
+</hibernate-mapping>

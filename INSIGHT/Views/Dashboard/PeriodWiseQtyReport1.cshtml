@@ -1,0 +1,165 @@
+﻿@{
+    ViewBag.Title = "PeriodWiseQtyReport1";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<style>
+    .PeriodGraph {
+        background-color: #ccffcc;
+    }
+</style>
+<script type="text/javascript">
+    var PeriodReport = "";
+    var SectorTable = "";
+
+    $(document).ready(function () {
+        $.ajax({
+            type: 'Get',
+            url: '@Url.Content("~/Dashboard/GetPeriodYearGraph")',
+            success: function (data) {
+               
+                var chart = new FusionCharts("~/Charts/FCF_Column2D.swf", "Period Year Details", "580", "150");
+                chart.setDataXML(data);
+                chart.render("PeriodYearGraph");
+            },
+            async: false,
+            dataType: "text"
+        });
+
+       
+       
+        $('#PeriodWiseReport').jqGrid({
+
+            url: '@Url.Content("~/Dashboard/PeriodWiseQtyDashboardReport")?Flag=PERIODYEAR',
+            type: 'GET',
+            datatype: 'json',
+            height: '400',
+            colNames: ['PeriodYear'],
+            colModel: [
+
+            { name: 'PeriodYear', index: 'PeriodYear', key: true },
+
+            ],
+            pager: 'PeriodWiseReportPager',
+            rowNum: '20',
+            rowList: [200, 300, 400, 500],
+            sortname: 'Id',
+            sortorder: 'Asc',
+            width: 600,
+            multiselect: false,
+            subGrid: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Periodwise Qty Report',
+            subGridOptions: { openicon: "ui-helper-hidden" },
+
+            subGridRowExpanded: function (PeriodGridDiv_Id, row_id) {
+                debugger;
+                var selectedData_PeriodYear = $('#PeriodWiseReport').jqGrid('getRowData', row_id);
+                var PeriodGridTable, PeriodGridPager;
+                PeriodGridTable = PeriodGridDiv_Id + "_t";
+                PeriodGridPager = "p_" + PeriodGridDiv_Id;
+                PeriodReport = PeriodGridTable
+                $("#" + PeriodGridDiv_Id).html("<table id='" + PeriodGridTable + "' ></table><div id='" + PeriodGridPager + "' ></div>");
+                jQuery("#" + PeriodGridTable).jqGrid({
+                    url: '@Url.Content("~/Dashboard/PeriodWiseQtyDashboardReport")?Flag=PERIOD&PeriodYear=' + row_id,
+                    datatype: 'json',
+                    colNames: ['Id', 'PeriodYear', 'Period', 'OrderQty', 'DeliveredQty', 'InvoiceQty', 'InvoiceValue'],
+                    colModel: [
+                          { name: 'Id', index: 'Id', hidden: true },
+                          { name: 'PeriodYear', index: 'PeriodYear', hidden: true },
+                          { name: 'Period', index: 'Period', width: 50 },
+                          { name: 'OrderQty', index: 'OrderQty', width: 120 },
+                          { name: 'DeliveredQty', index: 'DeliveredQty', width: 120 },
+                          { name: 'InvoiceQty', index: 'InvoiceQty', width: 120 },
+                          { name: 'InvoiceValue', index: 'InvoiceValue', width: 120 }
+                    ],
+
+                    sortname: 'Id',
+                    sortorder: "asc",
+                    pager: PeriodGridPager,
+                    subgrid: true
+
+                    //subGridRowExpanded: function (SectorGridDiv_Id, row_id) {
+                    //    //var selectedDate_Period 
+                    //    var SectorGridTable, SectorGridPager;
+                    //    SectorGridTable = SectorGridDiv_Id + "_t";
+                    //    SectorGridPager = "P_" + SectorGridDiv_Id;
+                    //    SectorTable = SectorGridTable;
+                    //    $("#" + SectorGridDiv_Id).html("<table id='" + SectorGridTable + "' ></table><div id='" + SectorGridPager + "' ></div>");
+                    //    jQuery("#"+)
+                    //}
+                });
+            }
+        });
+      
+        
+
+    });
+    function MCClickEvent(Periodyear) {
+        debugger;
+        if (Periodyear==1314)
+            PeriodGraph('13-14');
+        else if(Periodyear==1415)
+            PeriodGraph('14-15')
+     //  PeriodGraph('13-14');
+
+
+    }
+  
+    function PeriodGraph(Period) {
+        debugger;
+        $.ajax({
+            type: 'Get',
+            url: '@Url.Content("~/Dashboard/GetPeriodGraph")?PeriodYear=' + Period,
+            success: function (data) {
+                
+                var chart = new FusionCharts('@Url.Content("~/Charts/FCF_MSColumn2D.swf")', "Period Graph Details", "570", "280");
+                chart.setDataXML(data);
+                chart.render("PeriodGraph");
+            },
+            async: false,
+            dataType: "text"
+         });
+    }
+   
+</script>
+<table id="Maintable" width="100%" border="1px">
+    <tr>
+        <td width="50%">
+            <table id="PeriodWiseReport"></table>
+            <div id="PeriodWiseReportPager"></div>
+        </td>
+        <td width="50%" valign="top">
+            <table>
+                <tr>
+                    <td>
+                       <div align="right" id="PeriodYearGraph"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div align="centre" id="PeriodGraph"></div>
+                    </td>
+                </tr>
+            </table>
+
+
+            @* <table border="1"  width="100%">
+                <tr>
+                    <td bgcolor="red" style="height:200px;"></td>
+                </tr>
+                <tr>
+                    <td bgcolor="blue" style="height:300px;"><div id="PeriodGraph"></div></td>
+                </tr>
+            </table>*@
+
+        </td>
+
+    </tr>
+
+
+
+</table>
+
+
+
+
+

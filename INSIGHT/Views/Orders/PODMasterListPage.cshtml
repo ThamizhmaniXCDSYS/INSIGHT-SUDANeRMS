@@ -1,0 +1,287 @@
+﻿@{
+    ViewBag.Title = "PODMasterListPage";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<style type="text/css">
+    .ui-jqgrid tr.jqgrow td {
+        font-size: 10px;
+    }
+
+    .ui-jqgrid .ui-pg-input {
+        width: 30px;
+    }
+
+    .ui-jqgrid .ui-pg-selbox {
+        width: 50px;
+        height: 25px;
+    }
+</style>
+<script type="text/javascript">
+    function formateadorLink(cellvalue, options, rowObject) {
+        return "<a href='@Url.Content("~/Orders/PODItemsManagement")?PODId='" + rowObject[1] + ">" + cellvalue + "</a>";
+    }
+
+    function formateadorControlIdLink(cellvalue, options, rowObject) {
+        return "<a href='@Url.Content("~/Orders/PODItemsManagement")?PODId='" + rowObject[1] + ">" + cellvalue + "</a>";
+    }
+
+    $(document).ready(function () {
+
+        jQuery("#PODMasterJQgrid").jqGrid({
+            mtype: 'GET',
+            url: '@Url.Content("~/Orders/PODMasterJQgrid")',
+            datatype: 'json',
+            height: '335',
+            width: '1200',
+            shrinkToFit: true,
+            colNames: ['Id', 'POD Id', 'POD No', 'OrderId', 'Contingent', 'Cont Type', 'Location', 'ControlId', 'Period', 'Sector', 'Week', 'Year', 'Created By', 'Created Date', 'ExpDel Date'],
+            colModel: [
+                      { name: 'Id', index: 'Id', hidden: true },
+                      { name: 'PODId', index: 'PODId', key: true, hidden: true },
+                      { name: 'PODNo', index: 'PODNo', sortable: true, formatter: formateadorLink, width: 80, hidden: true },
+                      { name: 'OrderId', index: 'OrderId', width: 60, hidden: true },
+                      { name: 'Name', index: 'Name', width: 80 },
+                      { name: 'ContingentType', index: 'ContingentType', width: 60 },
+                      { name: 'Location', index: 'Location', width: 80 },
+                      { name: 'ControlId', index: 'ControlId', width: 250, formatter: formateadorControlIdLink },
+                      { name: 'Period', index: 'Period', width: 60 },
+                      { name: 'Sector', index: 'Sector', width: 60 },
+                      { name: 'Week', index: 'Week', width: 60 },
+                      { name: 'PeriodYear', index: 'PeriodYear', width: 60 },
+                      { name: 'CreatedBy', index: 'CreatedBy', sortable: true, width: 80 },
+                      { name: 'CreatedDate', index: 'CreatedDate', sortable: true, width: 70 },
+                      { name: 'ExpectedDeliveryDate', index: 'ExpectedDeliveryDate', width: 70 }
+            ],
+            pager: '#PODMasterJQgridPager',
+            rowNum: '1000',
+            //  rowList: [50, 100, 150, 200],
+            sortname: 'PODId',
+            sortorder: "Desc",
+            viewrecords: true,
+            rowList: [], // disable page size dropdown
+            pgbuttons: false, // disable page control like next, back button
+            pgtext: null, // disable pager text like 'Page 0 of 10'
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;POD List',
+            multiselect: true
+        });
+        jQuery("#PODMasterJQgrid").jqGrid('navGrid', '#PODMasterJQgridPager', { edit: false, add: false, del: false });
+        // $('#PODMasterJQgrid').jqGrid('filterToolbar', { searchOnEnter: true, enableClear: false, afterSearch: function () { $('#PODMasterJQgrid').clearGridData(); } });
+    });
+    function CreatePOD() {
+
+        window.location.href = '@Url.Content("~/Orders/PODMasterFormPage")';
+
+
+    }
+
+    $(function () {
+
+        FillSector();
+        FillContingent();
+        FillPeriod();
+        FillLocation();
+        FillPeriodYear();
+        $("#Sector").change(function () {
+            FillContingent($(this).val());
+        });
+        $("#Contingent").change(function () {
+            FillLocation($("#Sector").val(), $(this).val());
+        });
+        $("#btnPDF").click(function () {
+            window.open('@Url.Content("~/PdfGeneration/InvoicePrint")?OrderId=' + 61, '_blank');
+        });
+
+        //        $("#btnInvoice").click(function () {
+        //                window.location.href = '@Url.Action("NewInvoice", "Invoice")';
+        //        });
+    });
+
+    function FillSector() {
+        $.getJSON('@Url.Content("~/Masters/FillSectorbyUser/")',
+    function (modelData) {
+        var select = $("#Sector");
+        select.empty();
+        select.append($('<option/>',
+    {
+        value: "",
+        text: "Select Sector"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    function FillContingent(SectorCode) {
+        $.getJSON('@Url.Content("~/Masters/FillContingentbyUser/")?SectorCode=' + SectorCode,
+    function (modelData) {
+        var select = $("#Contingent");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Contingent"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillLocation(SectorCode, ContingentCode) {
+        $.getJSON('@Url.Content("~/Masters/FillLocationbyUser/")?SectorCode=' + SectorCode + '&ContingentCode=' + ContingentCode,
+    function (modelData) {
+        var select = $("#Location");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Location"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillPeriod() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriod/")',
+    function (modelData) {
+        var select = $("#Period");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Period"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillPeriodYear() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriodYear")',
+    function (modelData) {
+        var select = $("#PeriodYear");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Year"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    function PODSearch() {
+
+        var Sector = $('#Sector').val();
+        var Contingent = $('#Contingent').val();
+        var ClientName = $('#Location').val();
+        var Location = $('#Period').val();
+        var searchItems = $('#Sector').val() + ',' + $('#Contingent').val() + ',' + $('#Location').val() + ',' + $('#Period').val() + ',' + $('#PeriodYear').val();
+        $("#PODMasterJQgrid").setGridParam(
+{
+    datatype: "json",
+    url: '@Url.Content("~/Orders/PODMasterJQgrid")?searchItems=' + searchItems,
+    //postData: { ProjectCode: ProjectCode, ProjectType: ProjectType, ClientName: ClientName, City: City, ContactPerson: ContactPerson },
+    page: 0
+}).trigger("reloadGrid");
+    }
+    function ResetPODSearch() {
+        $('#Sector').val(0);
+        $('#Contingent').val(0);
+        $('#contingentType').val("");
+        $('#Period').val(0);
+        $('#PeriodYear').val(0);
+        $("#PODMasterJQgrid").clearGridData();
+    }
+
+
+
+</script>
+@using (Html.BeginForm())
+{
+@*
+    <table>
+        <tr>
+            <td>
+                <input type="button" id="btnCreatedPOD" value="CreatePOD" onclick="CreatePOD();return false;" />
+            </td>
+        </tr>
+    </table>*@
+  
+@*@Html.ActionLink("Create POD", "PODMasterForm", "Orders", new { @Class = "button" })*@
+    
+    <div id="divDocuments">
+        <table class="WithBorderOnly" width="100%">
+            <tr class="PanelHeading">
+                <td colspan="6" class="PanelHeading">
+                    <i class="icon-chevron-right"></i>&nbsp;POD List&nbsp;
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="lblheader">
+                        Sector</label><br />
+                    @Html.DropDownList("Sector", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+                </td>
+                <td>
+                    <label class="lblheader">
+                        Contingent</label><br />
+                    @Html.DropDownList("Contingent", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+                </td>
+                <td>
+                    <label class="lblheader">
+                        Location</label><br />
+                    @Html.DropDownList("Location", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+                </td>
+                <td>
+                    <label class="lblheader">
+                        Period Year</label><br />
+                    @Html.DropDownList("PeriodYear", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+                </td>
+                <td>
+                    <label class="lblheader">
+                        Period</label><br />
+                    @Html.DropDownList("Period", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+                </td>
+
+                <td>
+                    <input type="button" id="btnSearch" value="Search" onclick="PODSearch(); return false;" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                        type="reset" id="btnReset" onclick="ResetPODSearch(); return false;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+}
+<table id="PODMasterJQgrid">
+</table>
+<div id="PODMasterJQgridPager">
+</div>

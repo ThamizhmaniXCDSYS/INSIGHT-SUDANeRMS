@@ -1,0 +1,169 @@
+﻿@{
+    ViewBag.Title = "TemplateManagement";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<script type="text/javascript">
+    function EmailTemplateList() {
+        debugger;
+        $('#EmailTemplateList').jqGrid('GridUnload');
+        jQuery("#EmailTemplateList").jqGrid({
+            mtype: 'GET',
+            url: '@Url.Content("~/Email/TemplateManagementListJQGrid")',
+            datatype: 'json',
+            height: '335',
+            width: '1200',
+            shrinkToFit: true,
+            colNames: ['Template No','S.No', 'Mail Template','Report Name', 'User Name', 'Start date', 'Active Status'],
+            colModel: [
+                { width: 100 },
+                { name: 'MailTemplateId', index: 'MailTemplateId', key: true,hidden:true },
+                { name: 'NewTemplateName', index: 'NewTemplateName', width: 120 },
+                { name: 'ReportName', index: 'ReportName', width: 120 },
+                { name: 'UserName', index: 'UserName' },
+                { name: 'StartDate', index: 'StartDate' },
+                { }
+            ],
+
+            pager: '#EmailTemplateListPager',
+            rowNum: '100',
+            rowList: [100, 200, 300, 400],
+            sortname: 'MailTemplateId',
+            viewrecords: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Template Management Grid',
+            multiselect: true,
+            viewrecords: true
+        });
+        //$('#EmailTemplateList').jqGrid('filterToolbar', { searchOnEnter: true, enableClear: false, afterSearch: function () { $('#RecentDownloadsList').clearGridData(); } });
+        jQuery("#EmailTemplateList")
+              .navGrid('#EmailTemplateListPager', { edit: false, add: false, del: false, search: false, refresh: false })
+
+    }
+
+    $(function () {
+        EmailTemplateList();
+        FillMailPeriod();
+        FillMailTemplate();
+
+        $("#UserName").autocomplete({
+            source: function (request, response) {
+                $.getJSON('@Url.Content("~/Account/GetUserIds")?term=' + request.term, function (data) {
+                    response(data);
+                });
+            },
+            minLength: 1,
+            delay: 100
+        });
+
+    });
+
+
+    function FillMailPeriod() {
+        $.getJSON('@Url.Content("~/Masters/FillMailPeriod/")',
+    function (modelData) {
+        var select = $("#MailPeriod");
+        select.empty();
+        select.append($('<option/>',
+    {
+        value: "",
+        text: "Select Period"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillMailTemplate() {
+        $.getJSON('@Url.Content("~/Masters/FillMailTemplate/")',
+    function (modelData) {
+        var select = $("#MailTemplate");
+        select.empty();
+        select.append($('<option/>',
+    {
+        value: "",
+        text: "Select Template"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+
+    function EmailSearch() {
+        var searchItems =  $('#MailTemplate').val() + ',' + $('#IsActive').val() + ',' + $('#UserName').val();
+        $("#EmailTemplateList").setGridParam(
+            {
+                datatype: "json",
+                url: '@Url.Content("~/Email/TemplateManagementListJQGrid")?searchItems=' + searchItems,
+                page: 0
+            }).trigger("reloadGrid");
+    }
+    function ResetEamilSearch() {
+        //$('#MailPeriod').val(0);
+        $('#MailTemplate').val(0);
+        $('#IsActive').val(0);
+        $('#UserName').val("");
+        $("#EmailTemplateList").clearGridData();
+    }
+
+    function NewTemplateConfig() {
+        window.location.href = '@Url.Action("TemplateConfiguration","Email")';
+    }
+</script>
+<div id="divDocuments">
+    <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="5" class="PanelHeading">
+                <i class="icon-chevron-right"></i>&nbsp;Email Schedule Search&nbsp;
+            </td>
+        </tr>
+        <tr>
+            @*<td width="17%">
+                <label class="lblheader">
+                     Mail Period</label><br />
+                @Html.DropDownList("MailPeriod", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>*@
+            <td width="17%">
+                <label class="lblheader">
+                    Mail Template</label><br />
+                @Html.DropDownList("MailTemplate", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td width="17%">
+                <label class="lblheader">
+                    Active Status</label><br />
+                @Html.DropDownList("IsActive", new SelectList(new[]
+                                          {
+                                              new{Value="",Text="Select One"},
+                                              new{Value="True",Text="Active"},
+                                              new{Value="False",Text="Deactivated"}
+                                          },
+          "Value", "Text", ""), new { @Class = "CSSDropDownList" })
+            </td>
+            <td width="17%">
+                <label class="lblheader">
+                    User name</label><br />
+                <input type="text" id="UserName" name="Username" Class = "CSSTextBox" />
+            </td>
+            <td width="32%">
+                <input type="button" id="btnSearch" value="Search" onclick="EmailSearch(); return false;" /><input
+                    type="reset" id="btnReset" value="Reset" onclick="ResetEamilSearch(); return false;" />
+                <input type="button" id="NewUser" value="New Template Config" onclick="NewTemplateConfig(); return false;" />
+            </td>
+        </tr>
+    </table>
+</div>
+
+<table id="EmailTemplateList">
+</table>
+<div id="EmailTemplateListPager"></div>

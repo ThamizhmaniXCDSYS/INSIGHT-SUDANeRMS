@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping assembly="INSIGHT.Entities.InvoiceEntities.InvoiceItems"  namespace="INSIGHT.Entities"  xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.InvoiceEntities.InvoiceItems, INSIGHT.Entities" table="InvoiceItems" lazy="false" >
+    <id name="Id"  column="Id"  type="Int64" >
+      <generator class="identity" />
+    </id>
+  <property name="InvoiceId"  column="InvoiceId"  type="Int64" />
+  <property name="ItemRefId"  column="ItemRefId"  type="Int64" />
+  <property name="ItemId"  column="ItemId"  type="Int64" />
+</class>
+</hibernate-mapping>

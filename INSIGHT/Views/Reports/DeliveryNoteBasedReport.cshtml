@@ -1,0 +1,338 @@
+﻿@{
+    ViewBag.Title = "DeliveryNoteBasedReport";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        debugger;
+        $("#DeliverNoteBasedReport").jqGrid({
+            url: '@Url.Content("~/Reports/DeliveryNoteBasedReportjqGrid")',
+            width: 1200,
+            height: 250,
+            shrinkToFit: false,
+            datatype: 'json',
+            type: 'GET',
+            colNames: ['Id', 'Requisition Name', 'DN Number', 'Approved Date as per DP', 'Recd Date at Contingent', 'Difference b/w Approved date & Recd Date at contingent', 'DN Type', 'APL Application', 'Remark', 'Ordered Qty per contingent', 'Line Item Ordered',
+            'Sum of Actual Received Qty.(Egg Convt)', 'Line Items Delivered', '% by Line Items Delivered', '% by Delivered Qty', 'Substitution Count', 'Gross Amount', 'Timely Delivery', 'Order by Line Items', 'Orders by Weight', 'No. of  Authorized Substitutions', 'Total APL'],
+            colModel: [
+                { name: 'Id', index: 'Id', hidden: true },
+                { name: 'ControlId', index: 'ControlId', width: 300 },
+                { name: 'DeliveryNoteName', index: 'DeliveryNoteName', width: 120 },
+                { name: 'ExpectedDeliveryDate', index: 'ExpectedDeliveryDate', align: "center", width: 150, formatter: 'date', formatoptions: { srcformat: 'd/m/Y', newformat: 'd-M-y' } },
+                { name: 'ReceivedDate', index: 'ReceivedDate', align: "center", width: 150, formatter: 'date', formatoptions: { srcformat: 'd/m/Y', newformat: 'd-M-y' } },
+                { name: 'DateDiffer', index: 'DateDiffer', width: 310, align: "center" },
+                { name: 'DNType', index: 'DNType', width: 150, align: "center" },
+
+                { name: '', index: '' },
+                { name: '', index: '' },
+
+                { name: 'TotalWeight', index: 'TotalWeight', width: 250, align: "center" },
+                { name: 'LineItemOrdered', index: 'LineItemOrdered', width: 150, align: "center" },
+                { name: 'SumOfAccRecQty', index: 'SumOfAccRecQty', width: 230, align: "center" },
+                { name: 'LineItemsDelivered', index: 'LineItemsDelivered', width: 150, align: "center" },
+                { name: 'PercentByLineItemsDelevered', index: 'PercentByLineItemsDelevered', width: 150, align: "center" },
+                { name: 'PercentByDeliveredQty', index: 'PercentByDeliveredQty', width: 150, align: "center" },
+                { name: 'SubstitutionCount', index: 'SubstitutionCount', width: 150, align: "center" },
+                { name: 'GrossAmount', index: 'GrossAmount', width: 150, align: "center" },
+                { name: 'APL_TimelyDelivery', index: 'APL_TimelyDelivery', width: 150, align: "center" },
+                { name: 'APL_OrderbyLineItems', index: 'APL_OrderbyLineItems', width: 150, align: "center" },
+                { name: 'APL_OrdersbyWeight', index: 'APL_OrdersbyWeight', width: 150, align: "center" },
+                { name: 'APL_NoofAuthorizedSubstitutions', index: 'APL_NoofAuthorizedSubstitutions', width: 200, align: "center" },
+                { name: 'TOTALAPL', index: 'TOTALAPL', width: 150, align: "center" }
+            ],
+            pager: '#DeliveryNoteBasedReportPager',
+            rowNum: 1000,
+            rowList: [1000, 2000, 3000, 4000, 5000],
+            sortname: 'ControlId',
+            sortorder: 'Asc',
+            autowidth: true,
+
+
+            viewrecords: true,
+            caption: 'DeliveryNoteBased Report'
+        });
+        $("#DeliverNoteBasedReport").navGrid('#DeliveryNoteBasedReportPager', { add: false, edit: false, del: false, search: false, refresh: false }, {}, {}, {}, {});
+        $("#DeliverNoteBasedReport").jqGrid('navButtonAdd', '#DeliveryNoteBasedReportPager', {
+            caption: "Export To Excel",
+            onClickButton: function () {
+                debugger;
+                var ExptType = "Excel";
+                var Sector = $("#Sector").val();
+                var ContingentType = $("#contingentType").val();
+                var Contingent = $("#Contingent").val();
+                var PeriodYear = $("#PeriodYear").val();
+                var Period = $("#Period").val();
+                if ($('#PeriodYear').val() == "") {
+                    ErrMsg("Please Select Period Year");
+                    return false;
+                }
+                if ($('#Period').val() == "") {
+                    ErrMsg("Please Select Period");
+                    return false;
+                }
+                window.open("DeliveryNoteBasedReportjqGrid" + '?ExptType=' + ExptType + '&Sector=' + Sector + '&ContingentType=' + ContingentType + '&Contingent=' + Contingent + '&PeriodYear=' + PeriodYear + '&Period=' + Period + '&rows=9999' + '&sidx=' + '&sord=desc' + '&page=1');
+            }
+        });
+        FillSector();
+        FillContingent();
+        //FillPeriod();
+        FillLocation();
+        FillPeriodYear();
+
+        $("#Sector").change(function () {
+            FillContingent($(this).val());
+        });
+        $("#Contingent").change(function () {
+            FillLocation($("#Sector").val(), $(this).val());
+
+            var Contigent = $("#Contingent").val();
+            if (Contigent != "") {
+                var result = Contigent.indexOf("FPU") > -1;
+                if (result == true) {
+                    $("#contingentType").val("FPU");
+                }
+                else
+                    $("#contingentType").val("MIL")
+            }
+        });
+        $("#PeriodYear").change(function () {
+            FillPeriod();
+        });
+
+        $("#btnSearch").click(function () {
+            var Sector = $("#Sector").val();
+            var ContingentType = $("#contingentType").val();
+            var Contingent = $("#Contingent").val();
+            var PeriodYear = $("#PeriodYear").val();
+            var Period = $("#Period").val();
+            if ($('#PeriodYear').val() == "") {
+                ErrMsg("Please Select Period Year");
+                return false;
+            }
+            if ($('#Period').val() == "") {
+                ErrMsg("Please Select Period");
+                return false;
+            }
+            //var ReportType = "DNReport";
+            $("#DeliverNoteBasedReport").setGridParam(
+                    {
+                        datatype: "json",
+                        url: '@Url.Content("~/Reports/DeliveryNoteBasedReportjqGrid")',
+                        postData: { Sector: Sector, ContingentType: ContingentType, Contingent: Contingent, Period: Period, PeriodYear: PeriodYear },
+                        page: 1
+                    }).trigger("reloadGrid");
+        });
+
+
+        $("#btnReset").click(function () {
+
+            $("input[type=text], textarea, select").val("");
+            jQuery('#DeliverNoteBasedReport').jqGrid('clearGridData')
+.jqGrid('setGridParam', { data: data, page: 1 }).trigger('reloadGrid');
+        });
+
+        //$("#btnSearch").click(function () {
+        //    debugger;
+        //    var Sector = $('#Sector').val();
+        //    var ContingentType = $('#contingentType').val();
+        //    var Contingent = $('#Contingent').val();
+        //    var Period = $('#Period').val();
+        //    var PeriodYear = $('#PeriodYear').val();
+        //    $('#DeliverNoteBasedReport').setGridParam(
+        //   {
+        //       datatype: "json",
+        //       //url: '/Reports/DeliveryNoteBasedReportjqGrid' + '&Sector=' + Sector + '&contingentType=' + ContingentType + '&Contingent=' + Contingent + '&Period=' + Period + '&PeriodYear=' + PeriodYear,
+        //       url: '/Reports/DeliveryNoteBasedReportjqGrid?ReportType=' + 'DNReport',
+        //       postData: { Sector: Sector, ContingentType: contingentType, Contingent: Contingent, Period: Period },
+        //       page: 1
+        //   }).trigger("reloadGrid");
+        //});
+
+    });
+
+
+    function FillSector() {
+        $.getJSON('@Url.Content("~/Masters/FillSectorbyUser/")',
+    function (modelData) {
+        var select = $("#Sector");
+        select.empty();
+        select.append($('<option/>',
+    {
+        value: "",
+        text: "Select Sector"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    function FillContingent(SectorCode) {
+        $.getJSON('@Url.Content("~/Masters/FillContingentbyUser/")?SectorCode=' + SectorCode,
+    function (modelData) {
+        var select = $("#Contingent");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Contingent"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    function FillLocation(SectorCode, ContingentCode) {
+        $.getJSON('@Url.Content("~/Masters/FillLocationbyUser/")?SectorCode=' + SectorCode + '&ContingentCode=' + ContingentCode,
+    function (modelData) {
+        var select = $("#Location");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Location"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillPeriodYear() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriodYear")',
+    function (modelData) {
+        var select = $("#PeriodYear");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Year"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    function FillPeriod() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriod/")',
+    function (modelData) {
+        var select = $("#Period");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Period"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function OrderItemsSearch1() {
+
+        alert();
+    }
+    //function OrderItemsSearch() {
+    //    alert();
+    //    debugger;
+    //    var Sector = $('#Sector').val();
+    //    var ContingentType = $('#contingentType').val();
+    //    var Contingent = $('#Contingent').val();
+    //    var Period = $('#Period').val();
+    //    var PeriodYear = $('#PeriodYear').val();
+
+
+    //    //if ($('#PeriodYear').val() == "") {
+    //    //    ErrMsg("Please Select Period Year");
+    //    //    return false;
+    //    //}
+    //    //if ($('#Period').val() == "") {
+    //    //    ErrMsg("Please Select Period");
+    //    //    return false;
+    //    //}
+    //    $('#DeliverNoteBasedReport').setGridParam(
+    //        {
+    //            datatype: "json",
+    //            url: '/Reports/DeliveryNoteBasedReportjqGrid?ReportType='+'DNReport' + '&Sector=' + Sector + '&contingentType=' + ContingentType + '&Contingent=' + Contingent + '&Period=' + Period + '&PeriodYear=' + PeriodYear,
+    //            //url: '/Reports/DeliveryNoteBasedReportjqGrid',
+    //            postData: { Sector: Sector, ContingentType: contingentType, Contingent: Contingent, Period: Period },
+    //            page: 1
+    //        }).trigger("reloadGrid");
+    //}
+</script>
+<table class="WithBorderOnly" width="100%">
+    <tr class="PanelHeading">
+        <td colspan="7" class="PanelHeading">
+            <i class="icon-chevron-right"></i>&nbsp;Search&nbsp;
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label class="lblheader">
+                Sector</label><br />
+            @Html.DropDownList("Sector", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+        </td>
+        <td>
+            <label class="lblheader">
+                Contingent Type</label><br />
+            @Html.DropDownList("contingentType", new SelectList(new[]
+                                          {
+                                              new{Value="",Text="Select One"},
+                                              new{Value="FPU",Text="FPU"},
+                                              new{Value="MIL",Text="MIL"}
+                                          },
+          "Value", "Text", ""), new { @Class = "CSSDropDownList" })
+        </td>
+        <td>
+            <label class="lblheader">
+                Contingent</label><br />
+            @Html.DropDownList("Contingent", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+        </td>
+        <td>
+            <label class="lblheader">
+                Period Year</label><br />
+            @Html.DropDownList("PeriodYear", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+        </td>
+        <td>
+            <label class="lblheader">
+                Period</label><br />
+            @Html.DropDownList("Period", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+        </td>
+
+        <td>
+            @*<input type="button" id="btnSearch" value="Search"  onclick="OrderItemsSearch();" />*@
+            <input type="button" id="btnSearch" value="Search" />
+            @*<input type="button" id="btnSearch" value="Search" />*@
+            <input type="button" id="btnReset" value="Reset" />
+
+        </td>
+    </tr>
+</table>
+<table id="DeliverNoteBasedReport"></table>
+<div id="DeliveryNoteBasedReportPager"></div>
+

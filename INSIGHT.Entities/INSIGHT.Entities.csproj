@@ -1,0 +1,507 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{4CB29D13-96E5-4B5A-AE56-FFC281FDB21D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>INSIGHT.Entities</RootNamespace>
+    <AssemblyName>INSIGHT.Entities</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Activity.cs" />
+    <Compile Include="Application.cs" />
+    <Compile Include="AppRoleConfig.cs" />
+    <Compile Include="Branch.cs" />
+    <Compile Include="ContingentWeekWiseReport_vw.cs" />
+    <Compile Include="DashboardEntities\AuthorizedUnAuthorizedSubstitutionList_VW.cs" />
+    <Compile Include="DashboardEntities\CMRTrendReport.cs" />
+    <Compile Include="DashboardEntities\LossBecauseofExcessDelivery.cs" />
+    <Compile Include="DashboardEntities\LossBecauseofExcessDelivery_SP.cs" />
+    <Compile Include="DashboardEntities\LossBecauseOfSubstitutions_vw.cs" />
+    <Compile Include="DashboardEntities\PeriodWiseDeductionReport.cs" />
+    <Compile Include="DashboardEntities\PeriodWiseQtyReport_SP.cs" />
+    <Compile Include="DashboardEntities\PeriodWiseValuesDashboard_vw.cs" />
+    <Compile Include="DashboardEntities\TroopsReport.cs" />
+    <Compile Include="DashboardEntities\TroopsReport_LocationGraph.cs" />
+    <Compile Include="DeletedRecordEntities\DeliveryNoteDel.cs" />
+    <Compile Include="DeletedRecordEntities\InvoiceDel.cs" />
+    <Compile Include="DeletedRecordEntities\OrderItemsDel.cs" />
+    <Compile Include="DeletedRecordEntities\OrdersDel.cs" />
+    <Compile Include="DeletedRecordEntities\PODDel.cs" />
+    <Compile Include="DeletedRecordEntities\PODItemsDel.cs" />
+    <Compile Include="DeliveredPODItems_vw.cs" />
+    <Compile Include="DeliveryNote.cs" />
+    <Compile Include="DeliveryNoteBasedReport_Vw.cs" />
+    <Compile Include="DeliveryNoteOrders_vw.cs" />
+    <Compile Include="Documents.cs" />
+    <Compile Include="DocumentTypeMaster.cs" />
+    <Compile Include="EmailEntities\EmailScheduleView.cs" />
+    <Compile Include="EmailEntities\MailActivity.cs" />
+    <Compile Include="EmailEntities\MailColumn.cs" />
+    <Compile Include="EmailEntities\MailConfig.cs" />
+    <Compile Include="EmailEntities\MailPeriodMaster.cs" />
+    <Compile Include="EmailEntities\MailSchedule.cs" />
+    <Compile Include="EmailEntities\MailTemplate.cs" />
+    <Compile Include="EmailEntities\MailTemplateMaster.cs" />
+    <Compile Include="EmailLog.cs" />
+    <Compile Include="ErrorLog.cs" />
+    <Compile Include="FinalFoodOrderbyWeek.cs" />
+    <Compile Include="FinalFoodOrderdetails_SP.cs" />
+    <Compile Include="FinalFoodOrderDetails_vw.cs" />
+    <Compile Include="GCCRevised.cs" />
+    <Compile Include="GCCRevised_vw.cs" />
+    <Compile Include="ImportedDeliveryNote.cs" />
+    <Compile Include="ImportedDeliveryNoteItems.cs" />
+    <Compile Include="ImportedExpDelDate.cs" />
+    <Compile Include="InitialOrderItems.cs" />
+    <Compile Include="InitialOrders.cs" />
+    <Compile Include="InputUploadEntities\FIVItems.cs" />
+    <Compile Include="InputUploadEntities\FIVItems_vw.cs" />
+    <Compile Include="InputUploadEntities\NPAMaster.cs" />
+    <Compile Include="InsightFileUploads.cs" />
+    <Compile Include="InsightHomePageDashboard.cs" />
+    <Compile Include="InsightReport.cs" />
+    <Compile Include="InventoryManagementEntities\GITReport_vw.cs" />
+    <Compile Include="InventoryManagementEntities\Inventory_PurchaseOrder.cs" />
+    <Compile Include="InventoryManagementEntities\Inventory_PurchaseOrderInvoice.cs" />
+    <Compile Include="InventoryManagementEntities\Inventory_PurchaseOrderInvoiceItem.cs" />
+    <Compile Include="InventoryManagementEntities\Inventory_PurchaseOrderInvoiceItem_VW.cs" />
+    <Compile Include="InventoryManagementEntities\Inventory_PurchaseOrderInvoiceMapping.cs" />
+    <Compile Include="InventoryManagementEntities\Inventory_PurchaseOrderItem.cs" />
+    <Compile Include="InventoryManagementEntities\Inventory_PurchaseOrderItem_vw.cs" />
+    <Compile Include="InventoryManagementEntities\PODetails.cs" />
+    <Compile Include="InventoryManagementEntities\PORequestMaster.cs" />
+    <Compile Include="InventoryManagementEntities\ReceiptReport.cs" />
+    <Compile Include="InvoiceEntities\DeliveriesPerOrdQty.cs" />
+    <Compile Include="InvoiceEntities\DeliveryExceed.cs" />
+    <Compile Include="InvoiceEntities\DeliverySequence_PODItems.cs" />
+    <Compile Include="InvoiceEntities\DeliveryWithoutOrders.cs" />
+    <Compile Include="InvoiceEntities\ExcelDocuments.cs" />
+    <Compile Include="InvoiceEntities\ExcelDocumentsView.cs" />
+    <Compile Include="InvoiceEntities\Invoice.cs" />
+    <Compile Include="InvoiceEntities\InvoiceDeliveryExceedQty.cs" />
+    <Compile Include="InvoiceEntities\InvoiceDeliveryPerQty.cs" />
+    <Compile Include="InvoiceEntities\InvoiceDeliveryWithoutOrders.cs" />
+    <Compile Include="InvoiceEntities\InvoiceItems.cs" />
+    <Compile Include="InvoiceEntities\InvoiceManagementView.cs" />
+    <Compile Include="InvoiceEntities\InvoiceOrders.cs" />
+    <Compile Include="InvoiceEntities\InvoiceOrdersView.cs" />
+    <Compile Include="InvoiceEntities\InvoiceReports.cs" />
+    <Compile Include="InvoiceEntities\InvoiceReportsView.cs" />
+    <Compile Include="InvoiceEntities\OrderListWithoutDelivery.cs" />
+    <Compile Include="InvoiceEntities\PDFDocuments.cs" />
+    <Compile Include="InvoiceEntities\PDFDocumentsView.cs" />
+    <Compile Include="InvoiceEntities\PerformanceCalculateView.cs" />
+    <Compile Include="InvoiceEntities\PerformanceDetails.cs" />
+    <Compile Include="InvoiceEntities\PerformanceMatrix.cs" />
+    <Compile Include="InvoiceEntities\RecentDownloads.cs" />
+    <Compile Include="InvoiceEntities\SingleInvoiceView.cs" />
+    <Compile Include="InvoiceEntities\SubReplacementView.cs" />
+    <Compile Include="InvoiceEntities\TransportConsol.cs" />
+    <Compile Include="InvoiceEntities\TransportInvoice.cs" />
+    <Compile Include="InvoiceEntities\TransportPriceMaster.cs" />
+    <Compile Include="InvoiceEntities\TransportRateMaster.cs" />
+    <Compile Include="InvoiceEntities\TransportSingle.cs" />
+    <Compile Include="InvoiceNumberMaster.cs" />
+    <Compile Include="InvoiceQtyDelSector_PODItems.cs" />
+    <Compile Include="InvQtyandInvValForOrderItems_vw.cs" />
+    <Compile Include="LocalPurchase.cs" />
+    <Compile Include="Masters\CMRMaster.cs" />
+    <Compile Include="Masters\CountryMaster.cs" />
+    <Compile Include="Masters\DiscrepancyMaster.cs" />
+    <Compile Include="Masters\DocumentUpload.cs" />
+    <Compile Include="Masters\Inventory_CurrencyMaster.cs" />
+    <Compile Include="Masters\Inventory_ExchangeRateMaster.cs" />
+    <Compile Include="Masters\LocationMaster.cs" />
+    <Compile Include="Masters\PeriodMaster.cs" />
+    <Compile Include="Masters\POMasters.cs" />
+    <Compile Include="Masters\POTypeMaster.cs" />
+    <Compile Include="Masters\UNSectorConMapping.cs" />
+    <Compile Include="Masters\UNSectorDetailedItemPrice.cs" />
+    <Compile Include="Masters\UOMMaster.cs" />
+    <Compile Include="OrderItemMismatch.cs" />
+    <Compile Include="OrderitemOrderCombineView.cs" />
+    <Compile Include="OrderItems.cs" />
+    <Compile Include="OrderItemsCountAndMismatchCount_vw.cs" />
+    <Compile Include="OrderItemsReport_SP.cs" />
+    <Compile Include="OrderItemsReport_vw.cs" />
+    <Compile Include="Orders.cs" />
+    <Compile Include="Masters\SectorMaster.cs" />
+    <Compile Include="Masters\ContingentMaster.cs" />
+    <Compile Include="Masters\ItemMaster.cs" />
+    <Compile Include="Menu.cs" />
+    <Compile Include="GCCCounter.cs" />
+    <Compile Include="OrdersPerMonth_vw.cs" />
+    <Compile Include="Orders_LocalPurchase.cs" />
+    <Compile Include="ORDRPT_AnalysisSP.cs" />
+    <Compile Include="ORDRPT_BulkFoodOrder_SP.cs" />
+    <Compile Include="ORDRPT_ConsolidatedWeekReport.cs" />
+    <Compile Include="ORDRPT_ConsolidateWeekReport_vw.cs" />
+    <Compile Include="ORDRPT_FinalFoodOrderReport_SP.cs" />
+    <Compile Include="ORDRPT_FinalReport_SP.cs" />
+    <Compile Include="ORDRPT_Summary.cs" />
+    <Compile Include="ORDRPT_SummaryTroops.cs" />
+    <Compile Include="PDFEntities\Basic.cs" />
+    <Compile Include="PDFEntities\BasicList.cs" />
+    <Compile Include="PDFEntities\InvoiceList.cs" />
+    <Compile Include="PDFEntities\SingleInvoice.cs" />
+    <Compile Include="POD.cs" />
+    <Compile Include="PODItems.cs" />
+    <Compile Include="POdItemsCount_vw.cs" />
+    <Compile Include="PODOrderItems_vw.cs" />
+    <Compile Include="PODOrdersList_vw.cs" />
+    <Compile Include="ProcessInstance.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReportEntities\FIVItemsReport.cs" />
+    <Compile Include="Role.cs" />
+    <Compile Include="RoleUsers.cs" />
+    <Compile Include="SampleClass.cs" />
+    <Compile Include="Session.cs" />
+    <Compile Include="SubstitutionMaster.cs" />
+    <Compile Include="UNAMID.cs" />
+    <Compile Include="UploadGccRevisedRequest.cs" />
+    <Compile Include="UploadRequest.cs" />
+    <Compile Include="UploadRequestDetailsLog.cs" />
+    <Compile Include="User.cs" />
+    <Compile Include="UserAppRole.cs" />
+    <Compile Include="UserTypeMaster.cs" />
+    <Compile Include="Vw_DistinctValuesFOP.cs" />
+    <Compile Include="vw_OrderItemsReport.cs" />
+    <Compile Include="Vw_WeekWiseFinalOutPut.cs" />
+    <Compile Include="WorkFlowStatus.cs" />
+    <Compile Include="WorkFlowTemplate.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MastersOrm\ItemMaster.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MastersOrm\SectorMaster.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MastersOrm\ContingentMaster.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MastersOrm\CountryMaster.hbm.xml" />
+    <EmbeddedResource Include="MastersOrm\LocationMaster.hbm.xml" />
+    <EmbeddedResource Include="MastersOrm\PeriodMaster.hbm.xml" />
+    <EmbeddedResource Include="MastersOrm\UNSectorConMapping.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MastersOrm\DocumentUpload.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InvoiceOrm\Invoice.hbm.xml" />
+    <EmbeddedResource Include="InvoiceOrm\InvoiceItems.hbm.xml" />
+    <EmbeddedResource Include="InvoiceOrm\InvoiceOrders.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InvoiceOrm\DeliveriesPerOrdQty.hbm.xml" />
+    <EmbeddedResource Include="InvoiceOrm\DeliveryExceed.hbm.xml" />
+    <EmbeddedResource Include="InvoiceOrm\InvoiceDeliveryExceedQty.hbm.xml" />
+    <EmbeddedResource Include="InvoiceOrm\InvoiceDeliveryPerQty.hbm.xml" />
+    <EmbeddedResource Include="InvoiceOrm\InvoiceOrdersView.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MastersOrm\CMRMaster.hbm.xml" />
+    <EmbeddedResource Include="MastersOrm\DiscrepancyMaster.hbm.xml" />
+    <EmbeddedResource Include="MastersOrm\UOMMaster.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InvoiceOrm\InvoiceDeliveryWithoutOrders.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InvoiceOrm\DeliveryWithoutOrders.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InvoiceOrm\OrderListWithoutDelivery.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InvoiceOrm\InvoiceManagementView.hbm.xml" />
+    <EmbeddedResource Include="InvoiceOrm\SingleInvoiceView.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InvoiceOrm\PerformanceMatrix.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InvoiceOrm\PerformanceCalculateView.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DeletedRecordORM\DeliveryNoteDel.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DeletedRecordORM\InvoiceDel.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DeletedRecordORM\OrderItemsDel.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DeletedRecordORM\OrdersDel.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DeletedRecordORM\PODDel.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DeletedRecordORM\PODItemsDel.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InvoiceOrm\PerformanceDetails.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InvoiceOrm\ExcelDocuments.hbm.xml" />
+    <EmbeddedResource Include="InvoiceOrm\PDFDocuments.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InvoiceOrm\RecentDownloads.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InvoiceOrm\TransportInvoice.hbm.xml" />
+    <EmbeddedResource Include="InvoiceOrm\TransportPriceMaster.hbm.xml" />
+    <EmbeddedResource Include="InvoiceOrm\TransportRateMaster.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InvoiceOrm\DeliverySequence_PODItems.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InvoiceOrm\SubReplacementView.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InvoiceOrm\InvoiceReports.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MastersOrm\POMasters.hbm.xml" />
+    <EmbeddedResource Include="MastersOrm\POTypeMaster.hbm.xml" />
+    <EmbeddedResource Include="DashboardOrm\AuthorizedUnAuthorizedSubstitutionList_VW.hbm.xml" />
+    <EmbeddedResource Include="DashboardOrm\LossBecauseOfSubstitutions_vw.hbm.xml" />
+    <EmbeddedResource Include="DashboardOrm\PeriodWiseValuesDashboard_vw.hbm.xml" />
+    <EmbeddedResource Include="InvoiceOrm\ExcelDocumentsView.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InvoiceOrm\InvoiceReportsView.hbm.xml" />
+    <EmbeddedResource Include="InvoiceOrm\PDFDocumentsView.hbm.xml" />
+    <EmbeddedResource Include="EmailORM\EmailScheduleView.hbm.xml" />
+    <EmbeddedResource Include="EmailORM\MailPeriodMaster.hbm.xml" />
+    <EmbeddedResource Include="EmailORM\MailSchedule.hbm.xml" />
+    <EmbeddedResource Include="EmailORM\MailTemplateMaster.hbm.xml" />
+    <EmbeddedResource Include="EmailORM\MailColumn.hbm.xml" />
+    <EmbeddedResource Include="EmailORM\MailTemplate.hbm.xml" />
+    <EmbeddedResource Include="EmailORM\MailActivity.hbm.xml" />
+    <EmbeddedResource Include="EmailORM\MailCongfig.hbm.xml" />
+    <EmbeddedResource Include="DashboardOrm\LossBecauseofExcessDelivery.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ORMapping\Activity.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\Application.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\AppRoleConfig.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\Branch.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\ContingentWeekWiseReport_vw.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\DeliveredPODItems_vw.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\DeliveryNote.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\DeliveryNoteBasedReport_Vw.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\DeliveryNoteOrders_vw.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\Documents.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\DocumentTypeMaster.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\EmailLog.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\FinalFoodOrderdetails_SP.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\FinalFoodOrderDetails_vw.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\GCCCounter.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\GCCRevised.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\GCCRevised_vw.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\ImportedDeliverynote.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\ImportedDeliveryNoteItems.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\ImportedExpDelDate.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\InitialOrderItems.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\InitialOrders.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\InsightFileUploads.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\InsightReport.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\InvoiceQtyDelSector_PODItems.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\InvQtyandInvValForOrderItems_vw.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\Menu.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\OrderItemMismatch.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ORMapping\OrderitemOrderCombineView.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\OrderItems.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\OrderItemsCountAndMismatchCount_vw.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\OrderItemsReport_vw.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\Orders.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ORMapping\OrdersPerMonth_vw.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\ORDRPT_AnalysisSP.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\ORDRPT_BulkFoodOrder_SP.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\ORDRPT_ConsolidatedWeekReport.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\ORDRPT_ConsolidateWeekReport_vw.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\ORDRPT_FinalFoodOrderReport_SP.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\ORDRPT_FinalReport_SP.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\ORDRPT_Summary.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ORMapping\ORDRPT_SummaryTroops.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\POD.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\PODItems.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\PODItemsCount_vw.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\PODOrderItems_vw.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\PODOrdersList_vw.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\ProcessInstance.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\Role.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\RoleUsers.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\Session.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\SubstitutionMaster.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\UNAMID.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\UploadGccRevisedRequest.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\UploadRequest.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\UploadRequestDetailsLog.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\User.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\UserAppRole.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\UserTypeMaster.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\Vw_DistinctValuesFOP.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\vw_OrderItemsReport.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\Vw_WeekWiseFinalOutPut.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\WorkFlowStatus.hbm.xml" />
+    <EmbeddedResource Include="ORMapping\WorkFlowTemplate.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ORMapping\LocalPurchase.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MastersOrm\UNSectorDetailedItemPrice.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ORMapping\Orders_LocalPurchase.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ORMapping\ErrorLog.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ORMapping\InvoiceNumberMaster.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InputUploadORM\NPAMaster.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InputUploadORM\FIVItems.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ReportORM\FIVItemsReport.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InputUploadORM\FIVItems_vw.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InventoryManagementORM\PODetails.hbm.xml" />
+    <EmbeddedResource Include="InventoryManagementORM\PORequestMaster.hbm.xml" />
+    <EmbeddedResource Include="InventoryManagementORM\ReceiptReport.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InventoryManagementORM\GITReport_vw.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InventoryManagementORM\Inventory_PurchaseOrder.hbm.xml" />
+    <EmbeddedResource Include="InventoryManagementORM\Inventory_PurchaseOrderInvoice.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InventoryManagementORM\Inventory_PurchaseOrderInvoiceItem.hbm.xml" />
+    <EmbeddedResource Include="InventoryManagementORM\Inventory_PurchaseOrderItem.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InventoryManagementORM\Inventory_PurchaseOrderItem_vw.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MastersOrm\Inventory_CurrencyMaster.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MastersOrm\Inventory_ExchangeRateMaster.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InventoryManagementORM\Inventory_PurchaseOrderInvoiceMapping.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InventoryManagementORM\Inventory_PurchaseOrderInvoiceItem_VW.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,59 @@
+﻿@{
+    ViewBag.Title = "Admin";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<h3>
+    Admin Panel</h3>
+<div class="admin odd Helpdesk ">
+    <ul class="admin_icons">
+       @* <li><a href="Masters">
+            <div class="img-outer">
+                <img src="../../Content/BootStrap/img/Master.jpg" alt="..." />
+            </div>
+            <div class="admin-icon-text">
+                Masters</div>
+        </a></li>*@
+        <li><a href="UserAppRole">
+            <div class="img-outer">
+                <img src="../../Images/System Management/roles.png">
+            </div>
+            <div class="admin-icon-text">
+                User Role</div>
+        </a></li>
+        <li><a href="/Account/CustomRegister">
+            <div class="img-outer">
+                <img src="../../Content/BootStrap/img/User.png">
+            </div>
+            <div class="admin-icon-text">
+                New User</div>
+        </a></li>
+        <li><a href="/Account/UserModification">
+            <div class="img-outer">
+                <img src="../../Content/BootStrap/img/UserModify.png">
+            </div>
+            <div class="admin-icon-text">
+                User Modification</div>
+        </a></li>
+        <li><a href="/Account/GetPassword">
+            <div class="img-outer">
+                <img src="../../Content/BootStrap/img/password.png">
+            </div>
+            <div class="admin-icon-text">
+                Get Password</div>
+        </a></li>
+        <li><a href="/Account/LoginHistory">
+            <div class="img-outer">
+                <img src="../../Content/BootStrap/img/history.png">
+            </div>
+            <div class="admin-icon-text">
+                LogIn History</div>
+        </a></li>
+         <li><a href="/Account/Menu">
+            <div class="img-outer">
+                <img src="../../Content/BootStrap/img/Menu.png">
+            </div>
+            <div class="admin-icon-text">
+                Menu</div>
+        </a></li>
+    </ul>
+</div>

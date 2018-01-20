@@ -1,0 +1,359 @@
+﻿@{
+    //ViewBag.Title = "WeekInvoices";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        debugger;
+        $('#OrderItems').jqGrid({
+            url:'@Url.Content("~/Reports/OrderReportjqGrid")?ReportType=WKINV',
+            datatype: 'Json',
+            type: 'GET',
+            shrinkToFit: false,
+            height: 245,
+            width: 1200,
+            colNames: ['Id', 'Controlid', 'Invoice Number', 'Location', 'Strength', 'No   ofdays', 'Week', 'Period', 'Year', 'Sector', 'Contingent', 'ContingentType', 'Lineitemordered ', 'Totalline item substituted ', 'Ordqty ',
+         'Delqty', 'Accqty', 'Amount Ordered ', 'Amount Accepted', 'Troop Strength Discount', 'Other creditnotes ', 'Weekly Invoice Discount', 'Netamount for Rations', 'AplTimelydelivery',
+         'Apl Orderby lineitems', 'Apl Ordersby weight', 'Apl Noof authorized substitutions', 'Total InvoiceAmount ', 'Mode of Transportation ', 'Distance km ', 'Transportation perkgcost ', 'Total Transportation cost ',
+         'Dn ', 'Approveddeliverydate', 'Actualdateofreceipt ', 'Daysdelay ', 'Authorizedcmr ', 'Ordercmr ', 'Acceptedcmr ', 'Cmrutilized ', 'Lineitem delivered98 ', 'Confirmity to lineitemorder98 ', 'Conformity to orderby weight ',
+         'Noofsubtitution', 'Amountsubstituted ', 'Daysdelayperformance ', 'DeliveryNotes', 'ContingentID'],
+            colModel: [
+                { name: 'Id', index: 'Id', width: 300, hidden: true },
+                { name: 'Controlid', index: 'ControlId', width: 300, frozen: true },
+                { name: 'InvoiceNumber', index: 'InvoiceNumber', width: 300, frozen: true, search: false },
+                    { name: 'Location', index: 'Location', align: "center", width: 70, search: false, sortable: false },
+                    { name: 'Strength', index: 'Strength', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Noofdays', index: 'NoOfDays', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Week', index: 'Week', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Period', index: 'Period', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Year', index: 'Year', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Sector', index: 'Sector', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Contingent', index: 'Contingent', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'ContingentType', index: 'ContingentType', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Lineitemordered', index: 'LineItemOrdered', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Totallineitemsubstituted', index: 'TotalLineItemSubstituted', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Orderedqty', index: 'OrderedQty', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Deliveredqty', index: 'DeliveredQty', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Acceptedqty', index: 'AcceptedQty', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Amountordered', index: 'AmountOrdered', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Amountaccepted', index: 'AmountAccepted', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Troopstrengthdiscount', index: 'TroopStrengthDiscount', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Othercreditnotes', index: 'OtherCreditNotes', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Weeklyinvoicediscount', index: 'WeeklyInvoiceDiscount', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Netamountforrations', index: 'NetAmountforRations', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'AplTimelydelivery', index: 'APL_TimelyDelivery', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'AplOrderbylineitems', index: 'APL_OrderbyLineItems', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'AplOrdersbyweight', index: 'APL_OrdersbyWeight', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'AplNoofauthorizedsubstitutions', index: 'APL_NoofAuthorizedSubstitutions', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Totalinvoiceamount', index: 'TotalInvoiceAmount', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Modeoftransportation', index: 'ModeofTransportation', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Distancekm', index: 'DistanceKM', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Transportationperkgcost', index: 'TransportationPerKgCost', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Totaltransportationcost', index: 'TotalTransportationCost', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Dn', index: 'DN', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Approveddeliverydate', index: 'ApprovedDeliveryDate', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Actualdateofreceipt', index: 'ActualDateofReceipt', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Daysdelay', index: 'DaysDelay', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Authorizedcmr', index: 'AuthorizedCMR', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Ordercmr', index: 'OrderCMR', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Acceptedcmr', index: 'AcceptedCMR', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Cmrutilized', index: 'CMRUtilized', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Lineitemdelivered98', index: 'Lineitemdelivered98', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Confirmitytolineitemorder98', index: 'Confirmitytolineitemorder98', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Conformitytoorderbyweight', index: 'ConformitytoOrderbyWeight', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Noofsubtitution', index: 'Noofsubtitution', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Amountsubstituted', index: 'Amountsubstituted', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Daysdelayperformance', index: 'DaysDelayPerformance', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'DeliveryNotes', index: 'DeliveryNotes', search: false, align: "center", width: 600, sortable: false },
+                    { name: 'ContingentID', index: 'ContingentID', search: false, align: "center", width: 600, sortable: false }
+            ],
+            rowNum: 1000,
+            // scroll: true,
+            viewrecords: true,
+            rowList: [100, 200, 400, 1000],
+            sortorder: 'Asc',
+            sortname: 'ControlId',
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Order Items Report List',
+            pager: 'OrderItemsPager',
+        });
+        $("#OrderItems").navGrid('#OrderItemsPager', { add: false, edit: false, del: false, search: false, refresh: false });
+        $("#OrderItems").jqGrid('filterToolbar', { searchOnEnter: true, enableClear: false });
+        $("#OrderItems").jqGrid('navButtonAdd', '#OrderItemsPager', {
+            caption: "Export To Excel",
+            onClickButton: function () {
+                var ExptType = 'Excel';
+                var searchItems = $('#Sector').val() + ',' + $('#contingentType').val() + ',' + ',' + $('#Period').val() + ',' + $('#Week').val() + ',' + $('#PeriodYear').val();
+                window.open("OrderReportjqGrid" + '?searchItems=' + searchItems + '&ExptType=' + ExptType + '&ReportType=' + 'WKINV' + '&rows=9999' + '&sidx=' + '&sord=desc' + '&page=1');
+            }
+        });
+    });
+    $(function () {
+        FillSector();
+        FillContingent();
+        //FillPeriod();
+        FillLocation();
+        FillWeek();
+        FillPeriodYear();
+
+        //$("#Sector").change(function () {
+        //    FillContingent($(this).val());
+        //});
+        //$("#Contingent").change(function () {
+        //    FillLocation($("#Sector").val(), $(this).val());
+
+        //    var Contigent = $("#Contingent").val();
+        //    if (Contigent != "") {
+        //        var result = Contigent.indexOf("FPU") > -1;
+        //        if (result == true) {
+        //            $("#contingentType").val("FPU");
+        //        }
+        //        else
+        //            $("#contingentType").val("MIL")
+        //    }
+        //});
+        $("#PeriodYear").change(function () {
+            FillPeriod();
+        });
+        $("#Period").change(function () {
+            FillWeek($("#Period").val(),$("#PeriodYear").val());
+        });
+        //        $("#Week").change(function () {
+        //            FillPeriod($(this).val());
+        //        });
+    });
+    function FillSector() {
+        $.getJSON('@Url.Content("~/Masters/FillSectorbyUser/")',
+    function (modelData) {
+        var select = $("#Sector");
+        select.empty();
+        select.append($('<option/>',
+    {
+        value: "",
+        text: "Select Sector"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    function FillContingent(SectorCode) {
+        $.getJSON('@Url.Content("~/Masters/FillContingentbyUser/")?SectorCode=' + SectorCode,
+    function (modelData) {
+        var select = $("#Contingent");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Contingent"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillLocation(SectorCode, ContingentCode) {
+        $.getJSON('@Url.Content("~/Masters/FillLocationbyUser/")?SectorCode='+ SectorCode + '&ContingentCode=' + ContingentCode,
+    function (modelData) {
+        var select = $("#Location");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Location"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillPeriod() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriod/")',
+    function (modelData) {
+        var select = $("#Period");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Period"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillWeek(Period,PeriodYear) {
+        debugger;
+        $.getJSON('@Url.Content("~/Masters/FillWeek/")?Period=' + Period + "&PeriodYear=" + PeriodYear,
+    function (modelData) {
+        var select = $("#Week");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Week"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    function OrderItemsSearch() {
+        debugger;
+        var Sector = $('#Sector').val();
+        var ContingentType = $('#contingentType').val();
+        var Name = $('#Contingent').val();
+        var Period = $('#Period').val();
+        var Week = $('#Week').val();
+        var searchItems = $('#Sector').val() + ',' + $('#contingentType').val() + ',' + ',' + $('#Period').val() + ',' + $('#Week').val() + ',' + $('#PeriodYear').val();
+        $("#OrderItems").setGridParam(
+            {
+                datatype: "json",
+                url: '@Url.Content("~/Reports/OrderReportjqGrid")?searchItems=' + searchItems + '&ReportType=WKINV',
+                //                url: '/Reports/ConsolidateInvoicejqGrid',
+                //                postData: { Sector: Sector, ContingentType: contingentType, Name: Contingent, Period: Period },
+                page: 0
+            }).trigger("reloadGrid");
+    }
+    function ResetSearch() {
+        var searchItems = "";
+        $('#Sector').val(0);
+        $('#Contingent').val(0);
+        $('#contingentType').val("");
+        $('#Period').val(0);
+        $('#PeriodYear').val(0);
+        $('#Week').val(0);
+        $("#OrderItems").setGridParam(
+            {
+                datatype: "json",
+                url: '@Url.Content("~/Reports/OrderReportjqGrid")?searchItems=' + searchItems + '&ReportType=WKINV',
+                //                url: '/Reports/ConsolidateInvoicejqGrid',
+                postData: { Sector: Sector, ContingentType: contingentType, Name: Contingent, Period: Period, Week: Week },
+                page: 0
+            }).trigger("reloadGrid");
+    }
+
+
+    function WeekGenerate() {
+        var searchItems = ',' + ',' + ',' + $('#Period').val() + ',' + $('#PeriodYear').val();
+        var Period = $('#Period').val();
+        LoadPopupDynamicaly('@Url.Content("~/Reports/WeekGeneratePartial")?SearchItems=' + searchItems, $('#DivGenerateInvoice'),
+        function () {
+        }, "", 443, 212, "Generate Week Invoice");
+    }
+
+
+    function FillPeriodYear() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriodYear")',
+    function (modelData) {
+        var select = $("#PeriodYear");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Year"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+</script>
+
+<div id="divDocuments">
+    <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="7" class="PanelHeading">
+                <i class="icon-chevron-right"></i>&nbsp;Search&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="lblheader">
+                    Sector</label><br />
+                @Html.DropDownList("Sector", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Contingent Type</label><br />
+                @Html.DropDownList("contingentType", new SelectList(new[]
+                                          {
+                                              new{Value="",Text="Select One"},
+                                              new{Value="FPU",Text="FPU"},
+                                              new{Value="MIL",Text="MIL"}
+                                          },
+          "Value", "Text", ""), new { @Class = "CSSDropDownList" })
+            </td>
+           @*<td>
+                <label class="lblheader">
+                    Contingent</label><br />
+                @Html.DropDownList("Contingent", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>*@
+            <td>
+                <label class="lblheader">
+                    Period Year</label><br />
+                @Html.DropDownList("PeriodYear", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Period</label><br />
+                @Html.DropDownList("Period", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Week</label><br />
+                @Html.DropDownList("Week", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            
+            <td>
+                <input type="button" id="btnSearch" value="Search" onclick="OrderItemsSearch(); return false;" />
+                <input type="reset" id="btnReset"
+                    value="Reset" onclick="ResetSearch(); return false;" />
+                <input type="button" id="WeekGenerate"
+                    value="WeekGenerate" onclick="WeekGenerate(); return false;" />
+                @*<input type="button" id="search" value="Search" />
+                    <input type="button" id="reset" value="Reset" />*@
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div id="OrderItemsDetails">
+    <table id="OrderItems">
+    </table>
+    <div id="OrderItemsPager">
+    </div>
+</div>
+<div id="DivGenerateInvoice" title="GenerateInvoice"></div>

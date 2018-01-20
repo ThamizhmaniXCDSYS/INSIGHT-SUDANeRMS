@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping assembly="INSIGHT.Entities.DeletedRecordEntities.InvoiceDel" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.DeletedRecordEntities.InvoiceDel, INSIGHT.Entities" table="Invoice_Del" lazy="false" >
+  <id name="Id"  column="Id"  type="Int64" >
+    <generator class="identity" />
+</id>
+  <property name="InvoiceId"  column="InvoiceId"  type="Int64" />
+  <property name="InvoiceCode"  column="InvoiceCode"  type="string" />
+  <property name="OrderId"  column="OrderId"  type="Int64" />
+  <property name="Contract"  column="Contract"  type="string" />
+  <property name="InvoiceDate"  column="InvoiceDate"  type="datetime" />
+  <property name="PaymentTerms"  column="PaymentTerms"  type="string" />
+  <property name="PO"  column="PO"  type="string" />
+  <property name="Period"  column="Period"  type="string" />
+  <property name="UNINo"  column="UNINo"  type="string" />
+  <property name="Sector"  column="Sector"  type="string" />
+  <property name="TotalFeedTroopStrength"  column="TotalFeedTroopStrength"  type="long" />
+  <property name="TotalMadays"  column="TotalMadays"  type="decimal" />
+  <property name="CMR"  column="CMR"  type="decimal" />
+  <property name="SubTotal"  column="SubTotal"  type="decimal" />
+  <property name="GrandTotal"  column="GrandTotal"  type="decimal" />
+  <property name="CreatedDate"  column="CreatedDate"  type="datetime" />
+  <property name="CreatedBy"  column="CreatedBy"  type="string" />
+  <property name="ModifiedBy"  column="ModifiedBy"  type="string" />
+  <property name="ModifiedDate"  column="ModifiedDate"  type="datetime" />
+  <property name="Week"  column="Week"  type="Int64" />
+  <property name="PeriodYear"  column="PeriodYear"  type="string" />
+
+    <property name="DeletedDate"  column="DeletedDate"  type="datetime" />
+    <property name="DeletedBy"  column="DeletedBy"  type="string" />
+</class>
+</hibernate-mapping>

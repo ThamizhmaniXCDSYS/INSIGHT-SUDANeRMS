@@ -1,0 +1,521 @@
+﻿@using INSIGHT.Entities
+@model DeliveryNote
+<table width="100%" style="font-family: Arial, Helvetica, sans-serif; font-size: 8px;">
+    @* <tr>
+        <td colspan="6">
+            <img width="228" height="50" src="@Model.ImageUrl" alt="GCC Logo Original size" />
+        </td>
+    </tr>*@
+    <tr>
+        <td colspan="6" bgcolor="#B6B6B6" align="center">
+            Delivery Note
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Delivery Note
+        </td>
+        <td>
+            @Model.DeliveryNoteName
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Request No
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+            Unit Control No :
+        </td>
+        <td>
+            @Model.UnitControlNo
+        </td>
+    </tr>
+    <tr>
+        <td>
+            WareHouse
+        </td>
+        <td>
+            EI Fasher WareHouse
+        </td>
+        <td>
+            Consumption Week
+        </td>
+        <td>
+            3
+        </td>
+        <td>
+            Shipment Date
+        </td>
+        <td>
+            @Model.ShipmentDate
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Strength
+        </td>
+        <td>
+            @Model.ContingentStrength
+        </td>
+        <td>
+            Delivery Week
+        </td>
+        <td>
+            @Model.DeliveryWeek
+        </td>
+        <td>
+            UN Food Orders
+        </td>
+        <td>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            DOS
+        </td>
+        <td>
+            @Model.DOS
+        </td>
+        <td>
+            Delivery By
+        </td>
+        <td>
+            WareHouse Pick
+        </td>
+        <td>
+            UN Week
+        </td>
+        <td>
+            3
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Man Days
+        </td>
+        <td>
+            @Model.ManDays
+        </td>
+        <td>
+            Seal No
+        </td>
+        <td>
+        </td>
+        <td>
+            Period
+        </td>
+        <td>
+            @Model.Period
+        </td>
+    </tr>
+    <tr>
+        <td colspan="6">
+            <br />
+        </td>
+    </tr>
+</table>
+<table width="100%" border="1" style="font-family: Arial, Helvetica, sans-serif;
+    font-size: 8px;">
+    <tr bgcolor="#B6B6B6" align="center">
+        <td>
+            Line
+        </td>
+        <td>
+            Items
+        </td>
+        <td>
+            Description
+        </td>
+        <td>
+            Ord Qty
+        </td>
+        <td>
+            Del Qty
+        </td>
+        <td>
+            Num of Packs
+        </td>
+        <td>
+            Num of Pieces
+        </td>
+        <td>
+            Substitute For
+        </td>
+        <td>
+            Substitute Name
+        </td>
+        <td>
+            UOM
+        </td>
+        <td>
+            Issue Type
+        </td>
+        <td>
+            Remarks
+        </td>
+    </tr>
+    @{int Count = 0;
+      int flag = 0;
+      int i = 1;
+    }
+    @foreach (var obj in @Model.DeliveredPODItems)
+    {
+        Count = Count + 1;
+        <tr>
+            <td width="28%">@i
+            </td>
+            <td width="50%">
+                @obj.UNCode
+            </td>
+            <td width="350%">
+                @obj.Commodity
+            </td>
+            <td width="40%">
+                @obj.OrderedQty
+            </td>
+            <td width="40%">
+                @obj.DeliveredQty
+            </td>
+            <td width="50%">
+            </td>
+            <td width="50%">
+            </td>
+            <td width="60%">
+                @obj.SubstituteItemCode
+            </td>
+            <td width="250%">
+                @obj.SubstituteItemName
+            </td>
+            <td width="35%">
+                @obj.UOM
+            </td>
+            <td width="50%">
+            </td>
+            <td width="100%">
+            </td>
+        </tr>
+        if (Count == 15)
+        {
+            Count = 0;
+        <tr border="0">
+            <td colspan="12">
+                <table width="100%" border="0" style="font-family: Arial, Helvetica, sans-serif;
+                    font-size: 8px;">
+                    <tr>
+                        <td colspan="6" bgcolor="#B6B6B6" align="center">
+                            Delivery Note
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Delivery Note
+                        </td>
+                        <td>
+                            @Model.DeliveryNoteName
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Request No
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                            Unit Control No :
+                        </td>
+                        <td>
+                            @Model.UnitControlNo
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            WareHouse
+                        </td>
+                        <td>
+                            EI Fasher WareHouse
+                        </td>
+                        <td>
+                            Consumption Week
+                        </td>
+                        <td>
+                            3
+                        </td>
+                        <td>
+                            Shipment Date
+                        </td>
+                        <td>
+                            @Model.ShipmentDate
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Contingent Strength
+                        </td>
+                        <td>
+                            @Model.ContingentStrength
+                        </td>
+                        <td>
+                            Delivery Week
+                        </td>
+                        <td>
+                            @Model.DeliveryWeek
+                        </td>
+                        <td>
+                            UN Food Orders
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            DOS
+                        </td>
+                        <td>
+                            @Model.DOS
+                        </td>
+                        <td>
+                            Delivery By
+                        </td>
+                        <td>
+                            WareHouse Pick
+                        </td>
+                        <td>
+                            UN Week
+                        </td>
+                        <td>
+                            @Model.DeliveryWeek
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Man Days
+                        </td>
+                        <td>
+                            @Model.ManDays
+                        </td>
+                        <td>
+                            Seal No
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                            Period
+                        </td>
+                        <td>
+                            @Model.Period
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="6">
+                            <br />
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+            
+        <tr bgcolor="#B6B6B6" align="center">
+            <td>
+                Line
+            </td>
+            <td>
+                Items
+            </td>
+            <td>
+                Description
+            </td>
+            <td>
+                Ord Qty
+            </td>
+            <td>
+                Del Qty
+            </td>
+            <td>
+                Num of Packs
+            </td>
+            <td>
+                Num of Pieces
+            </td>
+            <td>
+                Substitute For
+            </td>
+            <td>
+                Substitute Name
+            </td>
+            <td>
+                UOM
+            </td>
+            <td>
+                Issue Type
+            </td>
+            <td>
+                Remarks
+            </td>
+        </tr>
+        
+        }
+        i = i + 1;
+    }
+</table>
+<newpage />
+<table style="font-family: Arial, Helvetica, sans-serif; font-size: 8px;">
+    <tr>
+        <td colspan="6">
+            <br />
+        </td>
+    </tr>
+    <tr align="right">
+        <td colspan="6">
+            Good Received Full and in good condition
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <b>GCC Representative</b>
+        </td>
+        <td colspan="2">
+            <b>R&I UN:</b>
+        </td>
+        <td colspan="2">
+            <b>UN Representative</b>
+        </td>
+    </tr>
+    <tr>
+        <td width="10%">
+            Name
+        </td>
+        <td>
+            ..................................
+        </td>
+        <td width="10%">
+            Name
+        </td>
+        <td>
+            ..................................
+        </td>
+        <td width="10%">
+            Name
+        </td>
+        <td>
+            ..................................
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Signature
+        </td>
+        <td>
+            ..................................
+        </td>
+        <td>
+            Signature
+        </td>
+        <td>
+            ..................................
+        </td>
+        <td>
+            Rank
+        </td>
+        <td>
+            ..................................
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Date
+        </td>
+        <td>
+            ..................................
+        </td>
+        <td>
+            Date
+        </td>
+        <td>
+            ..................................
+        </td>
+        <td>
+            Unit
+        </td>
+        <td>
+            ..................................
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ID
+        </td>
+        <td>
+            ..................................
+        </td>
+        <td>
+            ID
+        </td>
+        <td>
+            ..................................
+        </td>
+        <td>
+            Signature
+        </td>
+        <td>
+            ..................................
+        </td>
+    </tr>
+    <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+            Date
+        </td>
+        <td>
+            ..................................
+        </td>
+    </tr>
+    <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+            ID
+        </td>
+        <td>
+            ..................................
+        </td>
+    </tr>
+</table>

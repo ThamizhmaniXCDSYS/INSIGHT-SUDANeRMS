@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping assembly="INSIGHT.Entities.ErrorLog" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.ErrorLog, INSIGHT.Entities" table="ErrorLog" lazy="false" >
+    <id name="Err_Id" column="Err_Id" type="Int64">
+      <generator class="identity" />
+    </id>
+    <property name="Controller" column="Controller" type="string"  />
+    <property name="Action" column="Action" type="string" />
+    <property name="Err_Desc" column="Err_Desc" type="string" />
+    <property name="CreatedDate" column="CreatedDate" type="datetime" />
+    <property name="CreatedBy" column="CreatedBy" type="string" />
+  </class>
+</hibernate-mapping>

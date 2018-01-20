@@ -1,0 +1,52 @@
+﻿@{
+    ViewBag.Title = "ReceiptReport";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<table class="WithBorderOnly" width="100%">
+    <tr class="PanelHeading">
+        <td colspan="8" class="PanelHeading">
+            <i class="icon-chevron-right"></i>&nbsp;Search Panel&nbsp;
+        </td>
+    </tr>
+    <tr>
+        <td width="10%">
+            <label class="lblheader">
+                Receipt Key</label><br />
+            @Html.TextBox("txtReceiptKey", null, new { @class = "form-control", @onkeypress = "return AllowNumericValue(this);" })
+        </td>
+        <td width="10%">
+            <label class="lblheader">
+                Extern PO Key</label><br />
+            @Html.TextBox("txtExternPOKey", null, new { @class = "form-control", @onkeypress = "return AllowNumericValue(this);" })
+        </td>
+        <td width="10%">
+            <label class="lblheader">
+                Storer Key</label><br />
+            @Html.TextBox("txtStorerKey", null, new { @class = "form-control", @onkeypress = "return AllowNumericValue(this);" })
+        </td>
+        <td width="10%">
+            <label class="lblheader">
+                PO Key</label><br />
+            @Html.TextBox("txtPOKey", null, new { @class = "form-control", @onkeypress = "return AllowNumericValue(this);" })
+        </td>
+        <td width="10%">
+            <label class="lblheader">
+                Invoice Number</label><br />
+            @Html.TextBox("txtInvoiceNumber", null, new { @class = "form-control" })
+        </td>
+        <td width="10%">
+            <label class="lblheader">
+                Container Key</label><br />
+            @Html.TextBox("txtContainerKey", null, new { @class = "form-control" })
+        </td>
+        <td colspan="4" width="50%">
+            <input type="button" id="btnSearch" value="Search" onclick="Search(); return false;" />
+            <input type="reset" id="btnReset" value="Reset" onclick="ResetSearch(); return false;" />
+        </td>
+    </tr>
+</table>
+<table id="ReceiptReportList">
+</table>
+<div id="ReceiptReportListPager">
+</div>
+<script src='@Url.Content("~/Scripts/InventoryManagementScripts/ReceiptReportScript.js")'></script>

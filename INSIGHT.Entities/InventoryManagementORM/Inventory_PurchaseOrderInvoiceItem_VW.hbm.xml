@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.InventoryManagementEntities.Inventory_PurchaseOrderInvoiceItem_VW" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.InventoryManagementEntities.Inventory_PurchaseOrderInvoiceItem_VW, INSIGHT.Entities" table="Inventory_PurchaseOrderInvoiceItem_VW" lazy="false" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="identity" />
+    </id>
+    <property name="POInvoiceId" column="POInvoiceId" type="Int64" />
+    <property name="InvoiceNumber" column="InvoiceNumber" type="string" />
+    <property name="InvoiceDate" column="InvoiceDate" type="datetime" />
+    <property name="InvoiceAmount" column="InvoiceAmount" type="decimal" />
+    <property name="ContainerNumber" column="ContainerNumber" type="string" />
+    <property name="BillOfLading" column="BillOfLading" type="string" />
+    <property name="GLDate" column="GLDate" type="datetime" />
+    <property name="VoucherNumber" column="VoucherNumber" type="Int64" />
+    <property name="RemainingAmount" column="RemainingAmount" type="decimal" />
+    <property name="InvoiceAmountUSD" column="InvoiceAmountUSD" type="decimal" />
+    <property name="ExchangeRate" column="ExchangeRate" type="decimal" />
+    <property name="INVConfig_Id" column="INVConfig_Id" type="Int64" />
+    <property name="POInvoiceItemId" column="POInvoiceItemId" type="Int64" />
+    <property name="InvoiceQty" column="InvoiceQty" type="decimal" />
+    <property name="InvoiceUnitPrice" column="InvoiceUnitPrice" type="decimal" />
+    <property name="InvoiceValue" column="InvoiceValue" type="decimal" />
+    <property name="Remarks" column="Remarks" type="string" />
+    <property name="IsDisconnect" column="IsDisconnect" type="bool" />
+    <property name="IsComplete" column="IsComplete" type="bool" />
+    <property name="CreatedBy" column="CreatedBy" type="string" />
+    <property name="CreatedDate" column="CreatedDate" type="datetime" />
+    <property name="PurchOrderId" column="PurchOrderId" type="Int64" />
+    <property name="PO" column="PO" type="Int64" />
+    <property name="POLineId" column="POLineId" type="Int64" />
+    <property name="UNCode" column="UNCode" type="Int64" />
+    <property name="Commodity" column="Commodity" type="string" />
+    <property name="OrderedQty" column="OrderedQty" type="decimal" />
+    <property name="POUnitPrice" column="POUnitPrice" type="decimal" />
+    <property name="POValue" column="POValue" type="decimal" />
+    <property name="InvoicedQty" column="InvoicedQty" type="decimal" />
+    <property name="RemainingQty" column="RemainingQty" type="decimal" />
+  </class>
+</hibernate-mapping>

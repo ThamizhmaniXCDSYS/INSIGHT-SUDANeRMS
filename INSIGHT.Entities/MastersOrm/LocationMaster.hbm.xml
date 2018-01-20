@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.LocationMaster" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.LocationMaster, INSIGHT.Entities" table="LocationMaster" lazy="false" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="identity" />
+    </id>
+    <property name="LocationCode" column="LocationCode" type="string" />
+    <property name="LocationName" column="LocationName" type="string"/>
+    <property name="CountryCode" column="CountryCode" type="string"/>
+
+    <property name="DateCreated" column="DateCreated" type="datetime"/>
+    <property name="CreatedBy" column="CreatedBy" type="string"/>
+    <property name="DateModified" column="DateModified" type="datetime"/>
+    <property name="ModifiedBy" column="ModifiedBy" type="string"/>
+  </class>
+</hibernate-mapping>

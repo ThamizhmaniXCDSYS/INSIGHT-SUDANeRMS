@@ -1,0 +1,157 @@
+﻿
+<script type="text/javascript">
+    $(function () {
+        var grdDoc = $("#DocLibGrid");
+
+        grdDoc.jqGrid({
+            mtype: 'GET',
+            url: '@Url.Content("~/TicketingSystem/DocumentsList")?AppName=ETKT&EntityRefId=' + $('#Id').val(),
+            datatype: 'json',
+            height: '70',
+            width: '700',
+            shrinkToFit: true,
+            colNames: ['', 'Document Type', 'Document Name', 'Document Size', 'Uploaded By', 'Uploaded Date'],
+            colModel: [
+                          { name: 'Id', index: 'Id', width: '30%', sortable: false, hidden: true, key: true },
+                          { name: 'DocumentType', index: 'DocumentType', width: '40%', sortable: false },
+                          { name: 'DocumentName', index: 'DocumentName', width: '30%', sortable: false },
+                          { name: 'DocumentSize', index: 'DocumentSize', width: '30%', sortable: false },
+                          { name: 'UploadedBy', index: 'UploadedBy', width: '30%', sortable: false },
+                          { name: 'UploadedDate', index: 'UploadedDate', width: '30%', sortable: false }
+                          ],
+            pager: '#DocLibGridPage',
+            rowNum: '10',
+            rowList: [5, 10, 20, 50, 100, 150, 200 ],
+            multiselect: true,
+            viewrecords: true,
+            loadComplete: function (data) {
+                var ids = grdDoc.getDataIDs();
+                for (var i = 0; i < ids.length; i++) {
+                    var id = ids[i];
+                    var rowData = grdDoc.getRowData(id);
+                    if (rowData.UploadedBy.toUpperCase() != $('#loggedInUserId').val().toUpperCase()) {
+                        $('#jqg_' + id).attr("disabled", true);
+                        $('#cb_DocLibGrid').hide();
+                    }
+                }
+            }
+        });
+
+        /* upload button code //Ajax File Uploading */
+
+        function SpecialCharacters(strValidate) {
+            if (strValidate.indexOf('&') != -1 || strValidate.indexOf("'") != -1 ||
+                strValidate.indexOf(";") != -1 || strValidate.indexOf("#") != -1) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function validateDocReq(msg, reqField, isValid) {
+            var fieldVal = $('#' + reqField).val();
+            if ((typeof isValid != 'undefined' && isValid) || fieldVal == null || fieldVal == "") {
+                ErrMsg(msg, function () { $('#' + reqField).focus(); });
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        $('#btnUploadDoc').click(function () {
+            var splitstr = $('#uploadedFile').val().split('\\');
+            var fileName = splitstr[splitstr.length - 1];
+            var DocTypeText = $('#doctype option:selected').text();
+            if (!validateDocReq("Please Select Document Type.", 'doctype')) { }
+            else if (!validateDocReq("No document found. Please select a file to upload.", 'uploadedFile')) { }
+            else if (!validateDocReq("Special characters (&,#,;') are not supported in document file names. Please amend the file name before upload.", 'uploadedFile', SpecialCharacters(fileName))) { }
+            else if (!validateDocReq("The attached file does not contain file extension.", 'uploadedFile', (fileName.lastIndexOf('.') == -1))) { }
+            else {
+                ajaxUploadDocs();
+                return false;
+            }
+        });
+
+        function ajaxUploadDocs() {
+            //
+            var DocTypeText = $('#doctype option:selected').text();
+
+            $.ajaxFileUpload({
+                url: '@Url.Content("~/TicketingSystem/UploadDocuments")?AppName=ETKT&EntityRefId=' + $('#Id').val() + "&docType=" + DocTypeText,
+                secureuri: false,
+                fileElementId: 'uploadedFile',
+                dataType: 'json',
+                success: function (data, status) {
+                    grdDoc.setGridParam({ url: '@Url.Content("~/TicketingSystem/DocumentsList")?AppName=ETKT&EntityRefId=' + $('#Id').val() }).trigger("reloadGrid");
+                    $('#doctype').val('');
+                    if (typeof data.result != 'undefined' && data.result != '') {
+                        if (typeof data.success != 'undefined' && data.success == true) {
+                            InfoMsg(data.result);
+                        } else {
+                            ErrMsg(data.result);
+                        }
+                    }
+                },
+                error: function (data, status, e) {
+                    grdDoc.setGridParam({ url: '@Url.Content("~/TicketingSystem/DocumentsList")?AppName=ETKT&EntityRefId=' + $('#Id').val() }).trigger("reloadGrid");
+                    $('#doctype').val('');
+                }
+            });
+        }
+
+        $('#bntRemoveDoc').click(function () {
+            var selDocs;
+            selDocs = $('#DocLibGrid').getGridParam('selarrrow');
+            if (selDocs.length == 0) {
+                ErrMsg('Please select the document', function () { $('#bntRemoveDoc').focus(); });
+                return;
+            }
+            $('#DocLibGrid').setGridParam({
+                url: '<% =Url.Content("~/TicketingSystem/DeleteDocs/")%>?delDocs=' + selDocs.toString()
+            }).trigger("reloadGrid");
+        });
+        /* upload button code*/
+    });
+
+    function DownloadDocument(id1) {
+        window.location.href = '@Url.Content("~/TicketingSystem/DownloadDocuments")?AppName=ETKT&DocId=' + id1;
+    }
+
+</script>
+<div id="Documents">
+    <table width="100%" class="Withborderonly">
+         <tr>
+            <th width="20%">
+                <label>
+                    Document Type </label>
+            </th>
+            <th width="65%">
+                <label>
+                    Document Name </label>
+            </th>
+            <th width="15%"></th>
+        </tr>
+        <tr id="docPanel">
+            <td width="20%">
+                @*<label>
+                    Document Type
+                </label>*@
+                @Html.DropDownList("doctype", new SelectList(ViewBag.docTypes, "DocumentType", "DocumentType"), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td width="80%">
+               @* <label>
+                    Document Name
+                </label>*@
+                <input type="file" name="uploadedFile" id="uploadedFile" value="Browse" style="width: 60%;" />
+                @*</td>
+            <td width="15%">*@
+                <input type="button" value="Upload Doc" id="btnUploadDoc" />
+                @*<input type="button" value="Del Doc" id="bntRemoveDoc" />*@
+            </td>
+        </tr>
+    </table>
+    <table id="DocLibGrid">
+    </table>
+    <div id="DocLibGridPage">
+    </div>
+</div>

@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.InventoryManagementEntities.ReceiptReport" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+	<class name="INSIGHT.Entities.InventoryManagementEntities.ReceiptReport, INSIGHT.Entities" table="ReceiptReport" lazy="false" >
+		<id name="Receipt_Id" column="Receipt_Id" type="Int64">
+			<generator class="identity" />
+		</id>
+		<property name="POId" column="POId" type="Int64" />
+		<property name="PODetails_Id" column="PODetails_Id" type="Int64" />
+		<property name="ReceiptKey" column="ReceiptKey" type="Int64" />
+		<property name="ExternPOKey" column="ExternPOKey" type="Int64" />
+		<property name="StorerKey" column="StorerKey" type="Int64" />
+		<property name="Company" column="Company" type="string" />
+		<property name="SKU" column="SKU" type="Int64" />
+		<property name="Description" column="Description" type="string" />
+		<property name="QtyExpected" column="QtyExpected" type="decimal" />
+		<property name="QtyReceived" column="QtyReceived" type="decimal" />
+		<property name="DateReceived" column="DateReceived" type="datetime" />
+		<property name="StockType" column="StockType" type="string" />
+		<property name="Batch" column="Batch" type="string" />
+		<property name="ManDate" column="ManDate" type="datetime" />
+		<property name="ReceiptDate" column="ReceiptDate" type="datetime" />
+		<property name="ExpiryDate" column="ExpiryDate" type="datetime" />
+		<property name="Cost" column="Cost" type="decimal" />
+		<property name="UnitCostInUSD" column="UnitCostInUSD" type="decimal" />
+		<property name="TotalCost" column="TotalCost" type="decimal" />
+		<property name="TotalCostInUSD" column="TotalCostInUSD" type="decimal" />
+		<property name="POKey" column="POKey" type="Int64" />
+		<property name="SupplierCode" column="SupplierCode" type="string" />
+		<property name="SupplierName" column="SupplierName" type="string" />
+		<property name="SupplierDeliveryNoteNo" column="SupplierDeliveryNoteNo" type="string" />
+		<property name="InvoiceNumber" column="InvoiceNumber" type="string" />
+		<property name="ContainerKey" column="ContainerKey" type="string" />
+		<property name="BillofLoading" column="BillofLoading" type="string" />
+		<property name="Notes" column="Notes" type="string" />
+		<property name="DamageQty" column="DamageQty" type="decimal" />
+		<property name="ConditionCode" column="ConditionCode" type="string"/>
+		<property name="LOT" column="LOT" type="Int64"/>
+		<property name="RetailSKU" column="RetailSKU" type="Int64"/>
+		<property name="ASNPrice" column="ASNPrice" type="decimal"/>
+		<property name="Currency" column="Currency" type="string"/>
+		<property name="PortalPrice" column="PortalPrice" type="decimal"/>
+		<property name="ShelfLifeAtReceipt" column="ShelfLifeAtReceipt" type="Int64"/>
+		<property name="ShelfLife" column="ShelfLife" type="Int64"/>
+		<property name="ShelfLifePercentageAtReceipt" column="ShelfLifePercentageAtReceipt" type="Int64"/>
+		<property name="DateStart" column="DateStart" type="datetime"/>
+		<property name="DateEnd" column="DateEnd" type="datetime"/>
+		<property name="ASNStart" column="ASNStart" type="string"/>
+		<property name="ASNEnd" column="ASNEnd" type="string"/>
+		<property name="SKUStart" column="SKUStart" type="string"/>
+		<property name="SKUEnd" column="SKUEnd" type="string"/>
+		<property name="Lottable01" column="Lottable01" type="string"/>
+		<property name="Lottable09" column="Lottable09" type="string"/>
+		<property name="ContainerQty" column="ContainerQty" type="decimal"/>
+		<property name="TotalQtyReceived" column="TotalQtyReceived" type="decimal"/>
+		<property name="CreatedBy" column="CreatedBy" type="string" />
+		<property name="CreatedDate" column="CreatedDate" type="datetime" />
+		<property name="ModifiedBy" column="ModifiedBy" type="string" />
+		<property name="ModifiedDate" column="ModifiedDate" type="datetime" />
+		<property name="RequestId" column="RequestId" type="Int64" />
+		<property name="PORequestId" column="PORequestId" type="Int64" />
+		<property name="IsValid" column="IsValid" type="string" />
+	</class>
+</hibernate-mapping>

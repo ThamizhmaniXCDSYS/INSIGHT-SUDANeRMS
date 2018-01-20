@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.GCCCounter" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.GCCCounter, INSIGHT.Entities" table="GCCCounter" lazy="false" >
+    <id name="Id" column="Id">
+      <generator class="identity" />
+    </id>
+    <property name="TableName" column="TableName" type="string" />
+    <property name="ProcessName" column="ProcessName" type="string" />
+    <property name="CounterValue" column="CounterValue" type="Int64" />
+    <property name="IncrementBy" column="IncrementBy" type="Int64" />
+  </class>
+</hibernate-mapping>

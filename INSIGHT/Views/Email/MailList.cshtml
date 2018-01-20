@@ -1,0 +1,49 @@
+﻿@{
+    Layout = "~/Views/Shared/PartialViewMaster.cshtml";
+}
+<script type="text/javascript">
+    $(function () {
+        $("#UserList").jqGrid({
+            url: '@Url.Content("~/Account/UserListJQGrid")',
+            datatype: 'json',
+            type: 'GET',
+            colNames: ['Id', 'User Id', 'User Name', 'User Type', 'Email Id', 'Password', 'Is Active'],
+            colModel: [
+                      { name: 'Id', index: 'Id', sortable: true, key: true, hidden: true },
+                      { name: 'UserId', index: 'UserId', sortable: true },
+                      { name: 'UserName', index: 'UserName', sortable: true, hidden: true },
+                      { name: 'UserType', index: 'UserType', sortable: true, hidden: true },
+                      { name: 'EmailId', index: 'EmailId', width: 200, sortable: true },
+                      { name: 'Password', index: 'Password', sortable: true, hidden: true },
+                      { name: 'IsActive', index: 'IsActive', width: 40, sortable: true, hidden: false },
+            ],
+            pager: '#UserListPager',
+            rowNum: '50',
+            rowList: [5, 10, 20, 50, 100, 150, 200],
+            sortname: 'Id',
+            sortorder: 'Desc',
+            width: 475,
+            height: 150,
+            multiselect: true,
+            viewrecords: true,
+            caption: 'User List'
+        });
+        $("#UserList").navGrid('#UserListPager', { add: false, edit: false, del: false, search: false, refresh: false });
+
+
+        $("#AddEmailtoList").click(function () {
+            var Ids = $("#UserList").jqGrid('getGridParam', 'selarrrow');
+            EmailList(Ids);
+        });
+
+    });
+
+    
+
+
+</script>
+<table id="UserList">
+</table>
+<div id="UserListPager">
+</div>
+<button id="AddEmailtoList">Add Email Id's to List</button>

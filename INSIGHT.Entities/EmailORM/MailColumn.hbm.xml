@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping assembly="INSIGHT.Entities.EmailEntities.MailColumn" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.EmailEntities.MailColumn, INSIGHT.Entities" table="MailColumn" lazy="false" >
+    <id name="MailColumnId" column="MailColumnId" type="Int64" >
+      <generator class="identity" />
+    </id>
+    <property name="MailTemplateMasterId" column="MailTemplateMasterId" type ="Int64" />
+    <property name="Columns" column="Columns" type ="string" />
+    <property name="TableName" column="TableName" type ="string" />
+    <property name="RollOverId" column="RollOverId" type ="string" />
+    <property name="CreatedDate" column="CreatedDate" type ="datetime" />
+    <property name="CreatedBy" column="CreatedBy" type ="string" />
+    <property name="ModifiedBy" column="ModifiedBy" type ="string" />
+    <property name="ModifiedDate" column="ModifiedDate" type ="datetime" />
+    <property name="IsActive" column="IsActive" type ="bool" />
+  </class>
+</hibernate-mapping>

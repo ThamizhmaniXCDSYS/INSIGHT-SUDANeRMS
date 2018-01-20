@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.DeletedRecordEntities.OrdersDel" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.DeletedRecordEntities.OrdersDel, INSIGHT.Entities" table="Orders_Del" lazy="false" >
+    <id name="Id" column="Id">
+      <generator class="identity" />
+    </id>
+    <property name="OrderId" column="OrderId" type="Int64" />
+    <property name="Name" column="Name" type="string" />
+    <property name="ContingentType" column="ContingentType" type="string" />
+    <property name="Location" column="Location" type="string" />
+    <property name="ControlId" column="ControlId" type="string" />
+    <property name="StartDate" column="StartDate" type="datetime" />
+    <property name="EndDate" column="EndDate" type="datetime" />
+    <property name="Troops" column="Troops" type="decimal" />
+    <property name="TotalAmount" column="TotalAmount" type="decimal" />
+    <property name="LineItemsOrdered" column="LineItemsOrdered" type="decimal" />
+
+    <property name="KgOrderedWOEggs" column="KgOrderedWOEggs" type="decimal" />
+    <property name="EggsWeight" column="EggsWeight" type="decimal" />
+    <property name="TotalWeight" column="TotalWeight" type="decimal" />
+    <property name="CreatedBy" column="CreatedBy" type="string" />
+
+    <property name="CreatedDate" column="CreatedDate" type="datetime" />
+    <property name="LocationCMR" column="LocationCMR" type="decimal" />
+    <property name="ControlCMR" column="ControlCMR" type="decimal" />
+    <property name="Period" column="Period" type="string" />
+    <property name="Sector" column="Sector" type="string" />
+    <property name="Week" column="Week" type="Int64" />
+    <property name="PeriodYear" column="PeriodYear" type="string" />
+    <property name="ExpectedDeliveryDate" column="ExpectedDeliveryDate" type="datetime" />
+    <property name="ModifiedBy" column="ModifiedBy" type="string" />
+    <property name="ModifiedDate" column="ModifiedDate" type="datetime" />
+
+    <property name="InvoiceId" column="InvoiceId" type="Int64" />
+    <property name="PODId" column="PODId" type="Int64" />
+    <property name="FinalStatus" column="FinalStatus" type="string" />
+
+    <property name="OpeningStatus" column="OpeningStatus" type="string" />
+    <property name="InvoiceStatus" column="InvoiceStatus" type="string" />
+    <property name="CalYear" column="CalYear" type="Int64" />
+
+    <property name="DeletedDate"  column="DeletedDate"  type="datetime" />
+    <property name="DeletedBy"  column="DeletedBy"  type="string" />
+
+  </class>
+</hibernate-mapping>

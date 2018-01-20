@@ -1,0 +1,362 @@
+﻿@{
+    ViewBag.Title = "DeliveryNoteList";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<style>
+ #dvLoading
+    {
+        /*background: url("../../../Images/Sun.gif") no-repeat center center;*/
+        background: url("../Images/Sun.gif") no-repeat center center;
+        height: 100%;
+        width: 100%;
+        /*position: fixed;*/
+        z-index: 1000;
+        left: 0%;
+        top: 15%;
+        margin: -25px 0 0 -25px;
+    }
+    </style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#dvLoading').hide() // hide it initially.
+     .ajaxStart(function () {
+         $(this).show(); // show on any Ajax event.
+     })
+
+      .ajaxStop(function () {
+          $(this).hide(); // hide it when it is done.
+      });
+        function DelivNoteLink(cellvalue, options, rowObject) {
+
+            return "<a id='DeliveryNoteName_" + rowObject[1] + "'   href='@Url.Content("~/Orders/DeliveryNoteCreation")?DeliveryNoteId='" + rowObject[1] + ">" + cellvalue + "</a>";
+        }
+        $('#DeliveryNote').jqGrid({
+            url: '@Url.Content("~/Orders/GetDeliveryNoteListJQGrid")',
+            type: 'GET',
+            datatype: 'json',
+            colNames: ['Id', 'DeliveryNoteId', 'Delivery Note','DeliveryNoteType','DeliveryDate', 'ControlId', 'Contingent', 'Sector', 'Location', 'Period','Year'],
+            colModel: [
+            { name: 'Id', index: 'Id', hidden: true },
+            { name: 'DeliveryNoteId', index: 'DeliveryNoteId', key: true, hidden: true },
+            { name: 'DeliveryNoteName', index: 'DeliveryNoteName', sortable: true, formatter: DelivNoteLink, width: 100 },
+             { name: 'DeliveryNoteType', index: 'DeliveryNoteType',width:80 ,search:false},
+              { name: 'ActulDeliveryDate', index: 'ActulDeliveryDate',width:80,search:false},
+            { name: 'ControlId', index: 'ControlId', search: false,width: 180},
+            { name: 'Name', index: 'Name', search: false, width: 40 },
+            { name: 'Sector', index: 'Sector', width: 40, search: false },
+            { name: 'Location', index: 'Location', width: 40, search: false },
+            { name: 'Period', index: 'Period', width: 40, search: false },
+            { name: 'PeriodYear', index: 'PeriodYear', width: 40, search: false }
+            ],
+            pager: '#DeliveryNotePager',
+            rowNum: '1000',
+            rowList: [1000, 2000, 3000, 4000],
+            sortname: 'DeliveryNoteId',
+            sortorder: 'Asc',
+            width: 1200,
+            height: 245,
+            multiselect: true,
+            //rowList: [],        // disable page size dropdown
+            //pgbuttons: false,     // disable page control like next, back button
+            //pgtext: null,         // disable pager text like 'Page 0 of 10'
+            viewrecords: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Delivery Note List'
+
+        });
+        $('#DeliveryNote').jqGrid('filterToolbar', { searchOnEnter: true });
+        $("#DeliveryNote").jqGrid('navGrid', '#DeliveryNotePager', { del: false, add: false, edit: false, search: false });
+        $("#DeliveryNote").jqGrid('navButtonAdd', '#DeliveryNotePager', {
+            buttonicon: "ui-icon-trash",
+            caption: "",
+            onClickButton: function () {
+
+                DeleteDeliveryNote();
+            }
+        });
+
+        $("#DeliveryNote").jqGrid('navButtonAdd', '#DeliveryNotePager', {
+            caption: "Delivery Note Zip Download",
+            onClickButton: function () {
+                var searchItems = ',' + ',' + ',' + $('#Period').val() + ',' + $('#PeriodYear').val();
+                var Period = $('#Period').val();
+                if (Period == "") {
+                    ErrMsg("Please Select Period");
+                    return false;
+                }
+                if ($('#PeriodYear').val() == "") {
+                    ErrMsg("Please Select Period Year");
+                    return false;
+                }
+                else {
+                    window.open('@Url.Content("~/Orders/DownloadZipFiles")?searchItems=' + searchItems + '&PDF=' + false + '&EXCEL=' + true + '&invType=' + "DeliveryNotes", '_blank');
+                }
+            }
+        });
+    });
+    $(function () {
+
+        FillSector();
+        FillContingent();
+        FillPeriod();
+        FillLocation();
+        FillPeriodYear();
+        $("#Sector").change(function () {
+            FillContingent($(this).val());
+        });
+        $("#Contingent").change(function () {
+            FillLocation($("#Sector").val(), $(this).val());
+        });
+        $("#btnPDF").click(function () {
+            window.open('@Url.Content("~/PdfGeneration/InvoicePrint")?OrderId=' + 61, '_blank');
+        });
+
+        //        $("#btnInvoice").click(function () {
+        //                window.location.href = '@Url.Action("NewInvoice", "Invoice")';
+        //        });
+    });
+
+    function FillSector() {
+        $.getJSON('@Url.Content("~/Masters/FillSectorbyUser/")',
+    function (modelData) {
+        var select = $("#Sector");
+        select.empty();
+        select.append($('<option/>',
+    {
+        value: "",
+        text: "Select Sector"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    function FillContingent(SectorCode) {
+        $.getJSON('@Url.Content("~/Masters/FillContingentbyUser/")?SectorCode=' + SectorCode,
+    function (modelData) {
+        var select = $("#Contingent");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Contingent"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillLocation(SectorCode, ContingentCode) {
+        $.getJSON('@Url.Content("~/Masters/FillLocationbyUser/")?SectorCode=' + SectorCode + '&ContingentCode=' + ContingentCode,
+    function (modelData) {
+        var select = $("#Location");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Location"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillPeriod() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriod/")',
+    function (modelData) {
+        var select = $("#Period");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Period"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    function FillPeriodYear() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriodYear")',
+    function (modelData) {
+        var select = $("#PeriodYear");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Year"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    function OrdersSearch() {
+        // debugger;
+        var Sector = $('#Sector').val();
+        var Contingent = $('#Contingent').val();
+        var ClientName = $('#Location').val();
+        var Location = $('#Period').val();
+        var searchItems = $('#Sector').val() + ',' + $('#Contingent').val() + ',' + $('#Location').val() + ',' + $('#Period').val() + ',' + $('#PeriodYear').val();
+
+
+        $("#DeliveryNote").setGridParam(
+            {
+
+                datatype: "json",
+                url: '@Url.Content("~/Orders/GetDeliveryNoteListJQGrid")?searchItems=' + searchItems,
+                //postData: { ProjectCode: ProjectCode, ProjectType: ProjectType, ClientName: ClientName, City: City, ContactPerson: ContactPerson },
+                page: 0
+            }).trigger("reloadGrid");
+    }
+
+    function ResetOrderSearch() {
+        $('#Sector').val(0);
+        $('#Contingent').val(0);
+        $('#contingentType').val("");
+        $('#Period').val(0);
+        $('#PeriodYear').val(0);
+        $("#DeliveryNote").clearGridData();
+    }
+
+    function DeleteDeliveryNote() {
+        $('#dvLoading').show();
+        var DeliveryNoteName = "";
+        var id = $('#DeliveryNote').jqGrid('getGridParam', 'selarrrow');
+        var ids = id.toString().split(',');
+        for (var i = 0; i < ids.length; i++) {
+            DeliveryNoteName += $('#DeliveryNoteName_' + ids[i]).html() + ',';
+
+        }
+        DeliveryNoteName = DeliveryNoteName.slice(0, -1);
+        var Deliverynotenamearray = DeliveryNoteName.split(',');
+        if (confirm("Are you sure you want to delete this item?")) {
+            debugger;
+           
+
+            for (var i = 0; i < DeliveryNoteName.split(',').length; i++) {
+
+                $.ajax({
+                    url: '@Url.Content("~/Orders/DeleteDeliveryNote")?DeliveryNoteIds=' + ids[i] + '&DeliveryNoteNames=' + Deliverynotenamearray[i],
+                    type: 'POST',
+                    dataType: 'json',
+                    traditional: true,
+                    success: function (data) {
+                        var temp = data
+                  
+                        //$('#dvLoading').show();
+                        
+                        // $('#dvLoading').hide()
+                      //  $("#DeliveryNote").trigger("reloadGrid");
+                        //InfoMsg('Deleted Successfully!')
+
+                    },
+                    loadError: function (xhr, status, error) {
+                        msgError = $.parseJSON(xhr.responseText).Message;
+                        ErrMsg(msgError, function () { });
+                    }
+                });
+
+            }
+            
+
+            //$.ajax({
+            //    url: '/Orders/DeleteDeliveryNote?DeliveryNoteIds=' + id + '&DeliveryNoteNames=' + DeliveryNoteName,
+            //    type: 'POST',
+            //    dataType: 'json',
+            //    traditional: true,
+            //    success: function (data) {
+            //        $('#dvLoading').show();
+            //        alert(data);
+            //       // $('#dvLoading').hide()
+            //        $("#DeliveryNote").trigger("reloadGrid");
+            //        //InfoMsg('Deleted Successfully!')
+
+            //    },
+            //    loadError: function (xhr, status, error) {
+            //        msgError = $.parseJSON(xhr.responseText).Message;
+            //        ErrMsg(msgError, function () { });
+            //    }
+            //});
+        }
+
+        debugger;
+        $('#dvLoading').hide();
+        $("#DeliveryNote").trigger("reloadGrid");
+        InfoMsg('Deleted Successfully!')
+
+
+    }
+</script>
+<div id="divDocuments">
+    <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="6" class="PanelHeading">
+                <i class="icon-chevron-right"></i>&nbsp;Deliverynote List&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="lblheader">
+                    Sector</label><br />
+                @Html.DropDownList("Sector", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Contingent</label><br />
+                @Html.DropDownList("Contingent", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Location</label><br />
+                @Html.DropDownList("Location", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Period Year</label><br />
+                @Html.DropDownList("PeriodYear", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Period</label><br />
+                @Html.DropDownList("Period", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <input type="button" id="btnSearch" value="Search" onclick="OrdersSearch(); return false;" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                    type="reset" id="btnReset" onclick="ResetOrderSearch(); return false;" />
+            </td>
+        </tr>
+    </table>
+</div>
+<table id="DeliveryNote">
+</table>
+<div id="DeliveryNotePager">
+</div>
+<div id="dvLoading">
+</div>

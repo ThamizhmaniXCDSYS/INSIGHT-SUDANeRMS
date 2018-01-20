@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.DeliveryNoteOrders_vw" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.DeliveryNoteOrders_vw, INSIGHT.Entities" table="DeliveryNoteOrders_vw" lazy="false" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="identity" />
+    </id>
+    <property name="DeliveryNoteId"  column="DeliveryNoteId"  type="Int64" />
+    <property name="DeliveryNoteName"  column="DeliveryNoteName"  type="string" />
+    <property name="ControlId"  column="ControlId"  type="string" />
+    <property name="Name"  column="Name"  type="string" />
+    <property name="Sector"  column="Sector"  type="string" />
+    <property name="Location" column="Location" type="string" />
+    <property name="Period" column="Period" type="string" />
+    <property name="PeriodYear" column="PeriodYear" type="string" />
+    <property name="DeliveryNoteType" column="DeliveryNoteType" type="string" />
+    <property name="ActualDeliveryDate" column="ActualDeliveryDate" type="datetime" />
+    <property name="DocumentData"  type="Serializable" >
+    <column name="DocumentData" sql-type="varbinary(MAX)" length="2147483647"></column>
+    
+    </property>
+  </class>
+</hibernate-mapping>

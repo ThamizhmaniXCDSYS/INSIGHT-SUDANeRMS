@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping assembly="INSIGHT.Entities.LocalPurchase" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.LocalPurchase, INSIGHT.Entities" table="LocalPurchase" lazy="true" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="native" />
+    </id>
+
+    <property name="Period"  column ="Period" type="string"/>
+    <property name="PeriodYear"  column ="PeriodYear" type="string"/>
+    <property name="DocumentData" type="BinaryBlob">
+      <column name="DocumentData" sql-type="varbinary(2147483647)" length="2147483647"/>
+    </property>
+    <property name="CreatedBy"  column ="CreatedBy" type="string"/>
+    <property name="CreatedDate"  column ="CreatedDate" type="datetime"/>
+    <property name="ModifiedBy"  column ="ModifiedBy" type="string"/>
+    <property name="ModifiedDate"  column ="ModifiedDate" type="datetime"/>
+    <property name="DocumentType"  column ="DocumentType" type="string"/>
+  <property name="DocumentName"  column ="DocumentName" type="string"/>
+  
+  </class>
+</hibernate-mapping>

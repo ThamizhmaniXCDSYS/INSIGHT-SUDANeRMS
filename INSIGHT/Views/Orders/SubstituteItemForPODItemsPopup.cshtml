@@ -1,0 +1,147 @@
+﻿@model INSIGHT.Entities.PODItems
+@{
+    ViewBag.Title = "SubstituteItemForPODItemsPopup";
+    Layout = null;
+    
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+    debugger;
+        if ('@Model.SubstituteItemCode' == 0) {
+            $('#SubstituteItemCode').val('');
+        }
+        if('@Model.SubstituteItemName'==""){
+        $('#SubstituteItemName').val('');
+        }
+
+        if ('@Model.SubsDeliveredQty' == 0) {
+            $('#SubsDeliveredQty').val('');
+        }
+
+        if ('@Model.SubsAcceptedQty' == 0) {
+            $('#SubsAcceptedQty').val('');
+        }
+        $("#btnItemsMasterPopup").button({ icons: { primary: "ui-icon-search" },
+            text: false
+        });
+
+
+        jQuery("#SubstituteItemJQgrid").jqGrid({
+            mtype: 'GET',
+            url: '@Url.Content("~/Orders/SubstituteItemJQgrid")?PODItemsId=@Model.PODItemsId',
+            datatype: 'json',
+            height: '100',
+            width: '950',
+            shrinkToFit: true,
+            colNames: ['PODItemsId', 'SubstituteItemCode', 'SubstituteItemName', 'SubsDeliveredQty', 'SubsAcceptedQty'],
+            colModel: [
+                      { name: 'PODItemsId', index: 'PODItemsId', key: true },
+                      { name: 'SubstituteItemCode', index: 'SubstituteItemCode', sortable: true },
+                      { name: 'SubstituteItemName', index: 'SubstituteItemName', sortable: true },
+                      { name: 'SubsDeliveredQty', index: 'SubsDeliveredQty', sortable: true },
+                      { name: 'SubsAcceptedQty', index: 'SubsAcceptedQty', sortable: true }
+
+                      ],
+            pager: '#SubstituteItemJQgridPager',
+            rowNum: '50',
+            rowList: [50, 100, 150, 200],
+            sortname: 'PODItemsId',
+            sortorder: "ASC",
+            viewrecords: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;POD Substituted Item list',
+            multiselect: true
+        });
+
+    });
+    function AddSubstituteItem() {
+        debugger;
+        var SubstituteItemCode = $('#SubstituteItemCode').val();
+        var SubstituteItemName= $('#SubstituteItemName').val();
+        var SubsDeliveredQty = $('#SubsDeliveredQty').val();
+        var SubsAcceptedQty = $('#SubsAcceptedQty').val();
+        if (SubstituteItemCode == "" || SubstituteItemName == "" || SubsDeliveredQty == "" || SubsAcceptedQty == "") {
+            ErrMsg('Substitute Item code,Substitute Item Name,Substitute Delivered Qty,Substitute Accepted Qty can not be empty');
+            return false;
+        
+        }
+        
+        $.ajax({
+            url: '@Url.Content("~/Orders/SaveOrUpdateSubstituteItem")?PODItemsId=@Model.PODItemsId' + '&SubstituteItemCode=' + SubstituteItemCode + '&SubstituteItemName=' + SubstituteItemName + '&SubsDeliveredQty=' + SubsDeliveredQty + '&SubsAcceptedQty=' + SubsAcceptedQty,
+            type: 'POST',
+            dataType: 'json',
+            traditional: true,
+            success: function (data) {
+
+                //PODitems grid reload
+                PopUpGrid = $("#SubstituteItemJQgrid");
+                var brUrl1 = '@Url.Content("~/Orders/SubstituteItemJQgrid")?PODItemsId=@Model.PODItemsId';
+                LoadSetGridParam(PopUpGrid, brUrl1);
+            },
+            loadError: function (xhr, status, error) {
+                msgError = $.parseJSON(xhr.responseText).Message;
+                ErrMsg(msgError, function () { });
+            }
+        });
+
+    }
+</script>
+@using (Html.BeginForm())
+{
+    <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="6" class="PanelHeading">
+                Substitute Item Details
+            </td>
+        </tr>
+        <tr>
+            <td width="20%">
+                <label class="lblheader">
+                   
+                  Substitute Item Code</label><br />
+             @Html.TextBoxFor(a => a.SubstituteItemCode, new { @id = "SubstituteItemCode", @class = "CSSTextBox", style = "width: 70%", onkeydown = "return AllowNumericValue(this);" })
+              <a id="btnItemsMasterPopup">...</a>
+                    @Html.HiddenFor(m => m.SubstituteItemCode)
+                    @Html.HiddenFor(m => m.PODItemsId)
+
+
+            </td>
+            <td width="40%" colspan="2">
+                <label class="lblheader">
+                    Substitute Item Name</label> <br />
+                     
+                     @Html.TextBoxFor(m => m.SubstituteItemName, null, new { @id = "SubstituteItemName", @class = "CSSTextBox", style = "width: 90%" })
+                      @Html.HiddenFor(m => m.SubstituteItemName)
+            </td>
+            <td width="20%">
+                <label class="lblheader">
+                   Substitute Delivered Qty</label> <br />
+                         @Html.TextBox("SubsDeliveredQty", null, new { @id = "SubsDeliveredQty", @class = "CSSTextBox", style = "width: 90%", onkeydown = "return AllowNumericValue(this);" })
+                          @Html.HiddenFor(m => m.SubsDeliveredQty)
+            </td>
+            <td width="20%">
+                <label class="lblheader">
+                    Substitute Accepted Qty</label> <br />
+                        @Html.TextBoxFor(m => m.SubsAcceptedQty, null, new { @id = "SubsAcceptedQty", @class = "datepicker", style = "width: 90%", onkeydown = "return AllowNumericValue(this);" })
+                         
+            </td>
+
+   @* <td width="15%">
+            
+           @Html.DisplayFor(m => m.PODItemsId)
+         </td>
+            *@
+            <td width="15%">
+             <input type="button" id="btnSave" value="Save" onclick="AddSubstituteItem();return false;" />  
+           
+           <br />
+  
+            </td>
+        </tr>
+  
+
+    </table>
+
+}
+@*<table id="SubstituteItemJQgrid"></table>
+<div id="SubstituteItemJQgridPager"></div>*@

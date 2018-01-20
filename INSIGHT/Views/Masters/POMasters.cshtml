@@ -1,0 +1,74 @@
+﻿@{
+    ViewBag.Title = "POMasters";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#POMaster').jqGrid({
+            url: '@Url.Content("~/Masters/POMasterJqGrid")',
+            datatype: 'Json',
+            type: 'GET',
+            autowidth: true,
+            height: 300,
+            colNames: ['Id', 'PO Type', 'PO Number','Period', 'Year','Created By','Created Date'],
+            colModel: [
+            { name: 'Id', index: 'Id', hidden: true, editable: true, key: true },
+            { name: 'POType', index: 'POType', editable: true, edittype: 'select', editoptions: { dataUrl: '@Url.Content("~/Base/POTypeddl")', style: "width: 150px; height: 23px; font-size: 0.9em" }, editrules: { custom: true, custom_func: checkvalid }, sortable: true },
+            { name: 'PONumber', index: 'PONumber', editable: true, editrules: { custom: true, custom_func: checkvalid }, sortable: true },
+            { name: 'Period', index: 'Period', editable: true, edittype: 'select', editoptions: { dataUrl: '@Url.Content("~/Base/Periodddl")', style: "width: 150px; height: 23px; font-size: 0.9em" }, editrules: { custom: true, custom_func: checkvalid }, sortable: true },
+            { name: 'PeriodYear', index: 'PeriodYear', editable: true, edittype: 'select', editoptions: { dataUrl: '@Url.Content("~/Base/PeriodYearddl")', style: "width: 150px; height: 23px; font-size: 0.9em" }, editrules: { custom: true, custom_func: checkvalid }, sortable: true },
+            { name: 'CreatedBy', index: 'CreatedBy' },
+            { name: 'CreatedDate', index: 'CreatedDate'}
+            ],
+            rowNum: 20000,
+            rowList: [], // disable page size dropdown
+            pgbuttons: false, // disable page control like next, back button
+            pgtext: null, // disable pager text like 'Page 0 of 10'
+            sortname: 'Id',
+            sortorder: 'Asc',
+            pager: '#POMasterPager',
+            multiselect: true,
+            viewrecords: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;PO Number List'
+            
+        });
+        $('#POMaster').jqGrid('filterToolbar', { searchOnEnter: true });
+        jQuery("#POMaster").jqGrid('navGrid', '#POMasterPager', { add: true, edit: true, del: true, search: false, refresh: true },
+        //Edit options
+            { width: 'auto', url: '@Url.Content("~/Masters/EditPONumberMaster/")', left: '10%', top: '10%', height: '50%', width: 400 },
+        //Add options
+            { width: 'auto', url: '@Url.Content("~/Masters/AddPONumberMaster/")', left: '10%', top: '10%', height: '50%', width: 400 },
+        //Delete options
+        //{width: 'auto', url: '/Masters/DeletePOMaster/', left: '10%', top: '10%', height: '50%', width: 400, beforeShowForm: function (params) { var gsr = $("#POMaster").getGridParam('selrow'); var sdata = $("#POMaster").getRowData(gsr); return { Id: sdata.Id} } } );
+            {
+                width: 'auto', url: '@Url.Content("~/Masters/DeletePONumberMaster/")', left: '10%', top: '10%', height: '50%', width: 400,
+            beforeShowForm: function (params) { selectedrows = $("#POMaster").jqGrid("getGridParam", "selarrrow"); return { Id: selectedrows} }
+            });
+        function checkvalid(value, column) {
+
+            if (value == '') {
+                return [false, column + ": Field is Required"];
+            }
+            else {
+                return [true];
+            }
+        }
+        $("#POMaster").jqGrid('navButtonAdd', '#POMasterPager', {
+            caption: "Export To Excel",
+            onClickButton: function () {
+                var ExptType = 'Excel';
+
+                window.open('POMasterJqGrid?ExptType=' + ExptType + '&rows=9999' + '&sidx=' + '&sord=desc' + '&page=1');
+            }
+        });
+    });
+</script>
+<table width="100%"><tr>
+<td>
+<table id="POMaster">
+</table>
+<div id="POMasterPager">
+</div>
+</td>
+</tr></table>

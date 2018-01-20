@@ -1,0 +1,362 @@
+﻿@{
+    ViewBag.Title = "GCCRevisedUpload";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<style>
+    #dvLoading {
+        /*background: url("../../../Images/Sun.gif") no-repeat center center;*/
+        background: url("../Images/Sun.gif") no-repeat center center;
+        height: 100%;
+        width: 100%;
+        position: fixed;
+        z-index: 1000;
+        left: 0%;
+        top: 15%;
+        margin: -25px 0 0 -25px;
+    }
+</style>
+
+<script type="text/javascript">
+    function GetGCCRevisedList() {
+        debugger;
+        $('#GCCRevisedList').jqGrid('GridUnload');
+        jQuery("#GCCRevisedList").jqGrid({
+            mtype: 'GET',
+            url: '@Url.Content("~/Orders/GCCRevisedUploadListJQGrid")',
+            datatype: 'json',
+            height: '335',
+            width: '1200',
+            shrinkToFit: false,
+            colNames: ['Id', 'ControlId', 'Planned DeliveryDate', 'Delivery Number', 'Delivery Mode', 'ActualDelivery Date', 'UNCode', 'Commodity', 'Order Qty', 'SubstituteItem Code', 'SubstituteItem Name', 'Delivered Qty', 'Accepted Qty', 'Remaining Qty', 'Authorized', 'Period', 'Period Year', 'Created By', 'Created Date'],
+            colModel: [
+                { name: 'Id', index: 'Id', key: true, hidden: true },
+                { name: 'ControlId', index: 'ControlId', width: 300 },
+                //{ name: 'PlannedDeliveryDate', index: 'PlannedDeliveryDate' },
+                { name: 'ApprovedDeliveryDate', index: 'ApprovedDeliveryDate' },
+                //{ name: 'DeliveryNumber', index: 'DeliveryNumber' },
+                { name: 'DeliveryNoteName', index: 'DeliveryNoteName' },
+                { name: 'DeliveryMode', index: 'DeliveryMode' },
+                //{ name: 'ActualDeliveryDate', index: 'ActualDeliveryDate' },
+                { name: 'ReceivedDate', index: 'ReceivedDate' },
+                { name: 'UNCode', index: 'UNCode' },
+                { name: 'Commodity', index: 'Commodity', width: 300 },
+                //{ name: 'OrderQty', index: 'OrderQty' },
+                { name: 'OrderedQty', index: 'OrderedQty' },
+                { name: 'SubstituteItemCode', index: 'SubstituteItemCode' },
+                { name: 'SubstituteItemName', index: 'SubstituteItemName', width: 300 },
+                { name: 'DeliveredQty', index: 'DeliveredQty' },
+                //{ name: 'AcceptedQty', index: 'AcceptedQty' },
+                { name: 'ReceivedQty', index: 'ReceivedQty' },
+                { name: 'RemainingQty', index: 'RemainingQty' },
+                { name: 'Authorized', index: 'Authorized' },
+                { name: 'Period', index: 'Period' },
+                { name: 'PeriodYear', index: 'PeriodYear' },
+                { name: 'CreatedBy', index: 'CreatedBy' },
+                { name: 'CreatedDate', index: 'CreatedDate' }
+            ],
+
+            pager: '#GCCRevisedListPager',
+            rowNum: '100',
+            rowList: [100, 200, 300, 400],
+            sortname: 'Id',
+            sortorder: "desc",
+            viewrecords: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Gcc Revised Items Management',
+            multiselect: true,
+            viewrecords: true
+        });
+        $('#GCCRevisedList').jqGrid('filterToolbar', { searchOnEnter: true, enableClear: false, afterSearch: function () { $('#GCCRevisedList').clearGridData(); } });
+        jQuery("#GCCRevisedList")
+              .navGrid('#GCCRevisedListPager', { edit: false, add: false, del: false, search: false, refresh: false })
+    }
+
+    $(function () {
+        debugger;
+        $('#dvLoading').hide() // hide it initially.
+         .ajaxStop(function () {
+             $(this).hide(); // hide it when it is done.
+         });
+        if ('@ViewBag.Result' != " ") {
+            if ('@ViewBag.Result' != " " && '@ViewBag.Flag' == "True") {
+                $('#dvLoading').hide(); // hide it initially.
+                SucessMsg("Gcc Revised version of " + '@ViewBag.Result' + " is Uploaded Successfully");
+            }
+            else {
+                $('#dvLoading').hide(); // hide it initially.
+                SucessMsg("Gcc Revised version of " + '@ViewBag.Result' + " is already Exists!");
+            }
+        }
+        GetGCCRevisedList();
+        FillPeriod();
+        FillPeriodYear();
+        //var Period = $('#Period').val();
+        //var PeriodYear = $('#PeriodYear').val();
+        $('#Upload').click(function () {
+            debugger;
+
+            if ($('#Period').val() != "" && $('#PeriodYear').val() != "" && $('#file').val() != "") {
+                $('#dvLoading').show();
+                var splitstr = $('#file').val().split('\\');
+                var fileName = splitstr[splitstr.length - 1];
+                var DocTypeText = $('#doctype option:selected').text();
+                if (!validateDocReq("No document found. Please select a file to upload!!!", 'file')) { }
+                else if (!validateDocReq("Special characters (&,#,;') are not supported in document file names. Please amend the file name before upload!!!", 'file', SpecialCharacters(fileName))) { }
+                else if (!validateDocReq("The attached file does not contain file extension.", 'file', (fileName.lastIndexOf('.') == -1))) { }
+                else {
+
+                    ajaxUploadDocs();
+                    return false;
+                }
+            }
+            else {
+                ErrMsg('Period and Period year can not be empty');
+                return false;
+            }
+        });
+
+        function validateDocReq(msg, reqField, isValid) {
+            //var Period = $('#Period').val();
+            //var PeriodYear = $('#PeriodYear').val();
+            if ($('#Period').val() != "" && $('#PeriodYear').val() != "") {
+                var fieldVal = $('#' + reqField).val();
+                if ((typeof isValid != 'undefined' && isValid) || fieldVal == null || fieldVal == "") {
+                    ErrMsg(msg, function () { $('#' + reqField).focus(); });
+                    return false;
+                } else {
+                    //$.ajax({
+                    //    url: '/Orders/GCCRevisedUpload?Period=' + Period + '&PeriodYear=' + PeriodYear,
+                    //    type: 'POST',
+                    //    dataType: 'json',
+                    //    success: function () { }
+
+                    //});
+                    return true;
+                }
+            }
+            else {
+                ErrMsg('Period and Period year can not be empty');
+                return false;
+            }
+        }
+
+        function ajaxUploadDocs() {
+            debugger;
+            if ($('#Period').val() != "" && $('#PeriodYear').val() != "") {
+                $.ajaxFileUpload({
+                    url: 'GCCRevisedUpload',
+                    secureuri: false,
+                    fileElementId: 'file',
+                    dataType: 'json',
+                    data: { 'Period': $('#Period').val(), 'PeriodYear': $('#PeriodYear').val() },
+                    success: function (data, status) {
+                        //debugger;
+                        $('#GCCRevisedList').trigger("reloadGrid");
+                        $('#file').val('');
+                        if (typeof data.result != 'undefined' && data.result != '') {
+                            if (typeof data.success != 'undefined' && data.success == true) {
+                                //$("#textDialogBox").html("test<br/>test2");
+                                InfoMsg(data.result);
+                            } else {
+                                ErrMsg(data.result);
+                            }
+                        }
+                    },
+                    error: function (data, status, e) {
+
+                    }
+                });
+            }
+            else {
+                ErrMsg('Period and Period year can not be empty');
+                return false;
+            }
+        }
+
+    });
+
+    function FillPeriod() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriod/")',
+    function (modelData) {
+        var select = $("#Period");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Period"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function GCCRevisedSearch() {
+        if ($('#Period').val() == "" || $('#PeriodYear').val() == "") {
+            ErrMsg("Please Select Period/PeriodYear..!");
+        }
+        else {
+            var Sector = $('#Sector').val();
+            var Contingent = $('#Contingent').val();
+            var ClientName = $('#Location').val();
+            var Location = $('#Period').val();
+            var searchItems = ',' + ',' + ',' + $('#Period').val() + ',' + $('#PeriodYear').val();
+            $("#GCCRevisedList").setGridParam(
+                {
+                    datatype: "json",
+                    url: '@Url.Content("~/Orders/GCCRevisedUploadListJQGrid")?searchItems=' + searchItems,
+                    page: 0
+                }).trigger("reloadGrid");
+        }
+    }
+    function ResetGCCRevisedSearch() {
+        var searchItems = "";
+        $('#Period').val(0);
+        $('#PeriodYear').val(0);
+        $("#GCCRevisedList").clearGridData();
+    }
+
+    function FillPeriodYear() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriodYear")',
+    function (modelData) {
+        var select = $("#PeriodYear");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Year"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+
+        function UploadClick() {
+            alert("hi");
+
+        }
+
+    }
+</script>
+@using (Html.BeginForm("GCCRevisedUpload", "Orders", System.Web.Mvc.FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div id="divDocuments">
+        <table>
+            <tr>
+                <td style="width: 65%;">
+                    <table class="WithBorderOnly" width="100%">
+                        <tr class="PanelHeading">
+                            <td colspan="5" class="PanelHeading">
+                                <i class="icon-chevron-right"></i>&nbsp;Gcc Revised Search&nbsp;
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="lblheader">
+                                    Period Year</label><br />
+                                @Html.DropDownList("PeriodYear", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+                            </td>
+                            <td>
+                                <label class="lblheader">
+                                    Period</label><br />
+                                @Html.DropDownList("Period", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+                            </td>
+
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>
+                                <input type="button" id="btnSearch" value="Search" onclick="GCCRevisedSearch(); return false;" />
+                                <input type="reset" id="btnReset" value="Reset" onclick="ResetGCCRevisedSearch(); return false;" />
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td>
+                    <table class="WithBorderOnly" width="100%">
+                        <tr class="PanelHeading">
+                            <td colspan="5" class="PanelHeading">
+                                <i class="icon-chevron-right"></i>&nbsp;Upload Files&nbsp;
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <br style="line-height: 2px;" />
+                                <input type="file" name="file" id="file" style="padding-bottom:32px;"/>
+                                <input id="Upload" type="submit" value="Upload" />
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+}
+@*<div id="divDocuments">
+    <table>
+        <tr>
+            <td>
+                <table class="WithBorderOnly" width="100%">
+                    <tr class="PanelHeading">
+                        <td colspan="5" class="PanelHeading">
+                            <i class="icon-chevron-right"></i>&nbsp;Gcc Revised Search&nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="lblheader">
+                                Period Year</label><br />
+                            @Html.DropDownList("PeriodYear", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+                        </td>
+                        <td>
+                            <label class="lblheader">
+                                Period</label><br />
+                            @Html.DropDownList("Period", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+                        </td>
+
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>
+                            <input type="button" id="btnSearch" value="Search" onclick="GCCRevisedSearch(); return false;" /><input
+                                type="reset" id="btnReset" value="Reset" onclick="ResetGCCRevisedSearch(); return false;" />
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+
+                <table class="WithBorderOnly" width="100%">
+                    <tr class="PanelHeading">
+                        <td colspan="3" class="PanelHeading">
+                            <i class="icon-chevron-right"></i>&nbsp;Upload Files&nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @using (Html.BeginForm("GCCRevisedUpload", "Orders", System.Web.Mvc.FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            { <br style="line-height: 2px;" />
+                                <input type="file" name="file" id="file" />
+                                <input id="Upload" type="submit" value="Upload" />
+                            }
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+</div>*@
+
+<table id="GCCRevisedList">
+</table>
+<div id="GCCRevisedListPager">
+</div>
+<div id="dvLoading"></div>

@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.UploadRequestDetailsLog" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.UploadRequestDetailsLog, INSIGHT.Entities" table="UploadRequestDetailsLog" lazy="false" >
+    <id name="UploadReqDetLogId" column="UploadReqDetLogId">
+      <generator class="identity" />
+    </id>
+    <property name="RequestId" column="RequestId" type="Int64" />
+    <property name="FileName" column="FileName" type="string" />
+    <property name="UploadStatus" column="UploadStatus" type="string" />
+    <property name="ErrDesc" column="ErrDesc" type="string" />
+    <property name="CreatedBy" column="CreatedBy" type="string" />
+    <property name="CreatedDate" column="CreatedDate" type="datetime" />
+    <property name="ModifiedBy" column="ModifiedBy" type="string" />
+    <property name="ModifiedDate" column="ModifiedDate" type="datetime" />
+    <property name="ReferenceNo" column="ReferenceNo" type="string" />
+
+  </class>
+</hibernate-mapping>

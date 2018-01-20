@@ -1,0 +1,41 @@
+﻿    @{
+        ViewBag.Title = "About Us";
+        Layout = "~/Views/Shared/NewMaster.cshtml";
+    }
+
+    <h2>About</h2>
+    <html>
+    <head>
+    <link href="@Url.Content("~/App_Themes/Default/ui.jqgrid.css")" rel="stylesheet" type="text/css" />
+    <script src='@Url.Content("~/Scripts/jquery-1.7.2.js")' type="text/javascript"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jqGridJs/jquery.jqGrid.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jqGridJs/i18n/grid.locale-en.js")"></script>
+    <script type="text/javascript">
+        $(function ($) {
+
+            $("#StudentList").jqGrid({
+                url: '@Url.Content("~/Home/StudentInfoListJqGrid")',
+                postData: { idno: idno, name: name, section: section, campname: campname, grade: grade, bType: bType },
+                datatype: 'json',
+                type: 'GET',
+                colNames: ['Roll No', 'Student Name', 'Campus Name', 'Grade', 'Section', 'BoardingType'],
+                colModel: [
+                  { name: 'Id No', index: 'Id No', sortable: false },
+                  { name: 'Name', index: 'Name', sortable: false },
+                  { name: 'Campus Name', index: 'Campus Name', sortable: false },
+                  { name: 'Grade', index: 'Grade', sortable: false },
+                  { name: 'Section', index: 'Section', sortable: false },
+                  {name: 'BoardingType', index: 'BoardingType', sortable: false }
+                  ],
+                pager: '#StudentPager',
+                rowNum: '50',
+                rowList: [5, 10, 20, 50, 100, 150, 200 ],
+                sortname: '',
+                sortorder: "",
+                width: 1250,
+                height: 250,
+                viewrecords: true,
+                caption: 'Student List',
+            });
+        });
+    </script>

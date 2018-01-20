@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping assembly="INSIGHT.Entities.EmailEntities.MailActivity" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.EmailEntities.MailActivity, INSIGHT.Entities" table="MailActivity" lazy="false" >
+    <id name="ActivityId"  column="ActivityId"  type="Int64" >
+      <generator class="identity" />
+    </id>
+    <property name="MailTemplateId"  column="MailTemplateId"  type="Int64" />
+  <property name="StartDate" column="StartDate" type="datetime" />
+  <property name="ScheduleNextDate" column="ScheduleNextDate" type="datetime" /> 
+  <property name="MailTo" column="MailTo" type="string" />
+  <property name="Subject" column="Subject" type="string" />
+  <property name="MailDescription" column="MailDescription" type="string" />
+  <property name="MailSentDate" column="MailSentDate" type="datetime" />
+  <property name="IsActive" column="IsActive" type="bool" />
+  <property name="CreatedDate" column="CreatedDate" type="datetime" />
+  <property name="MailOn" column="MailOn" type="string" />
+  </class>
+</hibernate-mapping>

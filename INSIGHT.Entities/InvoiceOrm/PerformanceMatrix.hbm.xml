@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.InvoiceEntities.PerformanceMatrix"  namespace="INSIGHT.Entities"  xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.InvoiceEntities.PerformanceMatrix, INSIGHT.Entities" table="PerformanceMatrix_vw" lazy="false" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="native"/>
+    </id>
+    <property name="OrderId" column="OrderId" type="Int64" />
+    <property name="Period" column="Period" type="string" />
+    <property name="Week" column="Week" type="Int64" />
+    <property name="ContingentType" column="ContingentType" type="string" />
+    <property name="Sector" column="Sector" type="string" />
+    <property name="Name" column="Name" type="string" />
+    <property name="TotalLineItems" column="TotalLineItems" type="Int64" />
+    <property name="PercentCount" column="PercentCount" type="Int64" />
+    <property name="OrderQty" column="OrderQty" type="decimal" />
+    <property name="DeliveredQty" column="DeliveredQty" type="decimal" />
+    <property name="AcceptedQty" column="AcceptedQty" type="decimal" />
+    <property name="OrderValue" column="OrderValue" type="decimal" />
+    <property name="InvoiceValue" column="InvoiceValue" type="decimal" />
+    <property name="Deliverydate" column="Deliverydate" type="datetime" />
+    <property name="ExpectedDeliveryDate" column="ExpectedDeliveryDate" type="datetime" />
+    <property name="NofDateDelay" column="NofDateDelay" type="Int64" />
+    <property name="SubtituteCount" column="SubtituteCount" type="Int64" />
+    <property name="DeliveryPerformance" column="DeliveryPerformance" type="decimal" />
+    <property name="DeliveryDeduction" column="DeliveryDeduction" type="decimal" />
+    <property name="LineItemPerformance" column="LineItemPerformance" type="decimal" />
+    <property name="LineItemDeduction" column="LineItemDeduction" type="decimal" />
+    <property name="OrderWeightPerformance" column="OrderWeightPerformance" type="decimal" />
+    <property name="OrderWeightDeduction" column="OrderWeightDeduction" type="decimal" />
+    <property name="ComplaintsPerformance" column="ComplaintsPerformance" type="decimal" />
+    <property name="ComplaintsDeduction" column="ComplaintsDeduction" type="decimal" />
+    <property name="APLDeductionTOTAL" column="APLDeductionTOTAL" type="decimal" />
+
+    <property name="Troops" column="Troops" type="decimal" />
+    <property name="Mandays" column="Mandays" type="decimal" />
+
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,184 @@
+﻿<html>
+<head>
+    <style type="text/css">
+        .ui-jqgrid .ui-pg-input {
+            width: 30px;
+        }
+
+        .ui-jqgrid .ui-pg-selbox {
+            width: 50px;
+            height: 23px;
+        }
+
+        .ui-search-toolbar input[type="text"],
+        select {
+            height: 20px;
+        }
+    </style>
+    <title>@ViewBag.Title</title>
+    <link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/BootStrap/BootStrap.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/App_Themes/smoothness/jquery-ui-1.8.22.custom.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/App_Themes/Default/ui.jqgrid.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/ddsmoothmenu/ddsmoothmenu.css")" rel="stylesheet" type="text/css" />
+
+    @* newly added for multiple upload  *@
+    <link href="@Url.Content("~/Content/uploadify.css")" rel="stylesheet" type="text/css" />
+
+    <script src="@Url.Content("~/Scripts/jquery-1.7.2.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+    <script type="text/javascript" src='@Url.Content("~/Scripts/JQueryUI/jquery-ui-1.8.22.custom.min.js")'></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/dddsmoothmenu/ddsmoothmenu.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jqGridJs/i18n/grid.locale-en.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jqGridJs/jquery.jqGrid.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/jqGridJs/jquery.jqGrid.src.js")" type="text/javascript"></script>
+    @*/-----------------newly added-------------------------------/*@
+    <script src="@Url.Content("~/Scripts/BootStrap/bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/BootStrap/bootstrap-maxlength.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/BootStrap/bootstrap.file-input.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/BootStrap/bootstrapValidator.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/BootStrap/bootstrap-session-timeout.js")" type="text/javascript"></script>
+
+    @*/-----------------end newly added-------------------------------/*@
+    <script src="@Url.Content("~/Scripts/FusionCharts1/FusionCharts.js")" type="text/javascript"></script>
+    <script  src="@Url.Content("~/Scripts/jquery-asyncUpload-0.1.js")" type="text/javascript"></script>
+    @*   <script src="@Url.Content("~/Scripts/DateTimePicker.js" type="text/javascript"></script>*@
+    <script src="@Url.Content("~/Scripts/DatePicker.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/ajaxfileupload.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/ApplicationScript.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jqMsgs.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/json2.min.js")" type="text/javascript"></script>
+    @*<script src="@Url.Content("~/Scripts/IdleSessionMgmt.js" type="text/javascript"></script>*@
+    <script src="@Url.Content("~/Scripts/MasterPageScript.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/PasswordValidation.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/TimePicker.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/iframe.js")" type="text/javascript"></script>
+    @* <meta name="google-translate-customization" content="ca1446ea2621552d-8892ecc696fce5b2-g5ea0904bcfe74f1f-14">
+    </meta>*@
+    <script src="@Url.Content("~/Scripts/jqGridJs/grid.common.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jqGridJs/grid.custom.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jqGridJs/grid.formedit.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.uploadify.js")" type="text/javascript"></script>
+
+
+    <script type="text/javascript" language="javascript">
+        var ROOT = '';
+        //ROOT = 'SUDAN_BOERMS';
+        ddsmoothmenu.init({
+            mainmenuid: "smoothmenu2", //Menu DIV id orientation: 'v', //Horizontal or vertical menu: Set to "h" or "v"
+            classname: 'ddsmoothmenu', //class added to   menu's outer DIV //
+            customtheme: ["#B6B6B6"],
+            contentsource: "markup"
+        })
+
+        $(document).ready(function () {
+
+            $.sessionTimeout({
+                message: 'Your session will be locked in one minute.',
+                keepAliveUrl: '@Url.Action("KeepAlive", "Home")',
+                logoutUrl: '@Url.Action("LogOff", "Account")',
+                redirUrl: '@Url.Action("LogOff", "Account")',
+                //warnAfter: 114000000,
+                //redirAfter: 120000000
+                warnAfter: 600000,  // 15 minutes
+                redirAfter: 9000000   // 20 minutes
+            });
+
+
+
+            // object.onmousemove = function () { TriggerSession(); };
+            //  window.history.forward(1);
+            var defFunc = function defaultFunc(e) {
+                if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
+                    $("#btnsearch").click();
+                    return false;
+                }
+                return true;
+            }
+            $('input:text', '#srchKeyPress').keypress(defFunc);
+        });
+    </script>
+</head>
+<body>
+    <div id="main">
+        <table class="CenteredDiv" style="width: 90%;">
+            <tr>
+                <td style="height: 52px; width: 100%; background-color: #B6B6B6;">
+                    <img src='@Url.Content("~/Images/main_logo.jpg")' style="float: left; height: 57px; width: 250px" />
+                    @*<img src="../../Images/tips.gif" style="float: right; height: 57px; width: 100px" />*@
+                </td>
+            </tr>
+            <tr style="height: 21px; color: black; font: normal 11px Verdana,Arial,sans-serif;">
+                <td>
+                    <table class="InnerTable" width="100%">
+                        <tr>
+                            <td colspan="1" width="65%"></td>
+                            <td>
+                                <div class="title" style="height: 10px; text-align: right">
+                                    @Html.Partial("_LogOnPartial")
+                                </div>
+                            </td>
+                            @*  <td valign="top">
+                                @Html.Partial("_LogOnPartial")
+                                <div id="google_translate_element" align="right">
+                                </div>
+                                <script type="text/javascript">
+                                    function googleTranslateElementInit() {
+                                        new google.translate.TranslateElement({ pageLanguage: 'en', includedLanguages: 'ar,es,fr,ru,ta', layout: google.translate.TranslateElement.InlineLayout.SIMPLE, multilanguagePage: true }, 'google_translate_element');
+                                    }
+                                </script>
+                                <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+                            </td>*@
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td valign="top">
+                    <img src='@Url.Content("~/Images/fading_Background1.png")' height="10px" width="100%" />
+                </td>
+            </tr>
+            <tr class="menubar">
+                <td width="100%">
+                    <div id="smoothmenu2" class="ddsmoothmenu">
+                        <table>
+                            @if (Session["SiteLinks"] != null)
+                            {
+                                @Html.Raw(Session["SiteLinks"].ToString())
+                            }
+                        </table>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td valign="top">
+                    @RenderBody()
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <img src='@Url.Content("~/Images/fading_Background1.png")' height="5px;" width="100%" />
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>
+                    <table class="InnerTable" width="100%">
+                        <tr>
+                            <td>
+                                <p style="font-style: italic; font-size: x-small; text-align: left;">
+                                    GCC SERVICES © 2012 , All rights reserved
+                                </p>
+                            </td>
+                            <td style="margin: 0px 40px 0px 0px;">
+                                <img src='@Url.Content("~/Images/landline.png")' align="right" height="27" width="27" />
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

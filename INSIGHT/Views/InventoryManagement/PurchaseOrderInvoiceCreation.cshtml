@@ -1,0 +1,436 @@
+﻿@model INSIGHT.Entities.InventoryManagementEntities.Inventory_PurchaseOrder
+@{
+    ViewBag.Title = "PurchaseOrderInvoiceCreation";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<script src="../../Scripts/InventoryManagementScripts/bootstrap-multiselect.js"></script>
+<style>
+    #dvLoading {
+        background: url("../Images/Sun.gif") no-repeat center center;
+        height: 100%;
+        width: 100%;
+        position: fixed;
+        z-index: 1000;
+        left: 0%;
+        top: 15%;
+        margin: -25px 0 0 -25px;
+    }
+
+    .ui-jqgrid tr.jqgrow td {
+        font-size: 10px;
+    }
+</style>
+@using (Html.BeginForm())
+{
+    <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="6" class="PanelHeading">
+                <i class="icon-chevron-right"></i>&nbsp;Search Panel
+            </td>
+        </tr>
+        <tr>
+            @*<td width="15%">
+                <label class="lblheader">
+                    PO #
+                </label>
+                <br />
+                @Html.DropDownListFor(a => a.PO, new SelectList(Enumerable.Empty<SelectListItem>()), "", new { @id = "ddlPONumber", @multiple = "multiple", @style = "width:300px;", @class = "form-control" })
+            </td>*@
+            <td width="15%">
+                <label class="lblheader">
+                    Invoice Number
+                </label>
+                <br />
+                <input type="text" id="txtInvoiceNumberautosuggest" class="CSSTextBox" />
+            </td>
+            <td>
+                <input type="button" id="btnSearchPO" value="Search" style="width: 90px" />
+            </td>
+        </tr>
+    </table>
+    <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="10" class="PanelHeading">
+                <i class="icon-chevron-right"></i>&nbsp;Invoice Details
+            </td>
+        </tr>
+        <tr>
+            <td colspan="1">
+                <label class="lblheader">
+                    PO #
+                </label>
+                <br />
+                @Html.DropDownListFor(a => a.PO, new SelectList(Enumerable.Empty<SelectListItem>()), "", new { @id = "ddlPONumber", @multiple = "multiple", @style = "width:173px;", @class = "form-control" })
+            </td>
+            <td colspan="1">
+                <input type="button" id="btnGetPo" value="Get PO" style="width: 60%" />
+            </td>
+            <td colspan="3">
+                <label class="lblheader">
+                    Supplier Name
+                </label>
+                <br />
+                <input type="text" id="txtSupplierName" class="CSSTextBox" readonly style="width: 96%" />
+            </td>
+            <td colspan="2">
+                <label class="lblheader">
+                    Supplier Number
+                </label>
+                <br />
+                <input type="text" id="txtSupplierNumber" class="CSSTextBox" readonly />
+            </td>
+            <td colspan="2">
+                <label class="lblheader">
+                    Inv.Currency
+                </label>
+                <br />
+                <input type="text" id="txtInvCurrency" class="CSSTextBox" readonly />
+            </td>
+        </tr>
+        <tr>
+            <td colspan="1">
+                <label class="lblheader">
+                    Invoice Number
+                </label>
+                <br />
+                <input type="text" id="txtInvoiceNumber" />
+            </td>
+            <td colspan="1">
+                <label class="lblheader">
+                    Invoice Date
+                </label>
+                <br />
+                <input type="text" id="txtInvoiceDate" class="datepicker" readonly style="width: 60%" />
+            </td>
+            <td colspan="1">
+                <label class="lblheader">
+                    Inv.Amt(Inv.Currency)
+                </label>
+                <br />
+                <input type="text" id="txtTotInvoiceAmount" onkeypress="AllowNumericValue(this);" class="CSSTextBox" />
+            </td>
+            <td colspan="2">
+                <label class="lblheader">
+                    Bill of Lading Number
+                </label>
+                <br />
+                <input type="text" id="txtBLNo" />
+            </td>
+            <td colspan="2">
+                <label class="lblheader">
+                    Container Number
+                </label>
+                <br />
+                <input type="text" id="txtContainerNumber" />
+            </td>
+            <td colspan="2">
+                <input type="button" id="btnSave" value="Save" style="width: 60%" />
+            </td>
+        </tr>
+    </table>
+    @Html.Hidden("hiddenAutosuggestInvoiceId");
+}
+<table id="POInvoiceDetailsList"></table>
+<div id="POInvoiceDetailsListPager">
+</div>
+<div id="dvLoading">
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#dvLoading').hide() // hide it initially.
+.ajaxStart(function () {
+
+    $('#dvLoading').show(); // show on any Ajax event.
+})
+
+.ajaxStop(function () {
+    $('#dvLoading').hide(); // hide it when it is done.
+});
+
+        FillPORequest();
+        GetPOInvoiceDetails();
+        //$("#ddlPONumber").select2({
+        //    //maximumSelectionLength: 2,
+        //});
+        $('#ddlPONumber').multiselect({
+            includeSelectAllOption: true,
+            selectAllText: ' Select All',
+            enableCaseInsensitiveFiltering: true,
+            enableFiltering: true,
+            maxHeight: '410',
+            buttonWidth: '170px',
+            numberDisplayed: 2,
+            includeSelectAllDivider: true
+        });
+        $('#btnGetPo').click(function () {
+            if ($('#ddlPONumber').val() == '' || $('#ddlPONumber').val() == undefined) {
+                ErrMsg("Select PO Number");
+                return false;
+            }
+            else {
+                $.ajax({
+                    type: 'GET',
+                    dataType: "json",
+                    url: ROOT + '/InventoryManagement/GetPODetailsforInvoiceByInvoiceId/?PurchOrderIds=' + $('#ddlPONumber').val(),
+                    success: function (data) {
+                        $('#dvLoading').hide();
+                        if (data.length > 1) {
+                            ErrMsg('Multiple Supplier details available for selected PO!!');
+                            $('#txtSupplierName').val('');
+                            $('#txtSupplierNumber').val('');
+                            $('#txtInvCurrency').val('');
+                            return false;
+                        }
+                        else {
+                            GetPOInvoiceDetails();
+                            $('#txtSupplierName').val(data[0].Supplier);
+                            $('#txtSupplierNumber').val(data[0].SupplierNumber);
+                            $('#txtInvCurrency').val(data[0].POCurrency);
+                        }
+
+                    }
+                });
+            }
+        });
+        $('#btnSave').click(function () {
+            if ($('#ddlPONumber').val() == '' || $('#ddlPONumber').val() == undefined) {
+                ErrMsg("Select PO Number");
+                return false;
+            }
+            if ($('#txtSupplierName').val() == '' || $('#txtSupplierName').val() == undefined) {
+                ErrMsg("Select Supplier Name");
+                return false;
+            }
+            if ($('#txtSupplierNumber').val() == '' || $('#txtSupplierNumber').val() == undefined) {
+                ErrMsg("Select Supplier Number");
+                return false;
+            }
+            if ($('#txtInvCurrency').val() == '' || $('#txtInvCurrency').val() == undefined) {
+                ErrMsg("Select Invoice Currency");
+                return false;
+            }
+            if ($('#txtInvoiceNumber').val() == '' || $('#txtInvoiceNumber').val() == undefined) {
+                ErrMsg("Enter Invoice Number");
+                return false;
+            }
+            if ($('#txtInvoiceDate').val() == '' || $('#txtInvoiceDate').val() == undefined) {
+                ErrMsg("Enter Invoice Date");
+                return false;
+            }
+            if ($('#txtTotInvoiceAmount').val() == '' || $('#txtTotInvoiceAmount').val() == undefined) {
+                ErrMsg("Enter Invoice Amount");
+                return false;
+            }
+            if ($('#txtBLNo').val() == '' || $('#txtBLNo').val() == undefined) {
+                ErrMsg("Enter Bill of Lading Number");
+                return false;
+            }
+            if ($('#txtContainerNumber').val() == '' || $('#txtContainerNumber').val() == undefined) {
+                ErrMsg("Enter Container Number");
+                return false;
+            }
+            else {
+                $.ajax({
+                    type: 'GET',
+                    dataType: "json",
+                    data: { InvoiceNumber: $('#txtInvoiceNumber').val(), InvoiceAmount: $('#txtTotInvoiceAmount').val(), BillOfLading: $('#txtBLNo').val(), ContainerNumber: $('#txtContainerNumber').val(), InvCurrency: $('#txtInvCurrency').val() },
+                    url: ROOT + '/InventoryManagement/SaveInvoiceDetailsforPO/?PurchOrderId=' + $('#ddlPONumber').val() + '&InvDate=' + $('#txtInvoiceDate').val(),
+                    success: function (data) {
+                        $('#dvLoading').hide();
+                        if (data.InvoiceId > '0') {
+                            GetPOInvoiceDetails();
+                            resetInvoicePanel();
+                        }
+                        else {
+                            ErrMsg(data.msg);
+                        }
+                    }
+                });
+            }
+        });
+    });
+    function getPONumbers() {
+        var spec;
+        $.ajax(
+            {
+                url: ROOT + '/InventoryManagement/FillPONumber',
+                async: false,
+                success: function (data, result) {
+                    if (data != "" && data != null) {
+                        var tempData = '';
+                        for (var index = 0; index < data.length; index++) {
+                            tempData += data[index].Value + ':' + data[index].Text;
+                            if (index != data.length - 1)
+                                tempData += ';';
+                        }
+                        spec = tempData;
+                    }
+                    else {
+                        spec = '';
+                    }
+                }
+            });
+        return spec;
+    }
+    function formateadorLink(cellvalue, options, rowObject) {
+        return '<a href=' + ROOT + '/InventoryManagement/POInvoiceManagementForm?POInvoiceId=' + rowObject[0] + '>' + cellvalue + '</a>';
+    }
+    function GetPOInvoiceDetails() {
+        $('#POInvoiceDetailsList').jqGrid('GridUnload');
+        $('#POInvoiceDetailsList').jqGrid({
+            datatype: 'Json',
+            type: 'GET',
+            shrinkToFit: false,
+            url: ROOT + '/InventoryManagement/PurchaseOrderInvoiceDetailsListJQGrid',
+            height: 245,
+            width: 1200,
+            colNames: ['POInvoiceId', 'Invoice Number', 'Invoice Number', 'PO Count', 'PO Number', 'Invoice Date', 'Invoice Amount', 'Remaining Amount', 'Invoice Amount USD', 'Exchange Rate', 'Container Number', 'BillOfLading', 'GLDate', 'VoucherNumber', 'Status', 'Created By', 'Created Date'],
+            colModel: [
+                { name: 'POInvoiceId', index: 'POInvoiceId', hidden: true, editable: true, key: true },
+                { name: 'InvoiceNumber', index: 'InvoiceNumber', formatter: formateadorLink, editable: false, width: 100 },
+                { name: 'InvoiceNumberHidden', index: 'InvoiceNumberHidden', hidden: true, editable: true, editoptions: { readOnly: true }, editrules: { edithidden: true, required: true } },
+                { name: 'POCount', index: 'POCount', editable: false, width: 50 },
+                {
+                    name: 'PONumber', index: 'PONumber', hidden: true, editable: true, editrules: { edithidden: true, required: true }, edittype: 'select',
+                    editoptions: {
+                        multiple: true,
+                        value: getPONumbers(),
+                        dataInit: function (elem) {
+                            setTimeout(function () {
+                                $(elem).multiselect({
+                                    includeSelectAllOption: true,
+                                    selectAllText: ' Select All',
+                                    enableCaseInsensitiveFiltering: true,
+                                    enableFiltering: true,
+                                    maxHeight: '410',
+                                    buttonWidth: '174px',
+                                    numberDisplayed: 2,
+                                    includeSelectAllDivider: true
+                                });
+                                $('#tr_PONumber').find('ul').css('position', 'relative');//margin-top: -12px; 
+                                $('#tr_PONumber').find('button').css('margin-top', '-12px');
+                            });
+                        },
+                        style: "width: 150px; height: 23px; font-size: 0.9em"
+                    }
+                },
+                {
+                    name: 'InvoiceDate', index: 'InvoiceDate', editable: true, editoptions: { readOnly: true }, editrules: { required: false }, editoptions: {
+                        dataInit: function (data) {
+                            $(data).datepicker({
+                                dateFormat: "dd/mm/yy",
+                                changeMonth: true,
+                                timeFormat: 'hh:mm:ss',
+                                autowidth: true,
+                                changeYear: true,
+                            }).attr('readonly', 'readonly');
+                        }
+                    }, width: 70
+                },
+                { name: 'InvoiceAmount', index: 'InvoiceAmount', editable: true, width: 80 },
+                { name: 'RemainingAmount', index: 'RemainingAmount', editable: false, width: 80 },
+                { name: 'InvoiceAmountUSD', index: 'InvoiceAmountUSD', editable: true, width: 80 },
+                { name: 'ExchangeRate', index: 'ExchangeRate', editable: false, width: 80 },
+                { name: 'ContainerNumber', index: 'ContainerNumber', editable: true, editoptions: { readOnly: true }, width: 90 },
+                { name: 'BillOfLading', index: 'BillOfLading', editable: true, editoptions: { readOnly: true }, width: 80 },
+                {
+                    name: 'GLDate', index: 'GLDate', editable: false, width: 70, editrules: { required: false }, editoptions: {
+                        dataInit: function (data) {
+                            $(data).datepicker({
+                                dateFormat: "dd/mm/yy",
+                                changeMonth: true,
+                                timeFormat: 'hh:mm:ss',
+                                autowidth: true,
+                                changeYear: true,
+                            }).attr('readonly', 'readonly');
+                        }
+                    }
+                },
+                { name: 'VoucherNumber', index: 'VoucherNumber', editable: false, width: 90 },
+                { name: 'IsComplete', index: 'IsComplete', editable: false, width: 70 },
+                { name: 'CreatedBy', index: 'CreatedBy', sortable: false, editable: false, editoptions: { readOnly: true }, width: 90 },
+                { name: 'CreatedDate', index: 'CreatedDate', editable: false, editoptions: { readOnly: true }, width: 70 },
+            ],
+            multiselect: true,
+            rowNum: 500,
+            viewrecords: true,
+            rowList: [500, 1000, 2500, 5000],
+            sortorder: 'Asc',
+            sortname: 'POInvoiceId',
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;PO Invoice List',
+            pager: 'POInvoiceDetailsListPager'
+        });
+        $("#POInvoiceDetailsList").navGrid('#POInvoiceDetailsListPager', { add: false, edit: true, del: false, search: false, refresh: true },
+                 {
+                     width: 'auto', url: '/InventoryManagement/EditPOInvoiceDetails/', left: '10%', top: '10%', height: '50%', width: 400, modal: false, beforeSubmit: function (frm) {
+                         debugger;
+                         $.ajax({
+                             type: 'GET',
+                             dataType: "json",
+                             url: ROOT + '/InventoryManagement/GetPODetailsforInvoiceByInvoiceId/?PurchOrderIds=' + frm.PONumber,
+                             success: function (data) {
+                                 $('#dvLoading').hide();
+                                 if (data.length > 1) {
+                                     ErrMsg('Multiple Supplier details available for selected PO!!');
+                                     return false;
+                                 }
+                                 else {
+                                     $.ajax({
+                                         type: 'GET',
+                                         dataType: "json",
+                                         data: { POInvoiceId: frm.POInvoiceId, InvoiceNumber: frm.InvoiceNumberHidden, InvoiceAmount: frm.InvoiceAmount, BillOfLading: frm.BillOfLading, ContainerNumber: frm.ContainerNumber },
+                                         url: ROOT + '/InventoryManagement/EditPOInvoiceDetails/?PurchOrderId=' + frm.PONumber + '&InvDate=' + frm.InvoiceDate,
+                                         success: function (data) {
+                                             if (data.InvoiceId > '0') {
+                                                 SucessMsg('Invoice updated Successfully!!');
+                                                 GetPOInvoiceDetails();
+                                             }
+                                             else {
+                                                 ErrMsg(data.msg);
+                                             }
+                                         }
+                                     });
+                                 }
+                             }
+                         });
+                     }
+                 },//Edit options
+                {},//Add
+        {}//Delete options
+          )
+    }
+    function FillPORequest() {
+        $.getJSON(ROOT + '/InventoryManagement/FillPONumber/',
+      function (fillSec) {
+          var POddl = $("#ddlPONumber");
+          POddl.empty();
+          POddl.append($('<option/>', { value: "", text: "Select One" }));
+          $.each(fillSec, function (index, itemdata) {
+              POddl.append($('<option/>', { value: itemdata.Value, text: itemdata.Text }));
+          });
+          $("#ddlPONumber").multiselect('rebuild');
+      });
+    }
+    function resetInvoicePanel() {
+        $("input[type=text], textarea, select").val("");
+        $('#ddlPONumber').val('');
+        //$('#txtSupplierName').val('');
+        //$('#txtSupplierNumber').val('');
+        //$('#txtInvCurrency').val('');
+        //$('#txtInvoiceDate').val('');
+        //$('#txtInvoiceNumber').val('');
+        //$('#txtTotInvoiceAmount').val('');
+        //$('#txtBLNo').val('');
+        //$('#txtContainerNumber').val('');
+    }
+    function checkvalid(value, column) {
+        if (value == '') {
+            return [false, column + ": Field is Required"];
+        }
+        else {
+            return [true];
+        }
+    }
+</script>

@@ -1,0 +1,130 @@
+﻿@{
+    ViewBag.Title = "OrdersPerMonthReport";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        var Year;
+        var CurrYear = "@ViewBag.CurYear";
+        $("#ddlyear").val(CurrYear);
+        OrdersCountChart(CurrYear);
+        jQuery("#OrdersPerMonthReport").jqGrid({
+            url: '@Url.Content("~/Reports/OrdersPerMonthReportJqGrid")?CountYear=' + CurrYear,
+            datatype: 'json',
+            mtype: 'GET',
+            colNames: ['Id', 'Year', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            colModel: [
+              { name: 'Id', index: 'Id', hidden: true },
+              { name: 'Year', index: 'Year' },
+              { name: 'Jan', index: 'Jan' },
+              { name: 'Feb', index: 'Feb' },
+              { name: 'Mar', index: 'Mar' },
+              { name: 'Apr', index: 'Apr' },
+              { name: 'May', index: 'May' },
+              { name: 'Jun', index: 'Jun' },
+              { name: 'Jul', index: 'Jul' },
+              { name: 'Aug', index: 'Aug' },
+              { name: 'Sep', index: 'Sep' },
+              { name: 'Oct', index: 'Oct' },
+              { name: 'Nov', index: 'Nov' },
+              { name: 'Dec', index: 'Dec' },
+              ],
+            pager: '#OrdersPerMonthReportJqGridPager',
+            rowNum: '10',
+            rowList: [5, 10, 20, 50],
+            sortname: 'Id',
+            sortorder: 'Desc',
+            height: '100',
+            width: 550,
+            //  autowidth: true,
+            shrinkToFit: true,
+            viewrecords: true,
+            caption: 'Orders Per Month Report',
+            forceFit: true
+        });
+        $("#OrdersPerMonthReport").navGrid('#OrdersPerMonthReportJqGridPager', { add: false, edit: false, del: false, search: false, refresh: false });
+
+        $("#OrdersPerMonthReport").jqGrid('navButtonAdd', '#OrdersPerMonthReportJqGridPager', {
+            caption: "Export To Excel",
+            onClickButton: function () {
+                Year = $("#ddlyear").val();
+                var ExptType = "Excel";
+                window.open("OrdersPerMonthReportJqGrid" + '?CountYear=' + Year + '&rows=9999' + '&ExptType=' + ExptType);
+            }
+        });
+        $("#OrdersPerMonthReport").jqGrid('filterToolbar', { stringResult: false, searchOnEnter: true, beforeSearch: function () {
+            $('#OrdersPerMonthReport').clearGridData();
+            return false;
+        }
+        });
+        $("#btnSearch").click(function () {
+            $("#OrdersPerMonthReport").clearGridData();
+            Year = $("#ddlyear").val();
+            $("#OrdersPerMonthReport").setGridParam(
+                {
+                    datatype: "json",
+                    url: '@Url.Content("~/Reports/OrdersPerMonthReportJqGrid/")',
+                    postData: { CountYear: Year },
+                    page: 1
+                }).trigger("reloadGrid");
+            OrdersCountChart(Year);
+        });
+
+        $("#btnReset").click(function () {
+            window.location.href = '@Url.Action("OrdersPerMonthReport", "Reports")';
+        });
+
+    });
+
+    function OrdersCountChart(Year) {
+        $.ajax({
+            type: 'Get',
+            url: '@Url.Content("~/Reports/GetOrdersPerMonthReportChart/")',
+            data: { CountYear: Year },
+            success: function (data) {
+                var chart = new FusionCharts('@Url.Content("~/Charts/FCF_Column3D.swf")', "OrdersCount", "450", "220");
+                chart.setDataXML(data);
+                chart.render("OrdersCountChart");
+            },
+            async: false,
+            dataType: "text"
+        });
+    }
+</script>
+<h3>
+    Orders Per Month Report</h3>
+@using (Html.BeginForm("OrdersPerMonthReport", "Reports", FormMethod.Post))
+{
+    <table width="100%" class="WithBorderOnly">
+        <tr style="background-color: #B6B6B6; height: 25px; color: White;">
+            <td colspan="4">
+                Search Panel
+            </td>
+        </tr>
+        <tr>
+            <td width="25%">
+                Year: @Html.DropDownList("ddlyear", new SelectList(ViewBag.Years, "", ""), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <button type="button" class="btn btn-mini btn-primary" id="btnSearch">
+                    <i class="icon-search" style="vertical-align: middle"></i>Search
+                </button>
+                <button type="button" class="btn btn-mini btn-primary" id="btnReset">
+                    <i class="icon-repeat" style="vertical-align: middle"></i>Reset
+                </button>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <table id="OrdersPerMonthReport">
+                </table>
+                <div id="OrdersPerMonthReportJqGridPager">
+                </div>
+            </td>
+            <td>
+                <div id="OrdersCountChart">
+                </div>
+            </td>
+        </tr>
+    </table>
+}

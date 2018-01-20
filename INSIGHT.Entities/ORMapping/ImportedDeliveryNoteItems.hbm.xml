@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.ImportedDeliveryNoteItems" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.ImportedDeliveryNoteItems, INSIGHT.Entities" table="ImportedDeliveryNoteItems" lazy="false" >
+    <id name="ImpDeliveryNoteItemsId" column="ImpDeliveryNoteItemsId">
+      <generator class="identity" />
+    </id>
+    <property name="ImpDeliveryNoteId" column="ImpDeliveryNoteId" type="Int64" />
+    <property name="ImpDeliveryNoteName" column="ImpDeliveryNoteName" type="string" />
+    <property name="ImpControlId" column="ImpControlId" type="string" />
+    <property name="ImpUNCode" column="ImpUNCode" type="Int64" />
+    <property name="ImpCommodity" column="ImpCommodity" type="string" />
+    <property name="ImpOrderQty" column="ImpOrderQty" type="decimal" />
+    <property name="ImpDeliveryQty" column="ImpDeliveryQty" type="decimal" />
+    <property name="ImpNoOfPacks" column="ImpNoOfPacks" type="decimal" />
+    <property name="ImpNoOfPieces" column="ImpNoOfPieces" type="decimal" />
+
+    <property name="ImpSubsItemCode" column="ImpSubsItemCode" type="Int64" />
+    <property name="ImpSubsItemName" column="ImpSubsItemName" type="string" />
+    <property name="ImpUOM" column="ImpUOM" type="string" />
+    <property name="ImpIssueType" column="ImpIssueType" type="string" />
+
+    <property name="ImpRemarks" column="ImpRemarks" type="string" />
+    <property name="OrderId" column="OrderId" type="Int64" />
+     <property name="CreatedBy" column="CreatedBy" type="string" />
+    <!--<property name="ModifiedBy" column="ModifiedBy" type="string" />-->
+    <property name="CreatedDate" column="CreatedDate" type="datetime" />
+    <!--<property name="ModifiedDate" column="ModifiedDate" type="datetime" />-->
+    <property name="ImpDeliveryMode" column="ImpDeliveryMode" type="string" />
+    <property name="ImpSubsStatus" column="ImpSubsStatus" type="string" />
+    <property name="ImpExpDeliveryQty" column="ImpExpDeliveryQty" type="decimal" />
+    <property name="ImpDeliveryDate" column="ImpDeliveryDate" type="datetime" />
+    <property name="IsValid" column="IsValid" type="string" />
+    
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.InvoiceEntities.SubReplacementView"  namespace="INSIGHT.Entities"  xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.InvoiceEntities.SubReplacementView, INSIGHT.Entities" table="RevisedSubAndReplacement_vw" lazy="false" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="identity" />
+    </id>
+    <property name="PODId"  column="PODId"  type="Int64" />
+    <property name="UNCode"  column="UNCode"  type="Int64" />
+    <property name="Commodity"  column="Commodity"  type="string" />
+    <property name="SectorPrice"  column="SectorPrice"  type="decimal" />
+    <property name="OrderId"  column="OrderId"  type="Int64" />
+    <property name="LineId"  column="LineId"  type="Int64" />
+    <property name="OrderedQty"  column="OrderedQty"  type="decimal" />
+    <property name="DeliveredQty"  column="DeliveredQty"  type="decimal" />
+    <property name="InvoiceQty" column="InvoiceQty" type="decimal" />
+    <property name="AcceptedAmt"  column="AcceptedAmt"  type="decimal" />
+    <property name="SubstituteItemCode"  column="SubstituteItemCode"  type="Int64" />
+    <property name="SubstituteItemName"  column="SubstituteItemName"  type="string" />
+    <property name="SubstituteSectorPrice"  column="SubstituteSectorPrice"  type="decimal" />
+    <property name="DeliveryNoteName"  column="DeliveryNoteName"  type="string" />
+    <property name="DiscrepancyCode"  column="DiscrepancyCode"  type="string" />
+    <property name="DeliverySector"  column="DeliverySector"  type="string" />
+    <property name="APLWeight" column="APLWeight" type="decimal"/>
+    <property name="DiscCode"  column="DiscCode"  type="string" />
+  </class>
+  <sql-query name="GetSubReplacementList" callable="true">
+    <query-param name="OrderId" type="Int64"/>
+    <return class="INSIGHT.Entities.InvoiceEntities.SubReplacementView, INSIGHT.Entities">
+      <return-property name="Id" column="Id" />
+      <return-property name="PODId"  column="PODId" />
+      <return-property name="UNCode"  column="UNCode" />
+      <return-property name="Commodity"  column="Commodity" />
+      <return-property name="SectorPrice"  column="SectorPrice" />
+      <return-property name="OrderId"  column="OrderId" />
+      <return-property name="LineId"  column="LineId" />
+      <return-property name="OrderedQty"  column="OrderedQty" />
+      <return-property name="DeliveredQty"  column="DeliveredQty" />
+      <return-property name="InvoiceQty" column="InvoiceQty" />
+      <return-property name="AcceptedAmt"  column="AcceptedAmt" />
+      <return-property name="SubstituteItemCode"  column="SubstituteItemCode" />
+      <return-property name="SubstituteItemName"  column="SubstituteItemName" />
+      <return-property name="SubstituteSectorPrice"  column="SubstituteSectorPrice" />
+      <return-property name="DeliveryNoteName"  column="DeliveryNoteName" />
+      <return-property name="DiscrepancyCode"  column="DiscrepancyCode" />
+      <return-property name="DeliverySector"  column="DeliverySector" />
+      <return-property name="APLWeight" column="APLWeight" />
+      <return-property name="DiscCode"  column="DiscCode" />
+    </return>
+    <![CDATA[ 
+     EXEC [RevisedSubAndReplacement_sp] @OrderId=:OrderId
+    ]]>
+  </sql-query>
+  
+  
+  
+  
+</hibernate-mapping>

@@ -1,0 +1,1026 @@
+﻿@model INSIGHT.Entities.PODOrdersList_vw
+@{
+    ViewBag.Title = "PODItemsManagement";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+
+<style>
+#jqgh_OrderItemsJQGrid_MoveIcon{
+class:'icon-white icon-chevron-right';
+}
+.ui-jqgrid tr.jqgrow td{font-size:10px;}
+    input[disabled], select[disabled], textarea[disabled], input[readonly], select[readonly], textarea[readonly]
+    {
+        cursor: default;
+        background-color: #FFFFFF;
+    }
+    @*.ui-jqgrid tr.jqgrow td { height: 4px; }*@
+   
+</style>
+<script type="text/javascript" language="javascript">
+    
+    function PDFLink(DeliveryNoteId) {
+
+        window.open('@Url.Content("~/PdfGeneration/PrintDeliveryReports")?DeliveryNoteId=' + DeliveryNoteId, 'DeliveryNote', 'window settings');
+        return false;
+    }
+    function ShowComments(PODItemsId, Status) {
+        // 
+
+        LoadPopupDynamicaly('@Url.Content("~/Orders/SubstituteItemForPODItemsPopup")?PODItemsId=' + PODItemsId, $('#SubsItemLinkPopup'),
+        function () {
+            LoadSetGridParam($('#SubsItemLinkPopup'), '@Url.Content("~/Orders/SubstituteItemForPODItemsPopup")?PODItemsId=' + PODItemsId)
+        }, "", "1000", "150");
+        if (Status == "Delivery Accepted")
+            $("#btnSave").hide();
+    }
+
+    function CalculateRemainingQty(Id, OrdQty, lineid) {
+        debugger;
+        if ($('#DeliveredQty_' + Id).val() == "") {
+            $('#DeliveredQty_' + Id).val(0);
+        }
+
+        if ($('#DeliveredQty_' + Id).val() > 0 && $('#' + Id + '_RemainingQty').val()!=0.00 ) {
+            var RemainingQty = $('#' + Id + '_RemainingQty').val() - $('#DeliveredQty_' + Id).val()
+            $('#' + Id + '_RemainingQty').val(RemainingQty.toFixed(3));
+
+            $.ajax({
+                url: '@Url.Content("~/Orders/UpdateDeliveredQtyCell")?LineId=' + lineid + '&DelQty=' + $('#DeliveredQty_' + Id).val() + '&RemainingQty=' + $('#' + Id + '_RemainingQty').val() + '&PODId=@Model.PODId' + '&OrderId=' + $('#' + Id + '_OrderId').val(),
+                type: 'POST',
+                dataType: 'json',
+                traditional: true,
+                success: function (data) {
+                    debugger;
+                    $('#' + Id + '_DeliveredQty').val(data.DeliveredOrdQty);
+                    $('#' + Id + '_RemainingQty').val(data.RemainingOrdQty);
+                    //PODitems grid reload
+                    PopUpGrid = $("#PODItemsJQGrid");
+                    var brUrl1 = '@Url.Content("~/Orders/DeliveredPODItemsJQGrid")?PODId=' + '@Model.PODId';
+                    LoadSetGridParam(PopUpGrid, brUrl1);
+                },
+                loadError: function (xhr, status, error) {
+                    msgError = $.parseJSON(xhr.responseText).Message;
+                    ErrMsg(msgError, function () { });
+                }
+            });
+        }
+        //jQuery("#OrderItemsJQGrid").setSelection(Id, false);
+    }
+    function AutoFillDeliveryDate(Id, DelDt) {
+        // 
+        var det = $('#txtDeliveryDate_' + Id).val();
+        ID = $('#OrderItemsJQGrid').jqGrid('getDataIDs');
+        ID.splice($.inArray(Id.toString(), ID), 1);
+
+        for (var i = 0; i < ID.length; i++) {
+            if ($('#txtDeliveryDate_' + ID[i]).val() == "") {
+                $('#txtDeliveryDate_' + ID[i]).val(det);
+            }
+        }
+    }
+    //jquery autocomplete for substitute item name
+    function AutoFillSubsItemName(Id) {
+        debugger;
+        ID = $('#OrderItemsJQGrid').jqGrid('getDataIDs');
+        var subitemname = $("#txtSubItemName_" + Id).val();
+        // alert( $("#txtSubItemName_" + ID[i]).val());
+        $("#txtSubItemName_" + Id).autocomplete({
+
+            source: function (request, response) {
+                $.getJSON('@Url.Content("~/Orders/GetSubstituteItemName")?term=' + request.term, function (data) {
+                    response(data);
+                    //$(this).trigger('select'); return false;
+
+                });
+            },
+
+            minLength: 1,
+            delay: 100
+        });
+
+    }
+
+    function AutoFillItemCode(evt) {
+        debugger;
+        
+        var subitemname = $('#' + evt.id).val();
+        var id = evt.id.toString().split('_');
+        var LineId = $('#' + id[1] + "_LineId").val();
+
+        var checked = $('#chkReplacement_' + id[1]).is(':checked');
+       
+
+        if ( $('#DeliveredQty_' + id[1]).val() != "")
+        {
+        //return itemname
+        $.ajax({
+            url: '@Url.Content("~/Orders/AutoCompleteSubsItemCode")?subitemname=' + subitemname,
+            type: 'POST',
+            dataType: 'json',
+            // traditional: true,
+            success: function (data) {
+                if (data.length == 1) {
+
+                    // alert(data);
+                    if ($('#txtSubItemName_' + id[1]).val() != "") {
+                        $('#txtSubItemCode_' + id[1]).val(data);
+                    
+
+                        $.ajax({
+                            url: '@Url.Content("~/Orders/UpdateSubstituteItemNameCell")?LineId=' + LineId + '&SubstituteItemName=' + subitemname + '&subitemcode=' + data + '&isReplacement=' + checked,
+                            type: 'POST',
+                            dataType: 'json',
+                            traditional: true,
+                            success: function (data) {
+                                $("#PODItemsJQGrid").trigger("reloadGrid");
+                            },
+                            loadError: function (xhr, status, error) {
+                                msgError = $.parseJSON(xhr.responseText).Message;
+                                ErrMsg(msgError, function () { });
+                            }
+                        });
+
+
+                    }
+                 
+                }
+            },
+            loadError: function (xhr, status, error) {
+                msgError = $.parseJSON(xhr.responseText).Message;
+                ErrMsg(msgError, function () { });
+            }
+        });
+      
+      }
+      else
+      {
+      ErrMsg('Delivered Quantity can not be empty');
+      return false;
+      }
+
+    }
+    function UpdateSubstituteItemName(evt) {
+   
+        var subitemname = $('#' + evt.id).val();
+        var id = evt.id.toString().split('_');
+        var LineId = $('#' + id[1] + "_LineId").val();
+        debugger;
+        var subitemcode = $('#txtSubItemCode_' +id[1] ).val();
+        //alert(subitemcode);
+
+//        $.ajax({
+//            url: '/Orders/UpdateSubstituteItemNameCell?LindId=' + $('#' + id[1] + "_LineId").val() + '&SubstituteItemName=' + $('#' + evt.id).val(),
+//            type: 'POST',
+//            dataType: 'json',
+//            traditional: true,
+//            success: function (data) {
+
+//            },
+//            loadError: function (xhr, status, error) {
+//                msgError = $.parseJSON(xhr.responseText).Message;
+//                ErrMsg(msgError, function () { });
+//            }
+      //  });
+
+    }
+    function CheckBox(Id) {
+
+        jQuery("#OrderItemsJQGrid").setSelection(Id, true);
+    }
+
+    function MoveData(rdata) {
+        debugger;
+        var id = rdata.split('_');
+        var RemainingQty = $('#OrderItemsJQGrid').jqGrid("getCell", parseInt(id[1]), "RemainingQty");
+
+        var LineId = $('#' + id[1] + '_LineId').val();
+       
+
+
+        if ($('#' + id[1] + '_RemainingQty').val() != 0.00 || $('#' + id[1] + '_RemainingQty').val() != 0) {
+            $('#DeliveredQty_' + id[1]).val($('#' + id[1] + '_RemainingQty').val());
+
+            var RemainingQty = $('#' + id[1] + '_RemainingQty').val() - $('#DeliveredQty_' + id[1]).val()
+            $('#' + id[1] + '_RemainingQty').val(RemainingQty.toFixed(3));
+
+            $.ajax({
+                url: '@Url.Content("~/Orders/UpdateDeliveredQtyCell")?LineId=' + LineId + '&DelQty=' + $('#DeliveredQty_' + id[1]).val() + '&RemainingQty=' + $('#' + id[1] + '_RemainingQty').val() + '&PODId=@Model.PODId' + '&OrderId=' + $('#' + id[1] + '_OrderId').val(),
+                type: 'POST',
+                dataType: 'json',
+                traditional: true,
+                success: function (data) {
+                    debugger;
+                    $('#' + id[1] + '_DeliveredQty').val(data.DeliveredOrdQty);
+                    $('#' + id[1] + '_RemainingQty').val(data.RemainingOrdQty);
+
+                    //PODitems grid reload
+                    PopUpGrid = $("#PODItemsJQGrid");
+                    var brUrl1 = '@Url.Content("~/Orders/DeliveredPODItemsJQGrid")?PODId=' + '@Model.PODId';
+                    LoadSetGridParam(PopUpGrid, brUrl1);
+
+                },
+                loadError: function (xhr, status, error) {
+                    msgError = $.parseJSON(xhr.responseText).Message;
+                    ErrMsg(msgError, function () { });
+                }
+            });
+
+        }
+    }
+
+    //Move all data with move icon
+    function MoveAllData(ID) {
+        debugger;
+        for (var i = 0; i <ID.length; i++) {
+    
+
+        
+        var RemainingQty = $('#OrderItemsJQGrid').jqGrid("getCell", parseInt(ID[i]), "RemainingQty");
+
+        var LineId = $('#' + ID[i]+ '_LineId').val();
+       
+
+
+        if ($('#' + ID[i] + '_RemainingQty').val() != 0.00 || $('#' + ID[i]+ '_RemainingQty').val() != 0) {
+            $('#DeliveredQty_' + ID[i]).val($('#' +ID[i] + '_RemainingQty').val());
+
+            var RemainingQty = $('#' + ID[i]+ '_RemainingQty').val() - $('#DeliveredQty_' + ID[i]).val()
+            $('#' +ID[i] + '_RemainingQty').val(RemainingQty.toFixed(3));
+
+            $.ajax({
+                url: '@Url.Content("~/Orders/UpdateDeliveredQtyCell")?LineId=' + LineId + '&DelQty=' + $('#DeliveredQty_' + ID[i]).val() + '&RemainingQty=' + $('#' + ID[i] + '_RemainingQty').val() + '&PODId=@Model.PODId' + '&OrderId=' + $('#' + ID[i] + '_OrderId').val(),
+                type: 'POST',
+                dataType: 'json',
+                traditional: true,
+                success: function (data) {
+                    debugger;
+                    $('#' + ID[i] + '_DeliveredQty').val(data.DeliveredOrdQty);
+                    $('#' + ID[i] + '_RemainingQty').val(data.RemainingOrdQty);
+
+                    PopUpGrid = $("#OrderItemsJQGrid");
+                    var brUrl1 = '@Url.Content("~/Orders/PODOrderItemsSerachJQgrid")?OrderId=@Model.OrderId';
+                    LoadSetGridParam(PopUpGrid, brUrl1);
+
+                    //PODitems grid reload
+                    PopUpGrid = $("#PODItemsJQGrid");
+                    var brUrl1 = '@Url.Content("~/Orders/DeliveredPODItemsJQGrid")?PODId=' + '@Model.PODId';
+                    LoadSetGridParam(PopUpGrid, brUrl1);
+
+                },
+                loadError: function (xhr, status, error) {
+                    msgError = $.parseJSON(xhr.responseText).Message;
+                    ErrMsg(msgError, function () { });
+                }
+            });
+            }
+        }
+        }
+
+    //-----Move all code ends here
+
+    //Deleting the poditems
+
+    function DeleteComponentDtls(id) {
+        
+      var   DeliveredQty = $('#PODItemsJQGrid').jqGrid("getCell", id, "DeliveredQty");
+      var RemainingQty = $('#PODItemsJQGrid').jqGrid("getCell", id, "RemainingQty");
+      var LineId = $('#PODItemsJQGrid').jqGrid("getCell", id, "LineId");
+   
+      $.ajax({
+          url: '@Url.Content("~/Orders/DeletePODItemsAndUpdateOrderItems")?LineId=' + LineId + '&DeliveredQty=' + DeliveredQty + '&RemainingQty=' + RemainingQty+'&PODItemsId='+id,
+          type: 'POST',
+          dataType: 'json',
+          traditional: true,
+          success: function (data) {
+              $("#OrderItemsJQGrid").trigger("reloadGrid");
+              $("#PODItemsJQGrid").trigger("reloadGrid");
+             // PODItemsJQGrid
+          },
+          loadError: function (xhr, status, error) {
+              msgError = $.parseJSON(xhr.responseText).Message;
+              ErrMsg(msgError, function () { });
+          }
+      });
+   
+    }
+
+    function gridload() {
+        //
+
+//        $('#jqgh_OrderItemsJQGrid_MoveIcon').click(function () {
+//            alert();
+
+//        });
+        var lastsel;
+
+        //Delivered Date Textbox
+        function CreateDeldatetxtbox(cellvalue, options, rowObject) {
+            return "<input id='txtDeliveryDate_" + rowObject[0] + "'  readonly style='width:80px'  background-color='#FFFFFF' type='text' onchange='AutoFillDeliveryDate(" + rowObject[0] + "," + rowObject[23] + ");'' />";
+        }
+        //DeliveryQty textbox
+        function createtxtboxqty(cellvalue, options, rowObject) {
+
+            return "<input id='DeliveredQty_" + rowObject[0] + "'  onkeypress=' AllowNumericValue(this);' onblur='CheckBox(" + rowObject[0] + ");CalculateRemainingQty(" + rowObject[0] + "," + rowObject[13] + "," + rowObject[4] + ");'   style='width: 55px;font-size:10px' type='text'/>";
+            //return "<input id='DeliveredQty_" + rowObject[0] + "'  onkeypress='return AllowNumericValue(this);' onchange='CheckBox(" + rowObject[0] + ");CalculateRemainingQty(" + rowObject[0] + "," + rowObject[13] + "," + rowObject[4] + ");'onblur='CalculateRemainingQty(" + rowObject[0] + "," + rowObject[13] + "," + rowObject[4] + ");'   style='width: 60px;height:17px; font-size:10px' type='text'/>";
+        }
+        //-------------------------------------------------------------------------------------
+        //Substitute item code
+        function CreateSubCodetxtbox(cellvalue, options, rowObject) {
+            return "<input id='txtSubItemCode_" + rowObject[0] + "'  disabled onkeypress='return AllowNumericValue(this);'  style='width: 70px; font-size:10px; cursor: not-allowed;' type='text' tabindex=0 />";
+        }
+        //Substitute item name textbox
+
+        function CreateSubNametxtbox(cellvalue, options, rowObject) {
+            return "<input id='txtSubItemName_" + rowObject[0] + "' style='width: 270px; font-size:10px;' type='text'   onkeypress='AutoFillSubsItemName(" + rowObject[0] + ");'  Tabindex=-1 onblur='AutoFillItemCode(this);UpdateSubstituteItemName(this); ' />";
+        }
+        //Substitute delivered qty textbox
+        function CreateSubDelQtytxtbox(cellvalue, options, rowObject) {
+            return "<input id='txtSubItemDelQty_" + rowObject[0] + "'    onkeypress='return AllowNumericValue(this);' style='width: 63px; font-size:10px;' type='text'/>";
+        }
+
+
+        //Substitute accepted qty textbox
+        function CreateSubAccQtytxtbox(cellvalue, options, rowObject) {
+            return "<input id='txtSubItemAccQty_" + rowObject[0] + "'  onkeypress='return AllowNumericValue(this);' style='width: 63px' type='text'/>";
+        }
+        function formateadorLink(cellvalue, options, rowObject) {
+            return "<a href=/Orders/DeliveryNoteCreation?DeliveryNoteId=" + rowObject[0] + ">" + cellvalue + "</a>";
+        }
+
+        //Delete poditems list
+
+         function frmtrDel(cellvalue, options, rowdata) {
+
+            var delBtn = "";
+            delBtn = "<span id='T1btnDel_" + options.rowId + "'class='ui-icon ui-icon-trash T1CompDel' rowid='" + options.rowId + "' title='Delete'></span>";
+            return delBtn;
+        }
+
+         function ChkReplacement(cellvalue, options, rowObject) {
+             return "<input id='chkReplacement_" + rowObject[0] + "' type='CheckBox'/>";
+
+         }
+   
+
+        $("#OrderItemsJQGrid").jqGrid({
+            url: '@Url.Content("~/Orders/PODOrderItemsSerachJQgrid")?OrderId=@Model.OrderId',
+            datatype: 'json',
+            type: 'GET',
+            shrinkToFit: true,
+            colNames: ['Id', 'Order Id', 'Contingent', 'ControlId', 'LineId', 'Sector Price', 'Total', 'Period', 'Sector', 'Week', 'Period Year', 'UNCode', 'Commodity', 'OrdQty', '', 'DelQty', 'Prev DelQty', 'RemQty', 'AcpQty', '', 'AR','SubUNCode', 'SubCommodity', 'Del dt'],
+            //colNames: ['Id', 'Order Id', 'Name', 'ControlId', 'LineId', 'SectorPrice', 'Total', 'Period', 'Sector', 'Week', 'Period year', 'UNCode', 'Commodity', 'OrderQuantity', 'DeliveredQty', 'AcceptedQty', 'RemainingQty', ''],
+            colModel: [
+             { name: 'Id', index: 'Id', hidden: true, key: true },
+              { name: 'OrderId', index: 'OrderId', hidden: true, editable: true, editoptions: { disabled: true, class: 'NoBorder', style: " background-color:#FFFFFF; border-color:#FFFFFF;font-size:10px;"} },
+              { name: 'Name', index: 'Name', width: 40, hidden: true },
+              { name: 'ControlId', index: 'ControlId', hidden: true },
+              { name: 'LineId', index: 'LineId', editable: true, hidden: true },
+              { name: 'SectorPrice', index: 'SectorPrice', hidden: true },
+              { name: 'Total', index: 'Total', hidden: true },
+              { name: 'Period', name: 'Period', hidden: true, search: false, width: 30 },
+              { name: 'Sector', name: 'Sector', hidden: true },
+              { name: 'Week', name: 'Week', width: 20, hidden: true },
+              { name: 'PeriodYear', name: 'PeriodYear', width: 35, hidden: true },
+              { name: 'UNCode', index: 'UNCode', width: 12, search: true, editable: true, editoptions: { disabled: true, class: 'NoBorder', style: " background-color:#FFFFFF; border-color:#FFFFFF;font-size:10px;"} },
+              { name: 'Commodity', index: 'Commodity', search: true, width: 70 },
+              { name: 'OrderQty', index: 'OrderQty', search: false, width: 12, editable: true, editoptions: { disabled: true, class: 'NoBorder', style: " background-color:#FFFFFF; border-color:#FFFFFF;font-size:10px;"} },
+            //{name:'DeliveredQty',index:'DeliveredQty',width:40,editable:true,hidden:true},
+              {name: 'MoveIcon', index: 'MoveIcon', sortable: false, width: 5, search: false },
+              { name: 'DeliveredQty1', index: 'DeliveredQty1', sortable: false, width: 12, search: false, formatter: createtxtboxqty },
+              { name: 'DeliveredQty', index: 'DeliveredQty', sortable: false, width: 12, search: false, editable: true, hidden: false, editoptions: { disabled: true, class: 'NoBorder', style: " background-color:#FFFFFF; border-color:#FFFFFF;font-size:10px;"} },
+              { name: 'RemainingQty', index: 'RemainingQty', search: false, editable: true, editoptions: { disabled: true, class: 'NoBorder', style: " background-color:#FFFFFF; border-color:#FFFFFF;font-size:10px;" }, width: 12 },
+              { name: 'AcceptedQty', index: 'AcceptedQty', search: false, width: 12 },
+              { name: 'Status', index: 'Status', search: false, width: 60, hidden: true },
+               { name: 'ChkReplacement', index: 'ChkReplacement', width: 5, search: false, formatter: ChkReplacement },
+              { name: 'SubsItemCode', index: 'SubsItemCode', width: 15, search: false, formatter: CreateSubCodetxtbox },
+              { name: 'SubsItemName', index: 'SubsItemName', width: 50, search: false, formatter: CreateSubNametxtbox },
+            //{ name: 'SubsDelQty', index: 'SubsDelQty', width: 25, required: true, formatter: CreateSubDelQtytxtbox },
+            //{ name: 'SubsAccQty', index: 'SubsAccQty', width: 25, required: true, formatter: CreateSubAccQtytxtbox },
+              {name: 'DeliveryDate', index: 'DeliveryDate', width: 30, required: true, formatter: CreateDeldatetxtbox, hidden: true }
+            //{ name: 'RemainingQty', index: 'RemainingQty', search: false, editable: true, editoptions: { disabled: true, class: 'NoBorder', style: " background-color:#FFFFFF; border-color:#FFFFFF;"} },
+            //{ name: 'Status', index: 'Status', search: false },
+
+              ],
+            pager: '#OrderItemsJQGridPager',
+            rowNum: '1000',
+
+            sortname: 'Id',
+            sortorder: 'Asc',
+            width: 900,
+            height: 400,
+            autowidth: true,
+            rowList: [], // disable page size dropdown
+            pgbuttons: false, // disable page control like next, back button
+            pgtext: null, // disable pager text like 'Page 0 of 10'
+            viewrecords: true,
+            //multiselect: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Order Items Pick List',
+
+            gridComplete: function () {
+
+                ID = $('#OrderItemsJQGrid').jqGrid('getDataIDs');
+                for (var i = 0, list = ID.length; i < list; i++) {
+                    var Id = ID[i];
+                    $('#txtDeliveryDate_' + Id).datepicker({ dateFormat: 'dd-mm-yy' });
+
+                }
+                $('.move').click(function () {
+                    var rdata = $(this).attr('Id');
+                    MoveData(rdata);
+                });
+                $('#jqgh_OrderItemsJQGrid_MoveIcon').toggleClass('icon-white icon-chevron-right move');
+                $('#jqgh_OrderItemsJQGrid_MoveIcon').click(function () {
+                    MoveAllData(ID);
+                    
+                });
+
+
+
+
+
+            },
+
+            loadComplete: function () {
+
+                var $this = $(this), rows = this.rows, l = rows.length, i, row;
+                $(this).hide();
+                for (i = 1; i < l; i++) {
+                    row = rows[i];
+                    if ($(row).hasClass("jqgrow")) {
+                        $this.jqGrid('editRow', row.id);
+                    }
+                }
+                $(this).show();
+
+                ID = $('#OrderItemsJQGrid').jqGrid('getDataIDs');
+                for (var i = 0; i < ID.length; i++) {
+                    // $('#DeliveredQty_' + ID[i]).val($('#' + ID[i] + '_DeliveredQty').val());
+
+                }
+                //color changing according to the status
+                var ids = jQuery("#OrderItemsJQGrid").jqGrid('getDataIDs');
+                $("tr.jqgrow:odd").addClass('RowBackGroundColor');
+                for (var i = 0; i < ids.length; i++) {
+
+                    rowData = jQuery("#OrderItemsJQGrid").jqGrid('getRowData', ID[i]);
+                    if (rowData.Status == "ADDED IN ORDERITEMS") { $("#OrderItemsJQGrid").setCell(ID[i], "Commodity", "", { "background-color": "#ADADAD" }); }
+
+                    if (rowData.Status == "ADDED IN ORDERITEMS" && $('#' + ID[i] + '_OrderQty').val() == $('#' + ID[i] + '_RemainingQty').val()) {
+                        debugger;
+                        $("#OrderItemsJQGrid").setCell(ID[i], "Commodity", "", { "background-color": "#FFFFFF" });
+
+                    }
+                }
+
+            }
+
+        });
+        $("#OrderItemsJQGrid").jqGrid('navGrid', '#OrderItemsJQGridPager', { del: false, add: false, edit: false, search: false });
+        $('#OrderItemsJQGrid').jqGrid('filterToolbar', { searchOnEnter: true, enableClear: false });
+//        $("#OrderItemsJQGrid").jqGrid('navButtonAdd', '#OrderItemsJQGridPager', {
+//            caption: "Add",
+//            onClickButton: function () {
+//                //AddRecords();
+//            }
+//        });
+
+        //Added Grid
+        $("#PODItemsJQGrid").jqGrid({
+            url:'@Url.Content("~/Orders/DeliveredPODItemsJQGrid")?PODId=' + '@Model.PODId',
+            datatype: 'json',
+            type: 'GET',
+            // shrinkToFit: true,
+            colNames: ['Id', 'PODItemsId', 'Order Id', 'Contigent', 'LineId', 'Period', 'Week', 'UNCode', 'Commodity', 'OrdQty', 'DelQty', 'AcpQty', 'RemQty','DisCode', 'SubUNCode', 'SubCommodity', 'Status',''],
+            colModel: [
+                        { name: 'Id', index: 'Id', hidden: true },
+                        { name: 'PODItemsId', index: 'PODItemsId', key: true, hidden: true, editable: true },
+                        { name: 'OrderId', index: 'OrderId', hidden: true },
+                        { name: 'Name', index: 'Name', hidden: true },
+                        { name: 'LineId', index: 'LineId', hidden: true },
+                        { name: 'Period', name: 'Period', hidden: true, search: false },
+                        { name: 'Week', name: 'Week', hidden: true },
+                        { name: 'UNCode', index: 'UNCode', width: 50, editable: false, editoptions: { disabled: true, class: 'NoBorder', style: " background-color:#FFFFFF; border-color:#FFFFFF;"} },
+                        { name: 'Commodity', index: 'Commodity', width: 300 },
+                        { name: 'OrderQty', index: 'OrderQty', search: false, width: 60 },
+                        { name: 'DeliveredQty', index: 'DeliveredQty', sortable: false, width: 60, search: false },
+                          //{ name: 'AcceptedQty', index: 'AcceptedQty', sortable: false, width: 100, search: false, formatter:createAccQtyTextbox },
+                        {name: 'AcceptedQty', index: 'AcceptedQty', search: false, editable: false,hidden:true },
+                        { name: 'RemainingQty', index: 'RemainingQty', search: false, width: 60 },
+                        { name: 'DiscrepancyCode', index: 'DiscrepancyCode', search: false, width: 60 },
+                        { name: 'SubstituteItemCode', index: 'SubstituteItemCode', search: false, width: 60 },
+                        { name: 'SubstituteItemName', index: 'SubstituteItemName', search: false },
+                        { name: 'Status', index: 'Status', search: false, editable: true,hidden:true, editoptions: { disabled: true, class: 'NoBorder', style: " background-color:#FFFFFF; border-color:#FFFFFF;"} },
+                        { name: 'Delete', index:'Delete', align: 'center', formatter: frmtrDel, width: 20,search:false }
+                        
+                        ],
+                     loadComplete: function () {
+                var list = jQuery("#PODItemsJQGrid").getDataIDs();
+
+            },
+            gridComplete: function () {
+                var rdata = $("#PODItemsJQGrid").getRowData();
+
+                if (rdata.length > 0) {
+                    $('.T1CompDel').click(function () { DeleteComponentDtls($(this).attr('rowid')); });
+                }
+            },
+            onSelectRow: function (id) {
+                if (id && id !== lastsel) {
+                    //
+                    Status = $(this).jqGrid("getCell", id, "Status");
+                    if (Status != "Delivery Accepted") {
+                        jQuery('#PODItemsJQGrid').jqGrid('restoreRow', lastsel);
+                        jQuery('#PODItemsJQGrid').jqGrid("editRow", id, true, '', '', '', '', function reload(rowid, result) {
+                            $("#PODItemsJQGrid").trigger("reloadGrid");
+                            $("#OrderItemsJQGrid").trigger("reloadGrid");
+                        });
+                    }
+                    else
+                        return false;
+                    lastsel = id;
+                }
+            },
+            editurl: '@Url.Content("~/orders/UpdateAcceptedQty")',
+            pager: '#PODItemsJQGridPager',
+            rowNum: '1000',
+            rowList: [5, 10, 20, 50],
+            sortname: 'UNCode',
+            sortorder: 'Asc',
+            width: 850,
+            height: 300,
+            //autowidth: true,
+            rowList: [], // disable page size dropdown
+            pgbuttons: false, // disable page control like next, back button
+            pgtext: null, // disable pager text like 'Page 0 of 10'
+            viewrecords: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;PODItems List'
+
+        });
+        $("#PODItemsJQGrid").jqGrid('navGrid', '#PODItemsJQGridPager', { del: false, add: false, edit: false, search: false });
+        $('#PODItemsJQGrid').jqGrid('filterToolbar', { searchOnEnter: true, enableClear: false });
+
+        //Delivery note grid
+        jQuery("#DeliveryNoteJQGrid").jqGrid({
+            mtype: 'GET',
+            url: '@Url.Content("~/Orders/DeliveryNoteJQGrid")?OrderId=@Model.OrderId',
+            datatype: 'json',
+            height: '330',
+            width: '340',
+            shrinkToFit: true,
+            colNames: ['DeliveryNote Id', 'Delivery Number', 'PDF', 'Created Date','Status'],
+            colModel: [
+                      { name: 'DeliveryNoteId', index: 'DeliveryNoteId', key: true, hidden: true },
+                      { name: 'DeliveryNoteName', index: 'DeliveryNoteName', sortable: true, formatter: formateadorLink,width:180 },
+                      { name: 'PDF', index: 'PDF',width:60 },
+
+                      { name: 'CreatedBy', index: 'CreatedBy' },
+                      {name:'DeliveryStatus',index:'DeliveryStatus'}
+                      ],
+            pager: '#DeliveryNoteJQGridPager',
+            // rowNum: '50',
+            // rowList: [50, 100, 150, 200],
+            sortname: 'DeliveryNoteId',
+            sortorder: "Desc",
+            rowList: [], // disable page size dropdown
+            pgbuttons: false, // disable page control like next, back button
+            pgtext: null, // disable pager text like 'Page 0 of 10'
+            viewrecords: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Delivery Note List'
+            //multiselect: true
+        });
+        jQuery("#DeliveryNoteJQGrid").jqGrid('navGrid', '#DeliveryNoteJQGridPager', { edit: false, add: false, del: false, search: false });
+    }
+
+    function AddRecords() {
+        //  alert();
+        //
+        debugger;
+        var SelectedRecord = "";
+        var SelLindId = "";
+        var SelDeliveredQty = "";
+        var SelRemainingQty = "";
+        var SelOrderId = "";
+        var SelSubItemName = "";
+        var SelSubItemCode = "";
+        //  var SelSubDelQty = "";
+        //var SelSubAccQty = "";
+        var SelDelDate = "";
+
+
+        selDocs = $('#OrderItemsJQGrid').jqGrid('getGridParam', 'selarrrow');
+        var SelLineId = "";
+        if (selDocs != "") {
+            for (var i = 0, list = selDocs.length; i < list; i++) {
+                if ($('#DeliveredQty_' + selDocs[i]).val() == 0.00) {
+                    ErrMsg("Please enter  Delivered Quantity for   UNCode :" + $("#" + selDocs[i] + "_UNCode").val());
+                    return false;
+
+                }
+              
+                //                else if ($('#txtSubItemName_' + selDocs[i]).val() == "" && $('#DeliveredQty_' + selDocs[i]).val() == 0.00 )
+                //                {
+                //                ErrMsg("Please enter the Substitute item name  for UNCode :" + $("#" + selDocs[i] + "_UNCode").val());
+                //                return false;
+                //            
+                //                }
+                //            if($('#txtDeliveryDate_'+selDocs[i]).val()=="" ){
+                //                 ErrMsg("Please enter the Delivery date");
+                //                 
+                //                return false;
+                //                
+                //                }
+                SelectedRecord = selDocs[i];
+                selectedData = $('#OrderItemsJQGrid').jqGrid('getRowData', SelectedRecord);
+                SelLindId += $('#' + selDocs[i] + '_LineId').val() + ",";
+                SelDeliveredQty += $('#DeliveredQty_' + selDocs[i]).val() + ",";
+                SelRemainingQty += $('#' + selDocs[i] + '_RemainingQty').val() + ",";
+                SelOrderId += selectedData.OrderId + ",";
+                SelSubItemName += $('#txtSubItemName_' + selDocs[i]).val() + ",";
+                //SelSubDelQty += $('#txtSubItemDelQty_' + selDocs[i]).val() + ",";
+                //SelSubAccQty += $('#txtSubItemAccQty_' + selDocs[i]).val() + ",";
+                SelDelDate += $('#txtDeliveryDate_' + selDocs[i]).val() + ",";
+                SelSubItemCode += $('#txtSubItemCode_' + selDocs[i]).val() + ",";
+
+            }
+            SelLindId = SelLindId.slice(0, -1);
+            SelDeliveredQty = SelDeliveredQty.slice(0, -1);
+            SelRemainingQty = SelRemainingQty.slice(0, -1);
+            SelOrderId = SelOrderId.slice(0, -1);
+
+            SelSubItemName = SelSubItemName.slice(0, -1);
+            // SelSubDelQty = SelSubDelQty.slice(0, -1);
+            //SelSubAccQty = SelSubAccQty.slice(0, -1);
+            SelDelDate = SelDelDate.slice(0, -1);
+            SelSubItemCode = SelSubItemCode.slice(0, -1);
+            //alert(SelLindId);
+
+            $.ajax({
+                url: '@Url.Content("~/Orders/UpdateOrderItems")?SelLindId=' + SelLindId + '&SelDeliveredQty=' + SelDeliveredQty + '&SelRemainingQty=' + SelRemainingQty + '&SelOrderId=' + SelOrderId + '&PODId=' + '@Model.PODId' + '&SelSubItemCode=' + SelSubItemCode + '&SelSubItemName=' + SelSubItemName + '&SelDelDate=' + SelDelDate,
+                type: 'POST',
+                dataType: 'json',
+                traditional: true,
+                success: function (data) {
+                    //          $('#OrderItemsJQGrid').trigger("reloadGrid");
+                    PopUpGrid = $("#OrderItemsJQGrid");
+                    var brUrl1 = '@Url.Content("~/Orders/PODOrderItemsSerachJQgrid")?OrderId=@Model.OrderId';
+                    LoadSetGridParam(PopUpGrid, brUrl1);
+                    //PODitems grid reload
+                    PopUpGrid = $("#PODItemsJQGrid");
+                    var brUrl1 = '@Url.Content("~/Orders/DeliveredPODItemsJQGrid")?PODId=' + '@Model.PODId';
+                    LoadSetGridParam(PopUpGrid, brUrl1);
+                },
+                loadError: function (xhr, status, error) {
+                    msgError = $.parseJSON(xhr.responseText).Message;
+                    ErrMsg(msgError, function () { });
+                }
+            });
+
+
+        }
+        else {
+            ErrMsg("Select Order items and update the Delivered Qty");
+        }
+
+    }
+    function UpdateAcceptedQty() {
+        //
+        var SelAcceptedQty = "";
+        var SelPODItemsId = "";
+        var selectedData = "";
+        var SelectedRecord = "";
+
+
+        selDocs = $('#PODItemsJQGrid').jqGrid('getGridParam', 'selarrrow');
+        for (var i = 0, list = selDocs.length; i < list; i++) {
+            SelectedRecord = selDocs[i];
+            selectedData = $('#PODItemsJQGrid').jqGrid('getRowData', SelectedRecord);
+            SelPODItemsId += selectedData.PODItemsId + ",";
+        }
+
+        SelPODItemsId = SelPODItemsId.slice(0, -1);
+        SelAcceptedQty = SelAcceptedQty.slice(0, -1);
+        $.ajax({
+            url: '@Url.Content("~/Orders/UpdateAcceptedQty")?SelPODItemsId=' + SelPODItemsId + '&SelAcceptedQty=' + SelAcceptedQty,
+            type: 'POST',
+            dataType: 'json',
+            traditional: true,
+            success: function (data) {
+                //          $('#OrderItemsJQGrid').trigger("reloadGrid");
+                PopUpGrid = $("#PODItemsJQGrid");
+                var brUrl1 = '@Url.Content("~/Orders/PODOrderItemsSerachJQgrid")';
+                LoadSetGridParam(PopUpGrid, brUrl1);
+
+            },
+            loadError: function (xhr, status, error) {
+                msgError = $.parseJSON(xhr.responseText).Message;
+                ErrMsg(msgError, function () { });
+            }
+        });
+
+
+
+
+    }
+
+    $(document).ready(function () {
+        window.onload = gridload();
+    });
+
+    function OrderItemSearch() {
+        //
+        var OrderNo = $('#txtOrderNo').val();
+        var Contigent = $('#txtContigent').val();
+        var Week = $('#txtWeek').val();
+        var PeriodYear = $('#txtPeriodYear').val();
+
+
+        $("#OrderItemsJQGrid").setGridParam(
+            {
+                datatype: "json",
+
+                url: '@Url.Content("~/Orders/PODOrderItemsSerachJQgrid")',
+                postData: { OrderNo: OrderNo, Contigent: Contigent, Week: Week, PeriodYear: PeriodYear },
+                page: 1
+            }).trigger("reloadGrid");
+
+
+
+
+    }
+
+
+    function ResetOrderItems() {
+        //
+        $('#txtOrderNo').val('');
+        $('#txtContigent').val('');
+        $('#txtWeek').val('');
+        $('#txtPeriodYear').val('');
+
+
+        $("#OrderItemsJQGrid").setGridParam(
+            {
+                datatype: "json",
+                url: '@Url.Content("~/Orders/PODOrderItemsSerachJQgrid")',
+                postData: { OrderNo: "", Contigent: "", Week: "", PeriodYear: "" },
+                page: 1
+            }).trigger("reloadGrid");
+
+    }
+    function BackToList() {
+        $.ajax({
+            url: '@Url.Content("~/Orders/UpdateOpeningStatusinOrderTbl")?OrderId=@Model.OrderId',
+            type: 'POST',
+            dataType: 'json',
+            traditional: true,
+            success: function (data) {
+                window.location.href = '@Url.Content("~/Orders/PODMasterListPage")';
+            },
+            loadError: function (xhr, status, error) {
+                msgError = $.parseJSON(xhr.responseText).Message;
+                ErrMsg(msgError, function () { });
+            }
+        });
+
+
+
+    }
+    function GenerateDeliveryNote() {
+
+        var DeliveryNoteName = $('#txtDeliveryNoteName').val();
+        var DeliveryMode = $('#txtDeliveryMode').val();
+        var DeliverySector = $('#txtDeliverySector').val();
+        if (DeliveryNoteName == "") {
+            ErrMsg('Delivery Note Name can not be empty');
+            return false;
+        }
+        if (DeliveryMode == "") {
+
+            ErrMsg('Delivery Mode  can not be empty');
+            return false;
+        }
+        if (DeliverySector == "") {
+            ErrMsg('Delivery Sector  can not be empty');
+            return false;
+        }
+
+        ID = $('#PODItemsJQGrid').jqGrid('getDataIDs');
+        $.ajax({
+            url: '@Url.Content("~/Orders/GenerateDeliveryReport")?DeliveryNoteName=' + DeliveryNoteName + '&DeliveryMode=' + DeliveryMode + '&SelPODItemsId=' + ID + '&OrderId=@Model.OrderId&DeliverySector=' + DeliverySector,
+            type: 'POST',
+            dataType: 'json',
+            traditional: true,
+            success: function (data, status) {
+                //PODitems grid reload
+                debugger;
+                PopUpGrid = $("#PODItemsJQGrid");
+                var brUrl1 = '@Url.Content("~/Orders/DeliveredPODItemsJQGrid")?PODId=' + '@Model.PODId';
+                LoadSetGridParam(PopUpGrid, brUrl1);
+                $('#DeliveryNoteJQGrid').trigger("reloadGrid");
+                
+                $('#OrderItemsJQGrid').trigger("reloadGrid");
+                $('#txtDeliveryNoteName').val('');
+                $('#txtDeliveryMode').val('');
+                $('#txtDeliverySector').val('');
+
+                InfoMsg(data.result);
+            },
+            loadError: function (xhr, status, error) {
+                msgError = $.parseJSON(xhr.responseText).Message;
+                ErrMsg(msgError, function () { });
+            }
+        });
+
+    }
+    //Auto filling deliverysector based on the deliverynotename
+  
+  
+    function AutoFillDeliverySector() {
+        debugger; 
+        if ($('#txtDeliveryNoteName').val() != "") {
+            // alert($('#txtDeliveryNoteName').val());
+            $('#txtDeliverySector').val('');
+            deliverynotename = $('#txtDeliveryNoteName').val().toString().split('-');
+            
+            var delsec = deliverynotename[1];
+            if (delsec.substring(0, 1) == "1")
+            {
+                $('#txtDeliverySector').val('SN');
+
+            }
+            if (delsec.substring(0, 1) == "2")
+            {
+                $('#txtDeliverySector').val('SW');
+            }
+            if (delsec.substring(0, 1) == "3") {
+                $('#txtDeliverySector').val('SS');
+            }
+            //alert(a.substring(0,1));
+            
+        }   
+        
+
+
+    }
+  
+  
+  
+    //        function CompletePODItems(){
+    //        ID = $('#PODItemsJQGrid').jqGrid('getDataIDs');
+    //        if(ID!=null)
+    //        {
+    //       
+    //            $.ajax({
+    //                url: '/Orders/GenerateDeliveryReport?DeliveryNoteName=' + DeliveryNoteName + '&SelPODItemsId=' + ID+'&OrderId=@Model.OrderId'+'&Status=Completed',
+    //                type: 'POST',
+    //                dataType: 'json',
+    //                traditional: true,
+    //                success: function (data) {
+    //                    //PODitems grid reload
+    //                    PopUpGrid = $("#PODItemsJQGrid");
+    //                    var brUrl1 = '/Orders/DeliveredPODItemsJQGrid?PODId=' + '@Model.PODId';
+    //                    LoadSetGridParam(PopUpGrid, brUrl1);
+    //                    $('#DeliveryNoteJQGrid').trigger("reloadGrid");
+    //                },
+    //                loadError: function (xhr, status, error) {
+    //                    msgError = $.parseJSON(xhr.responseText).Message;
+    //                    ErrMsg(msgError, function () { });
+    //                }
+    //                           });
+    //                           }
+
+
+    // }
+
+</script>
+
+@using (Html.BeginForm())
+{
+    
+    <table width="100%" class="WithBorderOnly">
+        <tr valign="top">
+            <td width="100%" colspan="2">
+                <table width="100%" class="WithBorderOnly">
+                    <tr class="PanelHeading">
+                        <td colspan="4" width="100%">
+                           POD Details
+                        </td>
+                    </tr>
+                    <tr>
+                                  <td width="25%">
+                            <label class="lblheader">
+                                ControlId</label><br />
+                            @Html.DisplayFor(m => m.ControlId)
+                            @Html.HiddenFor(m => m.ControlId)
+                        </td>
+                        <td width="25%">
+                            <label class="lblheader">
+                                Location</label><br />
+                            @Html.DisplayFor(m => m.Location)
+                            @Html.HiddenFor(m => m.Location)
+                        </td>
+                        <td width="25%">
+                            <label class="lblheader">
+                                Sector</label><br />
+                            @Html.DisplayFor(m => m.Sector)
+                            @Html.HiddenFor(m => m.Sector)
+                        </td>
+                        <td width="25%">
+                            <label class="lblheader">
+                                Contingent</label><br />
+                            @Html.DisplayFor(m => m.Name)
+                            @Html.HiddenFor(m => m.Name)
+                        </td>
+                    </tr>
+                    <tr>
+             
+                        <td width="25%">
+                            <label class="lblheader">
+                                Created By</label><br />
+                            @Html.DisplayFor(m => m.CreatedBy)
+                            @Html.HiddenFor(m => m.CreatedBy)
+                        </td>
+                        <td width="25%">
+                            <label class="lblheader">
+                                Created Date</label><br />
+                            @String.Format("{0:dd/MM/yyyy }", Model.CreatedDate, new { @id = "lbldatacreated" })
+                            @Html.HiddenFor(m => m.CreatedDate)
+                        </td>
+                        <td width="25%">
+                            <label class="lblheader">
+                                Expected Delivery Date</label><br />
+                            @String.Format("{0:dd/MM/yyyy }", Model.ExpectedDeliveryDate, new { @id = "lblExpDelDate" })
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <table id="OrderItemsJQGrid">
+                </table>
+                <div id="OrderItemsJQGridPager">
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table id="PODItemsJQGrid">
+                </table>
+                <div id="PODItemsJQGridPager">
+                </div>
+               <b> DiscrepancyCode:&nbsp;&nbsp;&nbsp;&nbsp; AR-Replacement, &nbsp;&nbsp;&nbsp;&nbsp;AS-Substitution</b>
+            </td>
+            <td valign="top">
+                <table id="DeliveryNoteJQGrid">
+                </table>
+                <div id="DeliveryNoteJQGridPager">
+                </div>
+            </td>
+        </tr>
+            </table>
+    <table>
+        <tr>
+            <td  align="left" >
+            <label class="lblheader">Delivery Number</label><br />
+                <input type="text" id="txtDeliveryNoteName"  onblur="AutoFillDeliverySector();"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                
+            </td>
+            <td   >
+            <label class="lblheader">Delivery Sector</label><br />
+                <input type="text" id="txtDeliverySector" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                
+            </td>
+            <td>
+             <label class="lblheader">Delivery Mode</label><br />
+                @*<input type="text" id="txtDeliveryMode" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*@
+                 @Html.DropDownList("txtDeliveryMode", new SelectList(new[] {
+                                              new{Value="",Text="Select Delivery Mode"},
+                                              new{Value="Road",Text="Road"},
+                                              new{Value="Pick",Text="Pick"},
+                                              new{Value="Air",Text="Air"}
+                                              }, "Value", "Text", ""), new { id = "txtDeliveryMode", @Class = "CSSDropDownList"}) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+                <input type="button" value="Generate Delivery Note" onclick="GenerateDeliveryNote();return false;" />
+                @* <input
+                    type="button" value="Complete" onclick="CompletePODItems();return false;" />*@
+                <input type="button" id="btnBackToList" value="Back To List" onclick="BackToList();return false;" />
+            
+            </td>
+        </tr>
+        </table>
+     
+}
+<div id="SubsItemLinkPopup">
+</div>
+
+
+
+
+
+
+
+

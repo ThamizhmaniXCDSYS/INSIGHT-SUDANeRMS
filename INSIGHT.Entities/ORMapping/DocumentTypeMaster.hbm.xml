@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.DocumentTypeMaster" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.DocumentTypeMaster, INSIGHT.Entities" table="DOCUMENTTYPEMASTER" lazy="false" >
+    <id name="FormId" column="FormId" type="Int64">
+      <generator class="identity" />
+    </id>
+    <property name="FormCode" column="FormCode" type="string" not-null="true" />
+    <property name="DocumentType" column="DOTP" type="string" not-null="true" />
+    <property name="DocumentTypedesc" column="DOTPDESC" type="string" not-null="true" />
+    <property name="DocumentFor" column="DocumentFor" type="string" not-null="true" />
+  </class>
+</hibernate-mapping>

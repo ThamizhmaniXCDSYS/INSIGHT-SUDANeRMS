@@ -1,0 +1,304 @@
+﻿@{
+    ViewBag.Title = "orderItemMissMatch";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        debugger;
+        $('#OrderItemsMisMatch').jqGrid({
+            url: '@Url.Content("~/Reports/OrderitemsMisMatchJqGrid")',
+            datatype: 'Json',
+            type: 'GET',
+            shrinkToFit: false,
+            height: 245,
+            width: 1200,
+            colNames: ['Id', 'OrderId', 'ControlId', 'Sector', 'ContingentType', 'Name', 'Period', 'PeriodYear', 'UNCode', 'Commodity', 'DeliveredQty', 'SubsCode', 'SubsName', 'CreatedDate', 'CreatedBy', 'DeliveryNoteName', 'Description'],
+            colModel: [
+                { name: 'Id', index: 'Id', width: 300, hidden: true },
+                { name: 'OrderId', index: 'OrderId', width: 300, hidden: true },
+                { name: 'ControlId', index: 'ControlId', width: 300, frozen: true },
+                { name: 'Sector', index: 'Sector', width: 70,align :'center' },
+                { name: 'ContingentType', index: 'ContingentType', width: 100, align: 'center' },
+                { name: 'Name', index: 'Name', width: 70},
+                { name: 'Period', index: 'Period', width: 70, align: 'center' },
+                { name: 'PeriodYear', index: 'PeriodYear', width: 70, align: 'center' },
+                { name: 'UNCode', index: 'UNCode', width: 70,align :'center' },
+                { name: 'Commodity', index: 'Commodity', width: 300 },
+                { name: 'DeliveredQty', index: 'DeliveredQty', width: 100, align: 'right' },
+                { name: 'SubsCode', index: 'SubsCode', width: 70, align: 'center' },
+                { name: 'SubsName', index: 'SubsName', width: 300 },
+                { name: 'CreatedDate', index: 'CreatedDate', width: 70, align: 'center' },
+                { name: 'CreatedBy', index: 'CreatedBy', width: 70, align: 'center' },
+                { name: 'DeliveryNoteName', index: 'DeliveryNoteName', width: 120, align: 'center' },
+                { name: 'Description', index: 'Description', width: 320 }
+            ],
+            rowNum: 1000,
+            // scroll: true,
+            viewrecords: true,
+            rowList: [100, 200, 400, 1000],
+            sortorder: 'Asc',
+            sortname: 'ControlId',
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Order Items MisMatch Report List',
+            pager: 'OrderItemsMisMatchPager',
+        });
+        $("#OrderItemsMisMatch").navGrid('#OrderItemsMisMatchPager', { add: false, edit: false, del: false, search: false, refresh: false });
+        $("#OrderItemsMisMatch").jqGrid('navButtonAdd', '#OrderItemsMisMatchPager', {
+            caption: "Export To Excel",
+            onClickButton: function () {
+                //var Sector = $("#Sector").val();
+                //var ContingentType = $("#contingentType").val();
+                //var Name = $("#Contingent").val();
+                //var Period = $("#Period").val();
+                //var Week = $("#Week").val();
+                var ExptType = 'Excel';
+                var searchItems = $('#Sector').val() + ',' + $('#contingentType').val() + ',' + $('#Contingent').val() + ',' + $('#Period').val() + ',' + $('#PeriodYear').val();
+                window.open("OrderitemsMisMatchJqGrid" + '?searchItems=' + searchItems + '&ExptType=' + ExptType + '&rows=9999' + '&sidx=' + '&sord=desc' + '&page=1');
+            }
+        });
+    });
+    $(function () {
+        FillSector();
+        FillContingent();
+        //FillPeriod();
+        FillLocation();
+        FillWeek();
+        FillPeriodYear();
+
+        $("#Sector").change(function () {
+            FillContingent($(this).val());
+        });
+        $("#Contingent").change(function () {
+            FillLocation($("#Sector").val(), $(this).val());
+
+            var Contigent = $("#Contingent").val();
+            if (Contigent != "") {
+                var result = Contigent.indexOf("FPU") > -1;
+                if (result == true) {
+                    $("#contingentType").val("FPU");
+                }
+                else
+                    $("#contingentType").val("MIL")
+            }
+        });
+        $("#PeriodYear").change(function () {
+            FillPeriod();
+        });
+        $("#Period").change(function () {
+            FillWeek($("#Period").val(),$("#PeriodYear").val());
+        });
+        //        $("#Week").change(function () {
+        //            FillPeriod($(this).val());
+        //        });
+    });
+    function FillSector() {
+        $.getJSON('@Url.Content("~/Masters/FillSectorbyUser/")',
+    function (modelData) {
+        var select = $("#Sector");
+        select.empty();
+        select.append($('<option/>',
+    {
+        value: "",
+        text: "Select Sector"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    function FillContingent(SectorCode) {
+        $.getJSON('@Url.Content("~/Masters/FillContingentbyUser/")?SectorCode=' + SectorCode,
+    function (modelData) {
+        var select = $("#Contingent");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Contingent"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillLocation(SectorCode, ContingentCode) {
+        $.getJSON('@Url.Content("~/Masters/FillLocationbyUser/")?SectorCode=' + SectorCode + '&ContingentCode=' + ContingentCode,
+    function (modelData) {
+        var select = $("#Location");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Location"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillPeriod() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriod/")',
+    function (modelData) {
+        var select = $("#Period");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Period"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillWeek(Period,PeriodYear) {
+        debugger;
+        $.getJSON('@Url.Content("~/Masters/FillWeek/")?Period=' + Period + "&PeriodYear=" + PeriodYear,
+    function (modelData) {
+        var select = $("#Week");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Week"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    function OrderItemsMisMatchSearch() {
+        debugger;
+        var Sector = $('#Sector').val();
+        var ContingentType = $('#contingentType').val();
+        var Name = $('#Contingent').val();
+        var Period = $('#Period').val();
+        var Week = $('#Week').val();
+        var searchItems = $('#Sector').val() + ',' + $('#contingentType').val() + ',' + $('#Contingent').val() + ',' + $('#Period').val() + ',' + $('#PeriodYear').val();
+        $("#OrderItemsMisMatch").setGridParam(
+            {
+                datatype: "json",
+                url:'@Url.Content("~/Reports/OrderitemsMisMatchJqGrid")?searchItems=' + searchItems,
+                //                url: '/Reports/ConsolidateInvoicejqGrid',
+                //                postData: { Sector: Sector, ContingentType: contingentType, Name: Contingent, Period: Period },
+                page: 0
+            }).trigger("reloadGrid");
+    }
+    function ResetSearch() {
+        var searchItems = "";
+        $('#Sector').val(0);
+        $('#Contingent').val(0);
+        $('#contingentType').val("");
+        $('#Period').val(0);
+        $('#Week').val(0);
+        $("#OrderItemsMisMatch").clearGridData();
+    }
+
+    function FillPeriodYear() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriodYear")',
+    function (modelData) {
+        var select = $("#PeriodYear");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Year"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+</script>
+
+<div id="divDocuments">
+    <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="7" class="PanelHeading">
+                <i class="icon-chevron-right"></i>&nbsp;Search&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="lblheader">
+                    Sector</label><br />
+                @Html.DropDownList("Sector", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Contingent Type</label><br />
+                @Html.DropDownList("contingentType", new SelectList(new[]
+                                          {
+                                              new{Value="",Text="Select One"},
+                                              new{Value="FPU",Text="FPU"},
+                                              new{Value="MIL",Text="MIL"}
+                                          },
+          "Value", "Text", ""), new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Contingent</label><br />
+                @Html.DropDownList("Contingent", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Period Year</label><br />
+                @Html.DropDownList("PeriodYear", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Period</label><br />
+                @Html.DropDownList("Period", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            
+            <td>
+                <input type="button" id="btnSearch" value="Search" onclick="OrderItemsMisMatchSearch(); return false;" />
+                <input type="reset" id="btnReset"
+                    value="Reset" onclick="ResetSearch(); return false;" />
+                @*<input type="button" id="search" value="Search" />
+                    <input type="button" id="reset" value="Reset" />*@
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div id="OrderItemsMisMatchDetails">
+    <table id="OrderItemsMisMatch">
+    </table>
+    <div id="OrderItemsMisMatchPager">
+    </div>
+</div>
+

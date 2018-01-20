@@ -1,0 +1,416 @@
+﻿
+/*file needed for the tabs to work*/
+body
+{
+    margin: 0px;
+    padding: 0px;
+}
+
+
+span.captions 
+{
+    font-family: Arial;
+    font-size: 11px;
+    height: 18px;
+    padding-left: 10px;
+    color: #333333;
+    vertical-align: middle;
+    padding-right: 5px;
+    padding-top:2px;
+}
+myclass1
+{
+	background: #cdc9c9;
+  	color:black;
+  	font-family: Arial;
+	font-size: 11px;
+	height: 15px; /* changed to 16px from 15px to match*/
+	padding-left: 5px;
+	vertical-align: top;
+	border: 1px;
+	border-color: #AAAAAA;
+	border-style: solid;
+}
+th
+{
+    font-family: Arial;
+    font-size: 11px;
+    color: #333333;
+    font-weight: bold;
+    background-image: url('../images/bg_tableheader.gif'); 
+    background-repeat: repeat-x;
+    background-position: bottom;
+    background-color: #F8EFD9;
+    height: auto;
+    border-color: #F8EFD9;
+    border-collapse: collapse;
+    border-style:none;
+}
+
+fieldset legend
+{
+    margin-left: 8px;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-family: Arial;
+    font-size: 12px;
+}
+fieldset
+{
+    background-color: White;
+    outline-color: #CCCCCC;
+}
+
+
+input.button  /* for buttons*/
+{
+    
+    border-style: none;
+    border-color: black;
+    border-width:1px;
+    border-style: solid;
+    color: #000000;
+    vertical-align: bottom;
+    font-family: Arial;
+    font-size: 11px;
+    width: auto;
+    background-color:#DFE1DC;
+    padding-bottom: 2px;
+    cursor: hand;
+    background-position: center;
+    text-align: center;
+    
+}
+
+.checkboxText
+{
+
+   font-family: Arial;
+   font-size: 11px;
+   padding-left: 10px;
+   padding-bottom:3px;
+
+}
+
+input.cbSmall
+{
+   color:Red;
+   font-size:17px;
+}
+
+tr.gridheader
+{
+    height: 25px;
+    background-image: url('../images/bg_tableheader.gif');
+    background-position: top;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #F1C483;
+    border-collapse: collapse;
+}
+
+
+
+tr.gridrow
+{
+    border-width: 1px;
+    border-style: solid;
+    border-color: #F1C483;
+    border-collapse: collapse;
+    height: 22px;
+}
+
+/* Merging from Final.CSS for OB Team Starts */
+.page
+{
+    padding:0;
+    margin:0;
+    min-width: 1000px;
+}
+input.text
+{
+	font-family: Arial;
+	font-size: 11px;
+	color: #333333;
+	height: 15px; /* changed to 16px from 15px to match*/
+	padding-left: 5px;
+	vertical-align: top;
+	border: 1px;
+	border-color: #AAAAAA;
+	border-style: solid;
+}
+
+span
+{
+	font-family: Arial;
+	font-size: 11px;
+	height: 18px;
+	color: #333333;
+	vertical-align:middle;
+	padding-right: 5px;
+	padding-left:6px;
+}
+
+select
+{
+	font-family: Arial;
+	font-size: 11px;
+	color: #333333;
+	height: 20px;
+	padding-left: 5px;
+	vertical-align: middle;
+	border: 1px;
+	border-color: #AAAAAA;
+	border-style: solid;
+	width:auto;
+}
+
+.tabbed_box
+{
+	border:0px solid #000;
+	padding-top:0px;
+}
+
+.tabbed_area 
+{   
+   border:0px solid #ffffff;   
+   background-color:#ffffff;  
+   margin:0px;
+   padding:0px; 
+} 
+
+ul.tabs 
+{   
+    margin:0px; padding:0px;   
+    margin-top:0px;   
+    margin-bottom:0px;   
+	border:0px solid #918070;
+	background-color:white;
+	height:30px;
+}
+
+ul.tabs li 
+{
+	list-style:none;
+	display:inline;
+	height:25px;
+    border-bottom-width: 0;
+    margin: 0 0 0 0;
+    border:0px solid #000;
+    height:30px;
+}	
+
+.tab_out1{vertical-align:text-bottom;padding:0px 4px 0px 0px;background:url('../../Content/tab-right.gif') no-repeat right;height:21px;}
+.tab_inner {vertical-align:text-bottom;padding:0px 0px 0px 3px;background:url('../../Content/tab-left.gif') no-repeat;}
+.tab_middle {font-family:Verdana;vertical-align:text-bottom;
+	font-size:11px;height:14px;padding:4px;margin:0px;background:url('../../Content/tab.gif') repeat-x;text-decoration:none;color:#000;}
+
+.tab_hover_outer {vertical-align:text-bottom;padding:0px 4px 0px 0px;background:url('../../Content/tab-hover-right.gif') no-repeat right;height:21px;}
+.tab_hover_inner {vertical-align:text-bottom;padding:0px 0px 0px 3px;background:url('../../Content/tab-hover-left.gif') no-repeat;}
+.tab_hover_middle {font-family:Verdana;vertical-align:text-bottom;
+	font-size:11px;height:14px;padding:4px;margin:0px;background:url('../../Content/tab-hover.gif') repeat-x;text-decoration:none;color:#000;}
+
+.tab_active_outer {vertical-align:text-bottom; padding:0px 4px 0px 0px;background:url('../../Content/tab-active-right.gif') no-repeat right;height:20px;}
+.tab_active_inner {vertical-align:text-bottom;padding:0px 0px 0px 3px;background:url('../../Content/tab-active-left.gif') no-repeat;}
+.tab_active_middle 
+{
+	font-family:Verdana;vertical-align:text-bottom;
+	font-size:11px;
+	height:30px;
+	padding:4px;
+	margin:0px;
+	background:url('../../Content/tab-active.gif') repeat-x;
+	background-color:#F3CC91;
+	overflow:hidden;
+	text-decoration:none;
+	color:#000;
+	}
+.content    
+{
+
+    background-color:#ffffff;   
+   /* padding:10px;  */
+    margin-top:3px; 
+    /*border:1px solid #999999; 
+    border-top:1px solid #999999;*/  
+}   
+#content_2, #content_3, #content_3, #content_4, #content_5, 
+#content_6, #content_7, #content_8, #content_9, #content_10, 
+#content_11 
+{ display:none; }  
+
+.SearchButton
+{
+	width: 20px; 
+	background-image: url(../../Content/SearchImage.jpg);
+	background-repeat:no-repeat;
+	color: #000000;
+	height: 19px;
+	vertical-align: bottom;
+	font-family: Arial;
+	font-size:11px;
+	background-color:Transparent;
+	border:none 0 ;
+	padding-left : 0px;
+	padding-bottom:2px;
+	cursor : hand;
+	background-position:right;
+	text-align:right;
+}
+.processingDialog
+{
+	background-color: #EFF0F5;
+	font-weight: bold;
+	color: #cc0033 !important;
+	font-family: Arial;
+	font-size: 14pt;
+}
+.headingLabel {
+	font-size: 11px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	color: #28496F;
+	font-weight: bold;
+	text-decoration: none;
+	text-align: left;
+}
+.informaton
+{
+	background-image:url(../../App_Themes/Default/images/info.png);
+	background-repeat:no-repeat;
+	height:32px;
+	width:32px;
+	display:block;
+	overflow:hidden;
+}
+.text_intable_header {
+	font-size: 11px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	color: #000000;
+	font-weight: bold;
+	text-transform: none;
+	font-variant: normal;
+	text-decoration: none;
+	font-style: normal;
+	line-height: normal;
+	letter-spacing: 0.04em;
+	text-align: left;
+}
+.processing
+{
+	background-image:url(../../App_Themes/Default/images/wait.gif);
+	background-repeat:no-repeat;
+	height:25px;
+	width:inherit;
+	text-indent:25px;
+	display:block;
+	overflow:hidden;
+}
+.bg_title
+{
+	background-repeat:no-repeat; 
+	background-position:right; 
+	background-image:url('../../Content/bg_titlebackground.gif');
+	padding:0px;
+	padding-bottom:7px;
+}
+
+/* - Included the div realated classes used by OB application 
+Please uncomment if you are ok to use these here.
+*/
+div.general
+{
+	width: 100%; padding-left: 0px; vertical-align: middle;
+}
+div.background
+{
+	position: absolute; 
+	top: 0px; left: 0px;
+	z-index: 150;
+	opacity: 0.8;
+	filter: alpha(opacity=60);
+	-moz-opacity: 0.8;
+	overflow: hidden;
+	display: none;
+	text-align: center;
+}
+
+div.displayerror
+{
+	color: Red; 
+	font-family: Arial; 
+	font: 12; 
+	height: 20px;
+}
+
+div.pager
+{
+	text-align: center; width: 100%;
+}	
+
+div.orderheader
+{
+	width: 100%; padding-left: 0px; vertical-align: middle;
+}
+
+h2.heading
+{
+	color:#666666;
+}
+a.anchor
+{
+	color:#5c87b2; text-decoration:none;
+}
+
+.screenheading
+{
+	padding-bottom:10px;	
+	padding-top:10px;	
+	padding-left:10px;	
+	font-size:15px;
+	font-family: Arial;
+	font-weight:bold;
+}
+
+/* BAM integration images css classes - start*/
+.bpmChart
+{
+      background-image:url('../../content/chart_organisation.png');
+      background-repeat:no-repeat;
+      position:relative;
+      height:16px;
+      width:16px;
+      display:inline-block;
+      overflow:hidden;
+      margin:1px;
+}
+.bpmChar
+{     background-image:url('../../content/Char_View.png');
+      background-repeat:no-repeat;
+      position:relative;
+      height:16px;
+      width:16px;
+      display:inline-block;
+      overflow:hidden;
+      margin:1px;
+}
+.bpmLayout
+{
+      background-image:url('../../content/layout.png');
+      background-repeat:no-repeat;
+      position:relative;
+      height:16px;
+      width:16px;
+      display:inline-block;
+      overflow:hidden;
+      margin:1px;
+}
+
+/* BAM integration images css classes - end*/
+pre{
+   font-family: Arial;
+    font-size: 11px;
+}
+
+
+
+/* Merging from Final.CSS for OB Team Ends */

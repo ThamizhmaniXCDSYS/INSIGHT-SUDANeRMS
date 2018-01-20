@@ -1,0 +1,324 @@
+﻿@{
+    ViewBag.Title = "Masters";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+@using (Html.BeginForm("Masters", "Home", FormMethod.Post))
+{
+
+    <table>
+        <tr>
+            <td style="padding-bottom: 10px">
+                <h3 id="title">
+                    Master
+                </h3>
+            </td>
+        </tr>
+        <tr>
+        <td></td>
+        </tr>
+    </table>       
+}
+<script type="text/javascript" language="javascript">
+
+    var column2 = "Region";
+    var column3 = "Action";
+
+    var idno = "";
+    var name = "";
+    var section = "";
+    var campname = "";
+    var grade = "";
+    var boardtype = "";
+
+    $(document).ready(function () {
+        jQuery("#list4").jqGrid({
+            mtype: 'POST',
+            height: '300',
+            width: '1250',
+            shrinkToFit: true,
+            rowNum: '10',
+            rowList: [5, 10, 20, 50, 100, 150, 200],
+            sortname: '',
+            sortorder: "",
+            viewrecords: true,
+            caption: 'Masters List',
+            afterShowForm: function () {
+                $("#lui_" + grid[0].id).hide();
+                $('body').prepend('<div class="ui-widget-overlay" id="My_list" style="left: 0px; top: 0px; width: 100%; height: 100%; position: fixed; z-index: 949; opacity: 0.3;"/>');
+            }
+        });
+    });
+
+    $("#ddlmaster").change(function () {
+        debugger;
+        $("#list4").GridUnload();
+        window.onload = loadgrid();
+        function loadgrid() {
+            debugger;
+            var e = document.getElementById("ddlmaster");
+            var masterval1 = '';
+            var masterval = e.options[e.selectedIndex].text;
+
+            if (masterval == "Region") {
+                masterval1 = "RegionCod";
+                document.getElementById('studentsearch').style.display = "none";
+            }
+            else if (masterval == "Country") {
+                masterval1 = "CountryCode";
+                document.getElementById('studentsearch').style.display = "none";
+            }
+            else if (masterval == 'Grade') {
+                masterval1 = "grad";
+                document.getElementById('studentsearch').style.display = "none";
+            }
+            else if (masterval == 'Section') {
+                masterval1 = "Section";
+                document.getElementById('studentsearch').style.display = "none";
+            }
+            else if (masterval == 'FeeStructureYear') {
+                masterval1 = "FeeStructureYear";
+                document.getElementById('studentsearch').style.display = "none";
+            }
+            else if (masterval == 'FeeType') {
+                masterval1 = "FeeType";
+                document.getElementById('studentsearch').style.display = "none";
+            }
+            else if (masterval == 'Campus') {
+                masterval1 = "Campus";
+                document.getElementById('studentsearch').style.display = "none";
+            }
+            else if (masterval == 'BloodGroup') {
+                masterval1 = "BloodGroup";
+                document.getElementById('studentsearch').style.display = "none";
+            }
+            else if (masterval == 'Relationships') {
+                masterval1 = "Relationships";
+                document.getElementById('studentsearch').style.display = "none";
+            }
+            else if (masterval == 'AcademicYear') {
+                masterval1 = "AcademicYear";
+                document.getElementById('studentsearch').style.display = "none";
+            }
+            else if (masterval == 'ModeOfPayment') {
+                masterval1 = "ModeOfPayment";
+                document.getElementById('studentsearch').style.display = "none";
+            }
+            else if (masterval == 'DocumentType') {
+                masterval1 = "DocumentType";
+                document.getElementById('studentsearch').style.display = "none";
+            }
+            else if (masterval == 'IssueGroup') {
+                masterval1 = "IssueGroup";
+                document.getElementById('studentsearch').style.display = "none";
+            }
+            else if (masterval == 'IssueType') {
+                masterval1 = "IssueType";
+                document.getElementById('studentsearch').style.display = "none";
+            }
+            else if (masterval == 'StudentDetails') {
+                masterval1 = "StudentDetails";
+                document.getElementById('studentsearch').style.display = "block";
+            }
+            else if (masterval == 'Role') {
+                masterval1 = "Role";
+                document.getElementById('studentsearch').style.display = "none";
+            }
+            else if (masterval == 'AssignmentName') {
+                masterval1 = "AssignmentName";
+                document.getElementById('studentsearch').style.display = "none";
+            }
+            else if (masterval == 'Application') {
+                masterval1 = "Application";
+                document.getElementById('studentsearch').style.display = "none";
+            }
+            var column = "";
+            var column1;
+
+            if (masterval == "Select Master") {
+                document.getElementById("title").innerHTML = "Master";
+            }
+            else {
+                document.getElementById("title").innerHTML = masterval + " Master";
+            }
+            if (masterval == 'Region' || masterval == 'Country' || masterval == 'Grade') {
+                if (masterval == 'Grade') {
+                    column = "['FormId','FormCode','FormCode','" + masterval + "', 'Code', 'Description', 'cby', 'cdat', 'udby', 'uddat']";
+                    column1 = "[{ name: 'FormId', index: 'FormId', width: 50, align: 'left' , editable: true ,hidden: true,  edittype: 'text',  key: true },{ name: 'FormCode', index: 'FormCode', width: 150, align: 'left', edittype: 'text', editable: true ,hidden: true, sortable: false },{ name: 'FrmCode', index: 'FrmCode', width: 150, align: 'center', sortable: false },{ name: '" + masterval1 + "', index: '" + masterval1 + "', width: 400, align: 'center',  editable: true , edittype: 'text', editrules: { required: true, edithidden: true},editoptions: { maxlength: 4} },{ name: 'gradcod', index: 'gradcod', width: 400, align: 'center',  editable: true, edittype: 'text', editrules: { required: true, edithidden: true},editoptions: { maxlength: 4} },{ name: 'graddesc', index: 'graddesc', width: 400, align: 'center',  editable: true, edittype: 'text', editrules: { required: true } ,editoptions: { maxlength: 20}},{ name: 'CreatedBy', index: 'CreatedBy' ,editable: true ,hidden: true,  edittype: 'text', key: true },{ name: 'CreatedDate', index: 'CreatedDate' ,editable: true ,hidden: true,  edittype: 'text', key: true },{ name: 'UpdatedBy', index: 'UpdatedBy' ,editable: true ,hidden: true,  edittype: 'text', key: true },{ name: 'UpdatedBy', index: 'UpdatedBy' ,editable: true ,hidden: true,  edittype: 'text', key: true }]";
+                }
+                else if (masterval == 'Region') {
+                    column = "['FormId','FormCode','FormCode','Code', 'Name', 'cby', 'cdat', 'udby', 'uddat']";
+                    //     alert(column); //|| masterval == 'Grade'
+                    column1 = "[{ name: 'FormId', index: 'FormId', width: 50, align: 'left', editable: true ,hidden: true, edittype: 'text', key: true, sortable: false},{ name: 'FormCode', index: 'FormCode', width: 150, align: 'left', edittype: 'text', editable: true ,hidden: true, sortable: false },{ name: 'FrmCode', index: 'FrmCode', width: 150, align: 'left', sortable: false },{ name: '" + masterval1 + "', index: '" + masterval1 + "', width: 400, align: 'left',  editable: true, edittype: 'text', editrules: { required: true, edithidden: true},editoptions: { maxlength: 4} },{ name: '" + masterval + "Name', index: '" + masterval + "Name', width: 400, align: 'left',  editable: true, edittype: 'text', editrules: { required: true, edithidden: true},editoptions: { maxlength: 18} },{ name: 'CreatedBy', index: 'CreatedBy' ,editable: true ,hidden: true,  edittype: 'text', key: true },{ name: 'CreatedDate', index: 'CreatedDate' ,editable: true ,hidden: true,  edittype: 'text', key: true },{ name: 'UpdatedBy', index: 'UpdatedBy' ,editable: true ,hidden: true,  edittype: 'text', key: true },{ name: 'UpdatedBy', index: 'UpdatedBy' ,editable: true ,hidden: true,  edittype: 'text', key: true }]";
+                }
+                else if (masterval == 'Country') {
+                    column = "['FormId','FormCode','FormCode','Code', 'Name', 'RegionCode', 'cby', 'cdat', 'udby', 'uddat']";
+                    //     alert(column); //|| masterval == 'Grade'
+                    column1 = "[{ name: 'FormId', index: 'FormId', width: 50, align: 'left', editable: true ,hidden: true, edittype: 'text', key: true, sortable: false },{ name: 'FormCode', index: 'FormCode', width: 150, align: 'left', edittype: 'text', editable: true ,hidden: true, sortable: false },{ name: 'FrmCode', index: 'FrmCode', width: 150, align: 'left', sortable: false },{ name: '" + masterval1 + "', index: '" + masterval1 + "', width: 400, align: 'left',  editable: true, edittype: 'text', editrules: { required: true, edithidden: true},editoptions: { maxlength: 4} },{ name: '" + masterval + "Name', index: '" + masterval + "Name', width: 400, align: 'left',  editable: true, edittype: 'text', editrules: { required: true, edithidden: true},editoptions: { maxlength: 18} },{ name: 'RegionCode', index: 'RegionCode', width: 400, align: 'left',  editable: true,edittype:'select', editoptions: { dataUrl: '/Home/Regionddl', style: 'width: 150px; height: 20px; font-size: 0.9em'}, editrules: {custom: true, custom_func: checkvalid} },{ name: 'CreatedBy', index: 'CreatedBy' ,editable: true ,hidden: true,  edittype: 'text', key: true },{ name: 'CreatedDate', index: 'CreatedDate' ,editable: true ,hidden: true,  edittype: 'text', key: true },{ name: 'UpdatedBy', index: 'UpdatedBy' ,editable: true ,hidden: true,  edittype: 'text', key: true },{ name: 'UpdatedBy', index: 'UpdatedBy' ,editable: true ,hidden: true,  edittype: 'text', key: true }]";
+                }
+            }
+            else if (masterval == 'Select Master') {
+                $("#list4").GridUnload();
+                //$("#gridpager").GridUnload();
+            }
+            else {
+                if (masterval == 'Relationships' || masterval == 'IssueGroup') {
+                    column = "['FormId','FormCode','FormCode','" + masterval + "', 'cby', 'cdat', 'udby', 'uddat']";
+                    column1 = "[{ name: 'FormId', index: 'FormId', width: 50, align: 'left', editable: true ,hidden: true, edittype: 'text', key: true , sortable: false},{ name: 'FormCode', index: 'FormCode', width: 150, align: 'left', edittype: 'text', editable: true ,hidden: true, sortable: false },{ name: 'FrmCode', index: 'FrmCode', width: 150, align: 'left', sortable: false },{ name: '" + masterval1 + "', index: '" + masterval1 + "', width: 400, align: 'left',  editable: true, edittype: 'text', editrules: { required: true, edithidden: true},editoptions: { maxlength: 15} },{ name: 'CreatedBy', index: 'CreatedBy' ,editable: true ,hidden: true,  edittype: 'text', key: true },{ name: 'CreatedDate', index: 'CreatedDate' ,editable: true ,hidden: true,  edittype: 'text', key: true },{ name: 'UpdatedBy', index: 'UpdatedBy' ,editable: true ,hidden: true,  edittype: 'text', key: true },{ name: 'UpdatedBy', index: 'UpdatedBy' ,editable: true ,hidden: true,  edittype: 'text', key: true }]";
+                }
+                else if (masterval == 'IssueType') {
+                    column = "['FormId','FormCode','FormCode','IssueGroup','" + masterval + "', 'cby', 'cdat', 'udby', 'uddat']";
+                    column1 = column1 = "[{ name: 'FormId', index: 'FormId', width: 50, align: 'left', editable: true ,hidden: true, edittype: 'text', key: true , sortable: false},{ name: 'FormCode', index: 'FormCode', width: 150, align: 'left', edittype: 'text', editable: true ,hidden: true, sortable: false },{ name: 'FrmCode', index: 'FrmCode', width: 150, align: 'left', sortable: false },{ name: 'IssueGroup', index: 'IssueGroup', width: 400, align: 'left',  editable: true, edittype:'select', editoptions: { dataUrl: '/Home/Issuetypeddl', style: 'width: 150px; height: 20px; font-size: 0.9em', maxlength: 4}, editrules: {custom: true, custom_func: checkvalid}},{ name: '" + masterval1 + "', index: '" + masterval1 + "', width: 400, align: 'left',  editable: true, edittype: 'text', editrules: {required: true, edithidden: true} ,editoptions: { maxlength: 15}},{ name: 'CreatedBy', index: 'CreatedBy' ,editable: true ,hidden: true,  edittype: 'text', key: true },{ name: 'CreatedDate', index: 'CreatedDate' ,editable: true ,hidden: true,  edittype: 'text', key: true },{ name: 'UpdatedBy', index: 'UpdatedBy' ,editable: true ,hidden: true,  edittype: 'text', key: true },{ name: 'UpdatedBy', index: 'UpdatedBy' ,editable: true ,hidden: true,  edittype: 'text', key: true }]";
+                }
+                else if (masterval == 'StudentDetails') {
+                    column = "['IdNo', 'Name', 'Campus Name', 'Section', 'Grade','Is Hosteller', 'Boarding Type','Id']";
+                    column1 = column1 = "[{ name: 'id_no', index: 'id_no', width: 120, align: 'left', editable: true ,edittype: 'text', key: true , editoptions: { maxlength: 10}},{ name: 'Name', index: 'Name', width: 150, align: 'left', edittype: 'text', editable: true, sortable: false ,editoptions: { maxlength: 20}},{ name: 'campus_name', index: 'campus_name', width: 400, align: 'left',  editable: true, edittype: 'select', width: 100, editoptions: { dataUrl: '/Home/Campusddl', style: 'width: 150px; height: 20px; font-size: 0.9em'}, editrules: {custom: true, custom_func: checkvalid} },{ name: 'Section', index: 'Section', width: 150, align: 'left', sortable: false , width: 80, edittype: 'select', editable: true, editoptions: { dataUrl: '/Home/Sectionddl', style: 'width: 150px; height: 20px; font-size: 0.9em'}, editrules: {custom: true, custom_func: checkvalid}},{ name: 'Grade', index: 'Grade', width: 400, align: 'left',  editable: true, edittype:'select', width: 50, editoptions: { dataUrl: '/Home/Gradeddl', style: 'width: 150px; height: 20px; font-size: 0.9em'}, editrules: {custom: true, custom_func: checkvalid}},{ name: 'IsHosteller', index: 'IsHosteller', formatter: showYesOrNo ,editable: true ,  edittype: 'select', key: true , width: 80, editoptions: {dataUrl: '/Home/Hostellerddl', style: 'width: 150px; height: 20px; font-size: 0.9em'}, editrules: {custom: true, custom_func: checkvalid}},{ name: 'BoardingType', index: 'BoardingType' ,editable: true ,  edittype: 'select', key: true , width: 80, editoptions: { dataUrl: '/Home/BoardingTypeddl', style: 'width: 150px; height: 20px; font-size: 0.9em'}, editrules: {custom: true, custom_func: checkvalid}},{ name: 'Id', index: 'Id', width: 120, align: 'left', hidden: true , key: true ,editable: true ,  edittype: 'text' , sortable: false}]";
+                }
+                else if (masterval == 'Campus') {
+                    column = "['FormId','FormCode','FormCode','Name','Code','Location','Country', 'cby', 'cdat', 'udby', 'uddat']";
+                    column1 = column1 = "[{ name: 'FormId', index: 'FormId', width: 50, align: 'left', editable: true ,hidden: true, edittype: 'text', key: true , sortable: false},{ name: 'FormCode', index: 'FormCode', width: 150, align: 'left', edittype: 'text', editable: true ,hidden: true, sortable: false },{ name: 'FrmCode', index: 'FrmCode', width: 150, align: 'left', sortable: false },{ name: 'Name', index: 'Name', width: 400, align: 'left',  editable: true, edittype: 'text', editrules: {required: true, edithidden: true} ,editoptions: { maxlength: 15}},{ name: 'Code', index: 'Code', width: 400, align: 'left',  editable: true, edittype: 'text', editrules: {required: true, edithidden: true} ,editoptions: { maxlength: 2}},{ name: 'Location', index: 'Location', width: 400, align: 'left',  editable: true,editoptions: { maxlength: 15}},{ name: 'Country', index: 'Country', width: 400, align: 'left',  editable: true,editoptions: { maxlength: 15}},{ name: 'CreatedBy', index: 'CreatedBy' ,editable: true ,hidden: true,  edittype: 'text', key: true },{ name: 'CreatedDate', index: 'CreatedDate' ,editable: true ,hidden: true,  edittype: 'text', key: true },{ name: 'UpdatedBy', index: 'UpdatedBy' ,editable: true ,hidden: true,  edittype: 'text', key: true },{ name: 'UpdatedBy', index: 'UpdatedBy' ,editable: true ,hidden: true,  edittype: 'text', key: true }]";
+                }
+                else if (masterval == 'Role') {
+                    column = "['Id','RoleCode','RoleName', 'Description', 'cby', 'cdat', 'udby', 'uddat']";
+                    column1 = "[{ name: 'Id', index: 'Id', width: 50, align: 'left', editable: true ,hidden: true, edittype: 'text', key: true , sortable: false},{ name: 'RoleCode', index: 'RoleCode', width: 150, align: 'left', edittype: 'text', editable: true , sortable: false  ,editoptions: { maxlength: 20}},{ name: 'RoleName', index: 'RoleName', width: 150, align: 'left',  editable: true,editoptions: { maxlength: 20} },{ name: 'Description', index: 'Description', width: 400, align: 'left',  editable: true, edittype: 'text' ,editoptions: { maxlength: 30}},{ name: 'CreatedBy', index: 'CreatedBy' ,editable: true ,hidden: true,  edittype: 'text', key: true },{ name: 'CreatedDate', index: 'CreatedDate' ,editable: true ,hidden: true,  edittype: 'text', key: true },{ name: 'UpdatedBy', index: 'UpdatedBy' ,editable: true ,hidden: true,  edittype: 'text', key: true },{ name: 'UpdatedBy', index: 'UpdatedBy' ,editable: true ,hidden: true,  edittype: 'text', key: true }]";
+                }
+                else if (masterval == 'AssignmentName') {
+                    column = "['Id','AssingmentName','AssignmentCode', 'Description', 'cby', 'cdat', 'udby', 'uddat']";
+                    column1 = "[{ name: 'Id', index: 'Id', width: 50, align: 'left', editable: true ,hidden: true, edittype: 'text', key: true , sortable: false},{ name: 'AssignmentName', index: 'AssignmentName', width: 150, align: 'left', edittype: 'text', editable: true , sortable: false  ,editoptions: { maxlength: 40}, editrules: { required: true}},{ name: 'AssignmentCode', index: 'AssignmentCode', width: 150, align: 'left',  editable: true,editoptions: { maxlength: 20} },{ name: 'Description', index: 'Description', width: 400, align: 'left',  editable: true, edittype: 'text' ,editoptions: { maxlength: 30}},{ name: 'CreatedBy', index: 'CreatedBy' ,editable: true ,hidden: true,  edittype: 'text', key: true },{ name: 'CreatedDate', index: 'CreatedDate' ,editable: true ,hidden: true,  edittype: 'text', key: true },{ name: 'UpdatedBy', index: 'UpdatedBy' ,editable: true ,hidden: true,  edittype: 'text', key: true },{ name: 'UpdatedBy', index: 'UpdatedBy' ,editable: true ,hidden: true,  edittype: 'text', key: true }]";
+                }
+                else if (masterval == 'Application') {
+                    column = "['Id','AppCode','Application Name']";
+                    column1 = "[{ name: 'Id', index: 'Id', width: 50, align: 'left', editable: true ,hidden: true, edittype: 'text', key: true},{ name: 'AppCode', index: 'AppCode', width: 150, align: 'left', edittype: 'text', editable: true, sortable: false  ,editoptions: { maxlength: 40}, editrules: { required: true}},{ name: 'AppName', index: 'AppName', width: 150, align: 'left',  editable: true,editoptions: { maxlength: 20} }]";
+                }
+                else {
+                    if (masterval == 'FeeStructureYear' || masterval == 'AcademicYear') {
+                        column = "['FormId','FormCode','FormCode','Year', 'Description', 'cby', 'cdat', 'udby', 'uddat']";
+                    }
+                    else {
+                        column = "['FormId','FormCode','FormCode','" + masterval + "', 'Description', 'cby', 'cdat', 'udby', 'uddat']";
+                    }
+                    column1 = "[{ name: 'FormId', index: 'FormId', width: 50, align: 'left' , editable: true ,hidden: true, edittype: 'text', key: true, sortable: false },{ name: 'FormCode', index: 'FormCode', width: 150, align: 'left', edittype: 'text', editable: true ,hidden: true, sortable: false },{ name: 'FormCode', index: 'FormCode', width: 150, align: 'left', sortable: false },{ name: '" + masterval1 + "', index: '" + masterval1 + "', width: 400, align: 'left',  editable: true, edittype: 'text', editrules: {required: true, edithidden: true},editoptions: { maxlength: 18} },{ name: '" + masterval + "desc', index: '" + masterval + "desc', width: 400, align: 'left',  editable: true, edittype: 'text', editrules: { required: true, edithidden: true} ,editoptions: { maxlength: 20}},{ name: 'CreatedBy', index: 'CreatedBy' ,editable: true ,hidden: true,  edittype: 'text', key: true },{ name: 'CreatedDate', index: 'CreatedDate' ,editable: true ,hidden: true,  edittype: 'text', key: true },{ name: 'UpdatedBy', index: 'UpdatedBy' ,editable: true ,hidden: true,  edittype: 'text', key: true },{ name: 'UpdatedBy', index: 'UpdatedBy' ,editable: true ,hidden: true,  edittype: 'text', key: true }]";
+                }
+            }
+
+            column = eval(column);
+            column1 = eval(column1);
+            ///   alert(column1);
+
+            jQuery("#list4").jqGrid({
+                url: '/Home/Matersjqgrid',
+                postData: { id: masterval, idno: document.getElementById("idno").value, name: document.getElementById("name").value, sect: section, cname: campname, grad: grade, btype: boardtype },
+                datatype: 'json',
+                mtype: 'GET',
+                height: '240',
+                width: '1250',
+                shrinkToFit: true,
+                colNames: column,
+                colModel: column1,
+                pager: '#gridpager',
+                rowNum: '10',
+                rowList: [5, 10, 20, 50, 100, 150, 200],
+                sortname: '',
+                sortorder: "",
+                labelswidth: 60,
+                viewrecords: true,
+                multiselect: true,
+                closeAfterEdit: true,
+                closeAfterAdd: true,
+                // loadonce: true, 
+                reloadAfterSubmit: true,
+                caption: 'Masters List'
+            });
+
+            jQuery("#list4").navGrid('#gridpager', { search: true, add: true, edit: true, del: false, modal: true, closeAfterEdit: true, closeAfterAdd: true, reloadAfterSubmit: true },
+
+            //edit options
+  {url: '/Home/Add' + masterval + '?test=edit', left: '10%', top: '10%', height: '50%', width: 400, labelswidth: 60, editCaption: "Edit " + masterval + "", closeAfterEdit: true, closeOnEscape: true, reloadAfterSubmit: true, beforeShowForm: function (frm) { $('#' + masterval1 + '').attr('readonly', 'readonly'); $('#id_no').attr('readonly', 'readonly'); } },
+
+            //add options
+  {url: '/Home/Add' + masterval + '', addtext: 'Add1', addCaption: 'Add Record', left: '10%', top: '10%', width: 400, addCaption: "Add " + masterval + "", labelswidth: 60, reloadAfterSubmit: true, beforeShowForm: function (frm) { $('#' + masterval1 + '').attr('readonly', false); $('#id_no').attr('readonly', false); } }
+
+  );
+        }
+
+        $("#search").click(function () {
+            $("#list4").GridUnload();
+
+            var e = document.getElementById("ddlSection");
+            section = e.options[e.selectedIndex].text;
+
+            var f = document.getElementById("ddlCampus");
+            campname = f.options[f.selectedIndex].text;
+
+            var g = document.getElementById("ddlGrade");
+            grade = g.options[g.selectedIndex].text;
+
+            var h = document.getElementById("ddlBoardingType");
+            boardtype = h.options[h.selectedIndex].text;
+            loadgrid();
+        });
+
+        $("#reset").click(function () {
+            $("#list4").GridUnload();
+
+            section = "";
+            campname = "";
+            grade = "";
+            boardtype = "";
+
+            document.getElementById("idno").value = "";
+            document.getElementById("name").value = "";
+            document.getElementById("ddlSection").value = "1";
+            document.getElementById("ddlCampus").value = "1";
+            document.getElementById("ddlGrade").value = "1";
+            document.getElementById("ddlBoardingType").value = "1";
+            loadgrid();
+        });
+
+        var antik = "";
+        function dubcheck(value, column) {
+            valid1(value, column);
+            alert(antik);
+            if (antik == 'true') {
+                return [true];
+            }
+            else {
+                return [false, "Duplicate " + column + " not Allowed"];
+            }
+            $('#result').val(null);
+        }
+
+        function valid1(value, column) {
+            $.post('/Home/Add' + masterval + '?test=edit&code=' + value + '', function (data) {
+                alert(value);
+                antik = data;
+                $('#result').val(data); //alert(antik);
+
+            });
+        }
+
+        function showYesOrNo(cellvalue, options, rowObject) {
+
+            if (cellvalue == 'True') {
+                return 'Yes';
+            }
+            else {
+                return 'No';
+            }
+        }
+
+        function checkvalid(value, column) {
+            if (value == 'nil') {
+                return [false, column + ": Field is Required"];
+            }
+            else {
+                return [true];
+            }
+        }
+
+        function test1() {
+            alert('test1');
+        }
+    });
+
+</script>
+

@@ -1,0 +1,2 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="INSIGHT.WCFServices.MenuService" CodeBehind="MenuService.svc.cs" %>
+<%@ ServiceHost Language="C#" Debug="true" Service="INSIGHT.WCFServices.Service1" CodeBehind="Service1.svc.cs" %>

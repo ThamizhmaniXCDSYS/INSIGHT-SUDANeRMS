@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.InsightFileUploads" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.InsightFileUploads, INSIGHT.Entities" table="InsightFileUploads" lazy="false" >
+    <id name="UploadFileId" column="UploadFileId"  type="Int64">
+      <generator class="identity" />
+    </id>
+    <property name="UploadFileCategory"  column="UploadFileCategory"  type="string" />
+
+
+    <property name="UploadFile"  column="UploadFile"  type="BinaryBlob" />
+    <property name="UploadFileName"  column="UploadFileName"  type="string" />
+    
+    <property name="CreatedBy"  column="CreatedBy"  type="string" />
+    <property name="CreatedDate"  column="CreatedDate"  type="datetime" />
+
+    <property name="ModifiedBy"  column="ModifiedBy"  type="string" />
+  <property name="ModifiedDate"  column="ModifiedDate"  type="datetime" />
+
+    <property name="ReferenceId"  column="ReferenceId"  type="string" />
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.User" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.User, INSIGHT.Entities" table="Users" lazy="false" >
+    <id name="Id" column="Id" type="Int32">
+      <generator class="identity" />
+    </id>
+    <property name="UserId" column="UserId" type="string"/>
+    <property name="EmployeeId" column="EmployeeId" type="string"/>
+    <property name="UserName" column="UserName" type="string"/>
+    <property name="Role" column="Role" type="string"/>
+    <property name="Type" column="Type" type="string"/>
+    <property name="SectorCode" column="SectorCode" type="string"/>
+    <property name="EmailId" column="EmailId" type="string"/>
+    <property name="IsActive" column="IsActive" type="bool"/>
+    <property name="CreatedDate" column="CreatedDate" type="datetime"/>
+    <property name="ModifiedDate" column="ModifiedDate" type="datetime"/>
+    <property name="CreatedBy" column="CreatedBy" type="string"/>
+    <property name="ModifiedBy" column="ModifiedBy" type="string"/>
+    <property name="UserType" column="UserType" type="string"/>
+    <property name="Password" column="Password" type="string"/>
+    <property name="PasswordQuestion" column="PasswordQuestion" type="string"/>
+    <property name="PasswordAnswer" column="PasswordAnswer" type="string"/>
+  </class>
+</hibernate-mapping>

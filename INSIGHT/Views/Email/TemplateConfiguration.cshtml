@@ -1,0 +1,536 @@
+﻿@model INSIGHT.Entities.EmailEntities.MailTemplate
+@{
+    ViewBag.Title = "TemplateConfiguration";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<script type="text/javascript">
+    $(function () {
+        $("#StartDate").datepicker({
+            altField: '#StartDate',
+            altFormat: 'dd/mm/yy',
+            format: 'mm-dd-yy'
+        });
+
+        if ('@Model.MailTemplateId' == 0) {
+            $('#Templatecode').val("REGTEMP00" + '@ViewBag.TemplateId');
+            $("#StartDate").val(" ");
+        }
+        else {
+            $('#Templatecode').val("REGTEMP00" + '@Model.MailTemplateId');
+            //document.getElementById("StartDate").value = 'ViewBag.SDate';
+        }
+        FillMailTemplate();
+
+        $("#MailTemplate").change(function () {
+            //To fill ReportName
+            if ($("#MailTemplate").val() != 0) {
+                $("#SourceItems").empty();
+                $("#DestinationItems").empty();
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Content("~/Email/FillTemplateName")?TemplateId=' + $("#MailTemplate").val(),
+                    success: function (data) {
+                        $("#ReportName").val(data);
+                    },
+                    dataType: "json"
+                });
+            }
+            else {
+                $("#ReportName").val(" ");
+                $("#SourceItems").empty();
+                $("#DestinationItems").empty();
+            }
+
+            $.getJSON('@Url.Content("~/Email/FillTemplateColumn")?TemplateId=' + $("#MailTemplate").val(),
+   function (modelData) {
+       var select = $("#SourceItems");
+       select.empty();
+       $.each(modelData, function (index, itemData) {
+
+           select.append($('<option/>',
+   {
+       value: itemData.Value,
+       text: itemData.Text
+   }));
+       });
+   });
+        });
+
+        $("#btnSubmit").click(function () {
+            var Emailval = "";
+            var Emailsrc = document.getElementById("EmailItems");
+            for (var count = 0; count < Emailsrc.options.length; count++) {
+                Emailsrc.options[count].selected = false;
+                Emailval = Emailval + Emailsrc.options[count].text + ',';
+            }
+            document.getElementById("EmailList").value = Emailval;
+
+            var Sourceval = "";
+            var Sourcesrc = document.getElementById("SourceItems");
+            for (var count = 0; count < Sourcesrc.options.length; count++) {
+                Sourcesrc.options[count].selected = false;
+                Sourceval = Sourceval + Sourcesrc.options[count].text + ',';
+            }
+            document.getElementById("SourceList").value = Sourceval;
+
+            var Destval = "";
+            var Destsrc = document.getElementById("DestinationItems");
+            for (var count = 0; count < Destsrc.options.length; count++) {
+                Destsrc.options[count].selected = false;
+                Destval = Destval + Destsrc.options[count].text + ',';
+            }
+            document.getElementById("DestinationList").value = Destval;
+
+            var ddlmail = document.getElementById("MailTemplate");
+            var selectedText = ddlmail.options[ddlmail.selectedIndex].text;
+            document.getElementById("MailTemplateName").value = selectedText;
+
+            document.getElementById("StartDate").value = $("#StartDate").val();
+            //document.getElementById("ScheduleDate").value = document.getElementById("StartDate").value;
+            
+        });
+
+
+        //$("#EmailList").ondblclick(function () {
+        //    alert();
+        //    var src = document.getElementById("EmailList");
+        //    alert(src.options[count].selected);
+        //});
+
+
+        if ('@Model' != null) {
+
+            if (!isEmptyorNull('@Model.EmailList')) {
+
+                var src = document.getElementById("EmailItems");
+                var arrlist = "@Model.EmailList".split(",");
+                for (var i = 0; i < arrlist.length; i++) {
+                    //if (src.options[count].selected == false) {
+                    var newOption = document.createElement("option");
+                    newOption.value = arrlist[i];
+                    newOption.text = arrlist[i];
+                    try {
+                        src.add(newOption, null); //Standard
+                    } catch (error) {
+                        src.add(newOption); // IE only
+                    }
+                    //}
+                }
+            }
+            if (!isEmptyorNull('@Model.SourceList')) {
+
+                var src = document.getElementById("SourceItems");
+                var arrlist = "@Model.SourceList".split(",");
+                for (var i = 0; i < arrlist.length; i++) {
+                    //if (src.options[count].selected == false) {
+                    var newOption = document.createElement("option");
+                    newOption.value = arrlist[i];
+                    newOption.text = arrlist[i];
+                    try {
+                        src.add(newOption, null); //Standard
+                    } catch (error) {
+                        src.add(newOption); // IE only
+                    }
+                    //} 
+                }
+            }
+            if (!isEmptyorNull('@Model.DestinationList')) {
+
+                var src = document.getElementById("DestinationItems");
+                var arrlist = "@Model.DestinationList".split(",");
+                for (var i = 0; i < arrlist.length; i++) {
+                    //if (src.options[count].selected == false) {
+                    var newOption = document.createElement("option");
+                    newOption.value = arrlist[i];
+                    newOption.text = arrlist[i];
+                    try {
+                        src.add(newOption, null); //Standard
+                    } catch (error) {
+                        src.add(newOption); // IE only
+                    }
+                    //}
+                }
+            }
+
+            //EmailList SourceList DestinationList
+        }
+
+        //$("#AddEmail").click(function () {
+        //    LoadPopupDynamicaly("/Email/MailList", $('#DivMailList'),
+        //    function () {
+        //    }, "", 500, 306, "Email Id List");
+        //});
+
+
+
+
+    });
+    //select one by one and move it to a Destination Listbox
+    function listboxMoveacross(sourceID, destID) {
+        var src = document.getElementById(sourceID);
+        var dest = document.getElementById(destID);
+
+        for (var count = 0; count < src.options.length; count++) {
+
+            if (src.options[count].selected == true) {
+                var option = src.options[count];
+
+                var newOption = document.createElement("option");
+                newOption.value = option.value;
+                newOption.text = option.text;
+                newOption.selected = true;
+                try {
+                    dest.add(newOption, null); //Standard
+                    src.remove(count, null);
+                } catch (error) {
+                    dest.add(newOption); // IE only
+                    src.remove(count);
+                }
+                count--;
+            }
+        }
+    }
+    function listbox_Remove(sourceID, code) {
+        var src = document.getElementById(sourceID);
+        for (var count = 0; count < src.options.length; count++) {
+            if (src.options[count].selected == true) {
+                var option = src.options[count];
+                //var newOption = document.createElement("option");
+                //newOption.value = option.value;
+                //newOption.text = option.text;
+                //newOption.selected = true;
+                src.remove(count);
+                count--;
+            }
+        }
+
+    }
+
+    //select all and move it to a Destination Listbox
+    function listbox_selectall(sourceID, destID, isSelect) {
+        var src = document.getElementById(sourceID);
+        var dest = document.getElementById(destID);
+        for (var count = 0; count < src.options.length; count++) {
+
+            if (isSelect == true) {
+                src.options[count].selected = isSelect;
+                var option = src.options[count];
+                var newOption = document.createElement("option");
+                newOption.value = option.value;
+                newOption.text = option.text;
+                newOption.selected = true;
+                try {
+                    dest.add(newOption, null); //Standard
+                    src.remove(count, null);
+                } catch (error) {
+                    dest.add(newOption); // IE only
+                    src.remove(count);
+                }
+                count--;
+            } else {
+                if (isSelect == false) {
+                    var option = dest.options[count];
+                    var newOption = document.createElement("option");
+                    newOption.value = option.value;
+                    newOption.text = option.text;
+                    newOption.selected = true;
+                    try {
+                        src.add(newOption, null); //Standard
+                        dest.remove(count, null);
+                    } catch (error) {
+                        src.add(newOption); // IE only
+                        dest.remove(count);
+                    }
+                    count--;
+                }
+            }
+        }
+    }
+    //To move UP and Down
+    function listbox_move(listID, direction) {
+        var listbox = document.getElementById(listID);
+        var selIndex = listbox.selectedIndex;
+
+        if (-1 == selIndex) {
+            alert("Please select an option to move.");
+            return;
+        }
+        var increment = -1;
+        if (direction == 'up')
+            increment = -1;
+        else
+            increment = 1;
+
+        if ((selIndex + increment) < 0 ||
+            (selIndex + increment) > (listbox.options.length - 1)) {
+            return;
+        }
+        var selValue = listbox.options[selIndex].value;
+        var selText = listbox.options[selIndex].text;
+        listbox.options[selIndex].value = listbox.options[selIndex + increment].value
+        listbox.options[selIndex].text = listbox.options[selIndex + increment].text
+        listbox.options[selIndex + increment].value = selValue;
+        listbox.options[selIndex + increment].text = selText;
+        listbox.selectedIndex = selIndex + increment;
+    }
+
+    function FillMailTemplate() {
+        $.getJSON('@Url.Content("~/Masters/FillMailTemplate/")',
+    function (modelData) {
+        var select = $("#MailTemplate");
+        select.empty();
+        select.append($('<option/>',
+    {
+        value: "",
+        text: "Select Template"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function AddEmail() {
+        LoadPopupDynamicaly('@Url.Content("~/Email/MailList")', $('#DivMailList'),
+        function () {
+        }, "", 500, 306, "Email Id List");
+    }
+
+    function EmailList(Ids) {
+        $("#DivMailList").dialog('close');
+        $.getJSON('@Url.Content("~/Account/GetEmailList")?Ids=' + Ids,
+   function (modelData) {
+       var select = $("#EmailItems");
+       select.empty();
+       $.each(modelData, function (index, itemData) {
+           select.append($('<option/>',
+           {
+               value: itemData.Value,
+               text: itemData.Text
+           }));
+       });
+   });
+
+    }
+
+    function ResetTemplate() {
+        $("#ReportName").val(" ");
+        $("#StartDate").val(" ");
+        document.getElementById("Daily").checked = false;
+        document.getElementById("Weekly").checked = false;
+        document.getElementById("Monthly").checked = false;
+        $("#NewTemplateName").val(" ");
+        $("#MailTemplate").val(0);
+        $("#EmailItems").empty();
+        $("#SourceItems").empty();
+        $("#DestinationItems").empty();
+    }
+
+    function BacktoList() {
+        window.location.href = '@Url.Action("TemplateManagement","Email")';
+    }
+
+</script>
+
+@using (Html.BeginForm("TemplateConfiguration", "Email", System.Web.Mvc.FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(model => model.EmailList);  
+    @Html.HiddenFor(model => model.SourceList); 
+    @Html.HiddenFor(model => model.DestinationList);
+    @Html.HiddenFor(model => model.MailTemplateName);
+    
+    @Html.Hidden("Temp");
+    <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="5" class="PanelHeading">
+                <i class="icon-chevron-right"></i>&nbsp;User Information&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td width="20%">
+                <label class="lblheader">
+                    User Ref No</label><br />
+               USR-@Html.DisplayFor(model => model.UserRefId)
+            </td>
+            <td width="20%">
+                <label class="lblheader">
+                    User Name</label><br />
+                @Html.DisplayFor(model => model.UserName)
+            </td>
+            <td width="20%">
+                <label class="lblheader">
+                    User Email</label><br />
+                @Html.DisplayFor(model => model.UserEmail)
+            </td>
+            <td width="20%">
+                <label class="lblheader">
+                    User Status</label><br />
+                @Html.DisplayFor(model => model.ActiveStatus)
+            </td>
+            <td width="20%">
+                <label class="lblheader">
+                    User Role</label><br />
+                @Html.DisplayFor(model => model.UserRole)
+            </td>
+        </tr>
+    </table>
+    <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="5" class="PanelHeading">
+                <i class="icon-chevron-right"></i>&nbsp;Template Configuration&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td valign="Top" width="53%">
+                <table width="100%">
+                    <tr>
+                        <td valign="Top" width="50%">
+                            <label class="lblheader">
+                                Mail Template code</label>
+                        </td>
+                        <td valign="Top" colspan="2">@Html.TextBox("Templatecode", null, new { @Class = "CSSTextBox", @Readonly = "Readonly" })</td>
+                    </tr>
+                    <tr>
+                        <td valign="Top">
+                            <label class="lblheader">
+                                Report Name</label>
+                        </td>
+                        <td valign="Top" colspan="2">@Html.TextBoxFor(model => model.ReportName, new { @Class = "CSSTextBox", @Readonly = "Readonly" })</td>
+                    </tr>
+                    <tr>
+                        <td valign="Top">
+                            <label class="lblheader">
+                                Start Date</label>
+                        </td>
+                        @if (ViewBag.MailTempDDL == "Yes")
+                            {
+                        <td valign="Top" colspan="2">@Html.TextBoxFor(model => model.StartDate, new { @Class = "CSSTextBox"})
+                          </td>
+                        }
+                        else{
+                        <td valign="Top" colspan="2">@Html.TextBoxFor(model => model.ScheduleDate, new { @Class = "CSSTextBox", @Readonly = "Readonly" })</td>
+                            @Html.HiddenFor(model => model.StartDate)
+                        }
+                    </tr>
+                    <tr>
+                        <td valign="Top">
+                            <label class="lblheader">
+                                Mail Sent Option</label>
+                        </td>
+                        <td valign="Top" colspan="2">
+                        @Html.CheckBoxFor(model => model.DailyMail, new { id = "Daily" })&nbsp;&nbsp;&nbsp;Daily&nbsp;&nbsp;&nbsp;
+                        @Html.CheckBoxFor(model => model.WeeklyMail, new { id = "Weekly" })&nbsp;&nbsp;&nbsp;Weekly&nbsp;&nbsp;&nbsp;
+                        @Html.CheckBoxFor(model => model.MonthlyMail, new { id = "Monthly" })&nbsp;&nbsp;&nbsp;Monthly
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" width="0%"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" width="0%"></td>
+                    </tr>
+                    <tr>
+                        <td valign="Top">
+                            <label class="lblheader">
+                                Template Name</label>
+                        </td>
+                        <td colspan="2" valign="Top">@Html.TextBoxFor(model => model.NewTemplateName, new { @Class = "CSSTextBox" })</td>
+                    </tr>
+                    <tr>
+                        <td valign="Top">
+                            <label class="lblheader">
+                                Email ID lists</label>
+                        </td>
+                        <td valign="Top">@Html.ListBox("EmailItems", new SelectList(Enumerable.Empty<SelectListItem>()), new { @style = "width: 240px; height:130px;" })
+                        </td>
+                        <td>
+                            <button type="button" onclick="AddEmail(); return false;"><span class="ui-icon ui-icon-plusthick"></span></button>
+                            <br />
+                            <button type="button" onclick="listbox_Remove('EmailItems', 'remove');"><span class="ui-icon ui-icon-minusthick"></span></button>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td valign="Top"></td>
+                        <td valign="Top">
+
+                            <input type="Submit" id="btnSubmit" value="Save / Update" />
+                            @if (ViewBag.MailTempDDL == "Yes")
+                            {
+                                <input type="reset" id="btnReset" value="Reset" onclick="ResetTemplate(); return false;" />
+                            }
+                            <input type="button" onclick="BacktoList(); return false;" value="Back to List" />
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td width="7%"></td>
+            <td valign="Top" width="40%">
+                <table>
+                    <tr>
+                        @if (ViewBag.MailTempDDL == "Yes")
+                        {
+                            <td width="100%">
+                                <label class="lblheader">
+                                    Mail Template</label><br />
+                                @Html.DropDownListFor(model => model.MailTemplateMasterId, new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList", id = "MailTemplate" })
+
+                            </td>
+                        }
+                        else
+                        {
+                            <td width="100%">
+                                <label class="lblheader">
+                                    Mail Template</label><br />
+                                @Html.TextBoxFor(model => model.MailTemplateName, new { @Class = "CSSTextBox", @Readonly = "Readonly" })
+                            </td>
+                            @Html.HiddenFor(model => model.MailTemplateMasterId);
+                            @Html.HiddenFor(model => model.MailTemplateId);
+                        }
+
+                    </tr>
+                    <tr>
+                        <td width="100%">
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            @Html.ListBox("SourceItems", new SelectList(Enumerable.Empty<SelectListItem>()), new { @style = "width: 300px; height:300px;" })
+                                        </td>
+
+                                        <td>
+                                            <button type="button" onclick="listbox_selectall('SourceItems','DestinationItems', true);"><span class="ui-icon ui-icon-seek-next"></span></button>
+                                            <br>
+                                            <button type="button" onclick="listboxMoveacross('SourceItems', 'DestinationItems');"><span class="ui-icon ui-icon-triangle-1-e"></span></button>
+                                            <br>
+                                            <button type="button" onclick="listboxMoveacross('DestinationItems', 'SourceItems');"><span class="ui-icon ui-icon-triangle-1-w"></span></button>
+                                            <br>
+                                            <button type="button" onclick="listbox_selectall('DestinationItems','SourceItems', true);"><span class="ui-icon ui-icon-seek-prev"></span></button>
+                                        </td>
+                                        <td>@Html.ListBox("DestinationItems", new SelectList(Enumerable.Empty<SelectListItem>()), new { @style = "width: 300px; height:300px;" }) </td>
+                                        <td>
+                                            <button type="button" onclick="listbox_move('DestinationItems', 'up');"><span class="ui-icon ui-icon-triangle-1-n"></span></button>
+                                            <br>
+                                            <button type="button" onclick="listbox_move('DestinationItems', 'down');"><span class="ui-icon ui-icon-triangle-1-s"></span></button>
+                                            <br>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+
+
+        </tr>
+    </table>
+}
+<div id="DivMailList" title="MailList"></div>
+
+

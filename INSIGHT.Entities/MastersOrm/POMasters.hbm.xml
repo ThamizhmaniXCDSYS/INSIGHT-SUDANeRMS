@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.POMasters" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.POMasters, INSIGHT.Entities" table="POMasters" lazy="false" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="identity" />
+    </id>
+    <property name="POType" column="POType" type= "string"/>
+    <property name="PONumber" column="PONumber" type= "string"/>
+    <property name="Period" column="Period" type= "string"/>
+    <property name="PeriodYear" column="PeriodYear" type= "string"/>
+    <property name="CreatedBy" column="CreatedBy" type= "string"/>
+    <property name="CreatedDate" column="CreatedDate" type= "datetime"/>
+    <property name="ModifiedBy" column="ModifiedBy" type= "string"/>
+    <property name="ModifiedDate" column="ModifiedDate" type= "datetime"/>
+  </class>
+</hibernate-mapping>

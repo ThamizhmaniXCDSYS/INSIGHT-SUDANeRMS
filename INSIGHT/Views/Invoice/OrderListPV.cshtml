@@ -1,0 +1,69 @@
+﻿@{
+    Layout = null;
+}
+<script language="javascript" type="text/javascript">
+    $(function () {
+        GetOrdList();
+    });
+    function GetOrdList() {
+        $('#OrdList').jqGrid('GridUnload');
+        jQuery("#OrdList").jqGrid({
+            mtype: 'GET',
+            url: '@Url.Content("~/Orders/OrdersListJQGrid")?searchItems=' + "@ViewBag.SearchItems",
+            //postData: { userid: usersrch, appcd: appcdsrch, rlcd: rlcdsrch, depcd: depcdsrch, brncd: brncdsrch, Id: Id },
+            datatype: 'json',
+            height: '250',
+            width: '775',
+            shrinkToFit: true,
+            colNames: ['OrderId', 'ControlId', 'Name', 'Location', 'StartDate', 'EndDate', 'Troops', 'TotalAmount', 'LineItemsOrdered', 'KgOrderedWOEggs', 'EggsWeight', 'TotalWeight', 'LocationCMR', 'ControlCMR'],
+            colModel: [
+                      { name: 'OrderId', index: 'OrderId', key: true, hidden: true },
+                      { name: 'ControlId', index: 'ControlId', hidden: true },
+                      { name: 'Name', index: 'Name' },
+                      { name: 'Location', index: 'Location' },
+                      { name: 'StartDate', index: 'StartDate', hidden: true },
+                      { name: 'EndDate', index: 'EndDate', hidden: true },
+                      { name: 'Troops', index: 'Troops' },
+                      { name: 'TotalAmount', index: 'TotalAmount' },
+                      { name: 'LineItemsOrdered', index: 'LineItemsOrdered', hidden: true },
+                      { name: 'KgOrderedWOEggs', index: 'KgOrderedWOEggs', hidden: true },
+                      { name: 'EggsWeight', index: 'EggsWeight', hidden: true },
+                      { name: 'TotalWeight', index: 'TotalWeight' },
+                      { name: 'LocationCMR', index: 'LocationCMR' },
+                      { name: 'ControlCMR', index: 'ControlCMR' },
+                      ],
+            pager: '#OrdListPager',
+            rowNum: '50',
+            rowList: [50, 100, 150, 200],
+            sortname: 'OrderId',
+            sortorder: "ASC",
+            viewrecords: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;PO List',
+            multiselect: true
+        });
+        jQuery("#OrdList").jqGrid('navGrid', '#OrdListPager', { edit: false, add: false, del: false }),
+        $("#OrdList").append("<input type='button' value='Add Material List' style='height:20px;font-size:-3'/>");
+        $("input", "#OrdList").click(function () {
+            var RowList = $("#OrdList").jqGrid('getGridParam', 'selarrrow');
+            alert(RowList);
+            $.ajax({
+                url: '@Url.Content("~/Invoice/AddOrderList")?InvoiceId=' + "@ViewBag.InvoiceId" + "&OrderIds=" + RowList,
+                type: 'POST',
+                dataType: 'json',
+                success: function (data) {
+                    if (data == true) {
+                        $("#OrderListPV").dialog('close');
+                        LoadSetGridParam($('#InvoiceOrdersList'), "/Invoice/InvoiceOrdersListJQGrid?InvoiceId=" + "@ViewBag.InvoiceId" + "&OrdersId=" + RowList);
+                        LoadSetGridParam($('#DeliveriesPerOrdQtyList'), "/Invoice/DeliveriesPerOrdQtyListJQGrid?OrdersId=" + RowList);
+                        LoadSetGridParam($('#DeliveryExceedList'), "/Invoice/DeliveryExceedListJQGrid?OrdersId=" + RowList);
+                    }
+                }
+            });
+        });
+        $('#OrdList').jqGrid('filterToolbar', { searchOnEnter: true, enableClear: false, afterSearch: function () { $('#OrdList').clearGridData(); } });
+        }
+</script>
+    <table id="OrdList"></table>
+    <div id="OrdListPager">
+    </div>
+

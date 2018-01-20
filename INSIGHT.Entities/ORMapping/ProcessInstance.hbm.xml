@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping assembly="INSIGHT.Entities" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="ProcessInstance" table="ProcessInstance" lazy="true" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="native" />
+    </id>
+    <property name="TemplateId" column="TemplateId" type="Int64" />
+    <property name="CreatedBy" column="CreatedBy" type="string" />
+    <property name="Status" column="Status" type="string"  />
+    <property name="DateCreated" column="DateCreated" type="datetime"  />
+    <!--<property name="DifferenceInHours" column="DifferenceInHours" type="datetime"  />-->
+    <!--<many-to-one name="WorkFlowTemplate" class="INSIGHT.Entities.WorkFlowTemplate, INSIGHT.Entities"
+                     column="TemplateId" fetch="join" lazy="false" cascade="none" />-->
+  </class>
+</hibernate-mapping>

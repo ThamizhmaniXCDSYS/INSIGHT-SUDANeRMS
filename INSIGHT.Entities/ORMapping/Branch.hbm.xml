@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.Branch" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.Branch, INSIGHT.Entities" table="Branch" lazy="false" >
+    <id name="Id" column="Id">
+      <generator class="identity" />
+    </id>
+    <property name="BranchCode" column="BranchCode" type="string" not-null="true" />
+    <property name="BranchName" column="BranchName" type="string" not-null="true" />
+  </class>
+</hibernate-mapping>
+

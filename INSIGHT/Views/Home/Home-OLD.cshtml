@@ -1,0 +1,107 @@
+﻿@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+  //  Layout = null;
+}
+
+<head>
+	<meta charset="utf-8" />
+    <link href="../../Content/Homedesign/css/style.css" rel="stylesheet" type="text/css" />
+    <link href="../../Content/Homedesign/css/flexslider.css" rel="stylesheet" type="text/css" />
+    <script src="../../Content/Homedesign/js/jquery.flexslider-min.js" type="text/javascript"></script>
+    <script src="../../Content/Homedesign/js/functions.js" type="text/javascript"></script>
+</head>
+		
+@using (Html.BeginForm("Home", "Home"))
+{
+    <h3>
+        Home</h3>
+    <br />
+    <table width="100%">
+        <tr>
+            <td id="chart2">
+                <div id="ColumnChartDiv">
+                </div>
+            </td>
+            <td id="Column3DLineDY">
+                <div id="PieChartDiv">
+                </div>
+            </td>
+            <td id="chart1">
+                <div id="FunnelChartDiv">
+                </div>
+            </td>
+            <td>
+                <div id="WeeklyIssueStatus1Div">
+                </div>
+            </td>
+        </tr>
+    </table>
+    <table class="InnerTable" width="100%">
+        <tr>
+            <td width="60%">
+                <fieldset>
+                <div style="background-color: #B6B6B6; height: 100%; width: 100%; font-style: italic;
+                        text-align: left;">
+                        Description of the system
+                        <br />
+                    </div>
+                    <p><br />
+                        GCC SERVICES is a well-respected and renowned integrated remote site services company, offering construction, camp services, and catering. Among our clients we have a reputation for providing customized and innovative solutions with a personal touch. We offer an all-round capability of strong resources, know-how, corporate support and experience in supporting remote site operations and, above all, assurance of a quality service at a competitive price. We provide you home away from home.<br /><br />
+                        We are managed by the same dedicated and innovative international management team that has formed the company in Kuwait in 2003 and grown it since. Today our scope of services extends across the full spectrum of Remote Site support services, from facility design and construction to leasing, operations management, and maintenance of civilian and military infrastructure.<br /><br />
+
+We provide full real life support services, skilled and unskilled manpower supply, as well as facilities management, utilities and environmental services to a wide range of sites in the Oil & Gas, Defense, Mining, and Construction sectors.<br /><br />
+                    </p>
+                    <br />
+                    
+                </fieldset>
+            </td>
+            <td width="40%">
+                <fieldset>
+                <div style="background-color: #B6B6B6; height: 100%; width: 100%; font-style: italic;
+                        text-align: Left">
+                        Support Numbers & Id's
+                    </div>
+                    <table width="100%" class="InnerTable">
+                                <tr>
+                                    <td style="text-align: left" >
+                                      info@gccservices.com
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: left" >
+                                        	+971 (0) 4-4552600
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: left" ><br />
+                                        Supporthyd24by7@gmail.com
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: left" >
+                                        +917207464869
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td ><br />
+                                        <div style="background-color: #B6B6B6; height: 100%; width: 100%; font-style: italic;
+                                            text-align: left;">
+                                            Corporate Headquarters 
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr ><td valign="top"><br />Address&nbsp;:	33rd floor, Mazaya Business Avenue, Plot No. AA1, Jumeirah Lakes Towers</td></tr>
+                                <tr valign="top"><td >Mail&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:	P.O. Box 634367 Dubai, United Arab Emirates</td></tr>
+                                <tr valign="top"><td >Fax&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:	+971 (0) 4-4552699</td></tr>
+                                <tr valign="top"><td >Web&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:	www.gccservices.com</td></tr>
+                            </table>
+                    <br />
+                    <br>
+
+                    
+                </fieldset>
+            </td>
+        </tr>
+    </table>
+}

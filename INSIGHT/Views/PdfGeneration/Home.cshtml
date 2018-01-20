@@ -1,0 +1,8 @@
+﻿@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<h2>Home</h2>
+<h2>Press the link to print a customer list to PDF</h2>
+
+@Html.ActionLink("Inv-FPU-WK-32-34", "Print", null, new { target = "_blank" })

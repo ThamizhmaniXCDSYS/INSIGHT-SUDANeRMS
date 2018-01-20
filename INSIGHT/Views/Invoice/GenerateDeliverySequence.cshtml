@@ -1,0 +1,175 @@
+﻿@{
+    ViewBag.Title = "GenerateDeliverySequence";
+}
+<style>
+    #dvLoading {
+        /*background: url("../../../Images/Sun.gif") no-repeat center center;*/
+        background: url("../Images/Sun.gif") no-repeat center center;
+        height: 100%;
+        width: 100%;
+        position: fixed;
+        z-index: 1000;
+        left: 0%;
+        top: 15%;
+        margin: -25px 0 0 -25px;
+    }
+</style>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#dvLoading').hide() // hide it initially.
+        .ajaxStart(function () {
+            $(this).show(); // show on any Ajax event.
+        })
+         .ajaxStop(function () {
+             $(this).hide(); // hide it when it is done.
+         });
+
+
+        //function GenerateDeliverySequence() {
+        //    var PeriodYear = $('#PeriodYear').val();
+        //    var Period = $('#Period').val();
+        //    alert(PeriodYear + '   ' + Period)
+        //    debugger;
+        //    $.ajax({
+        //        url: 'Invoice/GenerateOrderQtyAndInvQtySequence?Period=' + Period + '&PeriodYear=' + PeriodYear,
+        //        type: 'post',
+        //        datatype: 'json',
+        //        success: function (data) { }
+
+
+        //    });
+        //}
+    });
+    function GenerateDeliverySequence() {
+        var PeriodYear = $('#txtPeiodYear').val();
+        var Period = $('#txtPeriod').val();
+        var Week = $('#txtWeek').val();
+        if (PeriodYear == "")
+        {
+            ErrMsg('PeriodYear Required!');
+            return false;
+        }
+        if (Period == "") {
+            ErrMsg('Period Required!');
+            return false;
+        }
+        if (Week == "") {
+            ErrMsg('Week Required!');
+            return false;
+        }
+
+        $.ajax({
+            // url: 'Invoice/GenerateOrderQtyAndInvQtySequence?Period=' + Period + '&PeriodYear=' + PeriodYear,
+            url: '@Url.Content("~/Invoice/GenerateOrderQtyAndInvQtySequence")?Period=' + Period + '&PeriodYear=' + PeriodYear + '&Week=' + Week,
+            type: 'POST',
+            dataType: 'json',
+            success: function (data) {
+                $('#dvLoading').hide();
+                //window.location.href = "/Orders/PODMasterListPage";
+                InfoMsg('Delivery sequence generated successfully');
+            },
+            loadError: function (xhr, status, error) {
+                msgError = $.parseJSON(xhr.responseText).Message;
+                ErrMsg(msgError, function () { });
+            }
+        });
+
+    }
+
+    $(function () {
+        FillPeriodYear();
+        $("#txtPeiodYear").change(function () {
+            FillPeriod($(this).val());
+        });
+        $("#txtPeriod").change(function () {
+            FillWeek($("#txtPeiodYear").val(), $(this).val());
+        });
+     });
+    function FillPeriodYear() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriodYear")',
+    function (modelData) {
+        var select = $("#txtPeiodYear");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Year"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    function FillPeriod() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriod/")',
+    function (modelData) {
+        var select = $("#txtPeriod");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Period"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    function FillWeek(PeriodYear, Period) {
+        $.getJSON('@Url.Content("~/Masters/FillWeekbyPeriodandPeriodYear/")?PeriodYear=' + PeriodYear + '&Period=' + Period,
+     function (modelData) {
+         var select = $("#txtWeek");
+         select.empty();
+         select.append($('<option/>', { value: "", text: "Select Week" }));
+         $.each(modelData, function (index, itemData) {
+             select.append($('<option/>', { value: itemData.Value, text: itemData.Text }));
+         });
+     });
+    }
+</script>
+@using (Html.BeginForm())
+{
+    
+    <table width="100%">
+        <tr>
+            <td><label class="lblheader">
+                    Period Year</label></td>
+            <td>
+              
+             @Html.DropDownList("txtPeiodYear", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+                  </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="lblheader">
+                    Period</label></td>
+            <td>
+                @Html.DropDownList("txtPeriod", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })</td>
+        </tr>
+        <tr>
+            <td>
+                <label class="lblheader">
+                    Week</label></td>
+            <td>
+                @Html.DropDownList("txtWeek", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })</td>
+        </tr>
+        <tr>
+            <td colspan="2">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <input type="button" onclick="GenerateDeliverySequence(); return false;" value="Generate Sequence" />
+            </td>
+        </tr>
+    </table>
+}
+<div id="dvLoading">
+</div>

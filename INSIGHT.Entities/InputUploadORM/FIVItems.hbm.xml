@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.InputUploadEntities.FIVItems" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.InputUploadEntities.FIVItems, INSIGHT.Entities" table="FIVItems" lazy="false" >
+    <id name="FIVItems_Id" column="FIVItems_Id" type="Int64">
+      <generator class="identity" />
+    </id>
+    <property name="OrderId" column="OrderId" type="Int64" />
+    <property name="ControlId" column="ControlId" type="string" />
+    
+    <property name="UNCode" column="UNCode" type="Int64" />
+    <property name="SubstituteItemCode" column="SubstituteItemCode" type="Int64" />
+    <property name="OrderedQuantity" column="OrderedQuantity" type="decimal" />
+    <property name="DeliveredQuantity" column="DeliveredQuantity" type="decimal" />
+    <property name="AcceptedQuantity" column="AcceptedQuantity" type="decimal" />
+    <property name="UnitPrice" column="UnitPrice" type="decimal" />
+    <property name="TotalPrice" column="TotalPrice" type="decimal" />
+    
+    <property name="CreatedBy" column="CreatedBy" type="string"/>
+    <property name="CreatedDate" column="CreatedDate" type="datetime"/>
+    <property name="ModifiedBy" column="ModifiedBy" type="string"/>
+    <property name="ModifiedDate" column="ModifiedDate" type="datetime"/>
+    <property name="IsValid" column="IsValid" type="string"/>
+    <property name="RequestId" column="RequestId" type="Int64" />
+    <property name="FIVStatus" column="FIVStatus" type="string"/>
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping assembly="INSIGHT.Entities.PODItemsCount_vw" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.PODItemsCount_vw, INSIGHT.Entities" table="PODItemsCount_vw" lazy="false" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="identity" />
+    </id>
+    <property name="Sector">
+      <column name="Sector" sql-type="varchar" not-null="false" />
+    </property>
+    <property name="Contingent">
+      <column name="Contingent" sql-type="varchar" not-null="false" />
+    </property>
+    <property name="Period">
+      <column name="Period" sql-type="varchar" not-null="false" />
+    </property>
+    <property name="PODId">
+      <column name="PODId" sql-type="Int34" not-null="false" />
+    </property>
+    <property name="ItemsCount">
+      <column name="ItemsCount" sql-type="Int32" not-null="false" />
+    </property>
+  </class>
+</hibernate-mapping>

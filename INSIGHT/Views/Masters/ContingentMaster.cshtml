@@ -1,0 +1,71 @@
+@{
+    ViewBag.Title = "Contingent";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#ContingentMaster').jqGrid({
+            url: '@Url.Content("~/Masters/ContingentMasterJqGrid")',
+            datatype: 'Json',
+            type: 'GET',
+            autowidth: true,
+            height: 300,
+            colNames: ['Id', 'Control No', 'Type of Unit', 'Sector Code', 'Nationality', 'Delivery Point', 'Location Code', 'Troop Strength', 'Delivery Mode', 'Distance', 'Sector Name', 'Description', 'Contingent ID'],
+            colModel: [
+            { name: 'Id', index: 'Id', hidden: true, editable: true, key: true },
+            { name: 'ContingentControlNo', index: 'ContingentControlNo', editable: true },
+            { name: 'TypeofUnit', index: 'TypeofUnit', editable: true },
+            { name: 'SectorCode', index: 'SectorCode', editable: true },
+            { name: 'Nationality', index: 'Nationality', editable: true },
+            { name: 'DeliveryPoint', index: 'DeliveryPoint', editable: true },
+            { name: 'LocationCode', index: 'LocationCode', editable: true },
+            { name: 'TroopStrength', index: 'TroopStrength', editable: true, editrules: { integer: true} },
+            { name: 'DeliveryMode', index: 'DeliveryMode', editable: true },
+            { name: 'Distance', index: 'Distance', editable: true, editrules: { integer: true} },
+            { name: 'SectorName', index: 'SectorName', editable: true },
+            { name: 'DeliveryModeDescription', index: 'DeliveryModeDescription', editable: true },
+            { name: 'ContingentID', index: 'ContingentID', editable: true, editrules: { integer: true } }
+            ],
+            rowNum: 20000,
+            rowList: [], // disable page size dropdown
+            pgbuttons: false, // disable page control like next, back button
+            pgtext: null, // disable pager text like 'Page 0 of 10'
+            sortname: 'Id',
+            sortorder: 'Asc',
+            pager: '#ContingentMasterPager',
+            multiselect: true,
+            viewrecords: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Contingent List'
+            
+        });
+        $('#ContingentMaster').jqGrid('filterToolbar', { searchOnEnter: true });
+        jQuery("#ContingentMaster").jqGrid('navGrid', '#ContingentMasterPager', { add: true, edit: true, del: true, search: false, refresh: true },
+        //Edit options
+            {width: 'auto', url: '@Url.Content("~/Masters/EditContingentMaster/")', left: '10%', top: '10%', height: '50%', width: 400 },
+        //Add options
+            {width: 'auto', url: '@Url.Content("~/Masters/AddContingentMaster/")', left: '10%', top: '10%', height: '50%', width: 400 },
+        //Delete options
+        //{width: 'auto', url: '/Masters/DeleteContingentMaster/', left: '10%', top: '10%', height: '50%', width: 400, beforeShowForm: function (params) { var gsr = $("#ContingentMaster").getGridParam('selrow'); var sdata = $("#ContingentMaster").getRowData(gsr); return { Id: sdata.Id} } } );
+            {width: 'auto', url: '@Url.Content("~/Masters/DeleteContingentMaster/")', left: '10%', top: '10%', height: '50%', width: 400,
+            beforeShowForm: function (params) { selectedrows = $("#ContingentMaster").jqGrid("getGridParam", "selarrrow"); return { Id: selectedrows} }
+            });
+
+        $("#ContingentMaster").jqGrid('navButtonAdd', '#ContingentMasterPager', {
+            caption: "Export To Excel",
+            onClickButton: function () {
+                var ExptType = 'Excel';
+
+                window.open('ContingentMasterJqGrid?ExptType=' + ExptType + '&rows=9999' + '&sidx=' + '&sord=desc' + '&page=1');
+            }
+        });
+    });
+</script>
+<table width="100%"><tr>
+<td>
+<table id="ContingentMaster">
+</table>
+<div id="ContingentMasterPager">
+</div>
+</td>
+</tr></table>

@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.Orders" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.Orders, INSIGHT.Entities" table="Orders" lazy="false" >
+    <id name="OrderId" column="OrderId">
+      <generator class="identity" />
+    </id>
+    <property name="Name" column="Name" type="string" />
+    <property name="ContingentType" column="ContingentType" type="string" />
+    <property name="Location" column="Location" type="string" />
+    <property name="ControlId" column="ControlId" type="string" />
+    <property name="StartDate" column="StartDate" type="datetime" />
+    <property name="EndDate" column="EndDate" type="datetime" />
+    <property name="Troops" column="Troops" type="decimal" />
+    <property name="TotalAmount" column="TotalAmount" type="decimal" />
+    <property name="LineItemsOrdered" column="LineItemsOrdered" type="decimal" />
+
+    <property name="KgOrderedWOEggs" column="KgOrderedWOEggs" type="decimal" />
+    <property name="EggsWeight" column="EggsWeight" type="decimal" />
+    <property name="TotalWeight" column="TotalWeight" type="decimal" />
+    <property name="CreatedBy" column="CreatedBy" type="string" />
+
+    <property name="CreatedDate" column="CreatedDate" type="datetime" />
+    <property name="LocationCMR" column="LocationCMR" type="decimal" />
+    <property name="ControlCMR" column="ControlCMR" type="decimal" />
+    <property name="Period" column="Period" type="string" />
+    <property name="Sector" column="Sector" type="string" />
+    <property name="Week" column="Week" type="Int64" />
+    <property name="PeriodYear" column="PeriodYear" type="string" />
+    <property name="ExpectedDeliveryDate" column="ExpectedDeliveryDate" type="datetime" />
+    <property name="ModifiedBy" column="ModifiedBy" type="string" />
+    <property name="ModifiedDate" column="ModifiedDate" type="datetime" />
+
+    <property name="InvoiceId" column="InvoiceId" type="Int64" />
+    <property name="PODId" column="PODId" type="Int64" />
+    <property name="FinalStatus" column="FinalStatus" type="string" />
+    <property name="OpeningStatus" column="OpeningStatus" type="string" />
+    <property name="InvoiceStatus" column="InvoiceStatus" type="string" />
+    <property name="CalYear" column="CalYear" type="Int64" />
+
+    <property name="DocumentData"  type="Serializable" >
+      <column name="DocumentData" sql-type="varbinary(MAX)" length="2147483647"></column>
+    </property>
+
+    <property name="DP" column="DP" type="string" />
+    <property name="FFOId" column="FFOId" type="Int64" />
+    <property name="PurchGr" column="PurchGr" type="string" />
+    <property name="ShipIns" column="ShipIns" type="string" />
+    <property name="RelReq" column="RelReq" type="string" />
+    <property name="Mission" column="Mission" type="string" />
+    <property name="ContingentId" column="ContingentId" type="Int64" />
+    <!--<loader query-ref="GetOrderList"/>-->
+  </class>
+
+  <sql-query name="GetOrderList" callable="true">
+    <query-param name="Period" type="string"/>
+    <query-param name="PeriodYear" type="string"/>
+    <return class="INSIGHT.Entities.Orders, INSIGHT.Entities">
+      <return-property name="OrderId" column="OrderId" />
+      <return-property name="Name" column="Name" />
+      <return-property name="ContingentType" column="ContingentType" />
+      <return-property name="Location" column="Location" />
+      <return-property name="ControlId" column="ControlId" />
+      <return-property name="StartDate" column="StartDate" />
+      <return-property name="EndDate" column="EndDate" />
+      <return-property name="Troops" column="Troops" />
+      <return-property name="TotalAmount" column="TotalAmount" />
+      <return-property name="LineItemsOrdered" column="LineItemsOrdered" />
+      <return-property name="KgOrderedWOEggs" column="KgOrderedWOEggs" />
+      <return-property name="EggsWeight" column="EggsWeight" />
+      <return-property name="TotalWeight" column="TotalWeight" />
+      <return-property name="CreatedBy" column="CreatedBy" />
+      <return-property name="CreatedDate" column="CreatedDate" />
+      <return-property name="LocationCMR" column="LocationCMR" />
+      <return-property name="ControlCMR" column="ControlCMR" />
+      <return-property name="Period" column="Period" />
+      <return-property name="Sector" column="Sector" />
+      <return-property name="Week" column="Week" />
+      <return-property name="PeriodYear" column="PeriodYear" />
+      <return-property name="ExpectedDeliveryDate" column="ExpectedDeliveryDate" />
+      <return-property name="ModifiedBy" column="ModifiedBy" />
+      <return-property name="ModifiedDate" column="ModifiedDate" />
+      <return-property name="InvoiceId" column="InvoiceId" />
+      <return-property name="PODId" column="PODId" />
+      <return-property name="FinalStatus" column="FinalStatus" />
+      <return-property name="OpeningStatus" column="OpeningStatus" />
+      <return-property name="InvoiceStatus" column="InvoiceStatus" />
+      <return-property name="CalYear" column="CalYear" />
+      <return-property name="DocumentData" column="DocumentData" />
+
+      <return-property name="DP" column="DP" />
+      <return-property name="FFOId" column="FFOId" />
+      <return-property name="PurchGr" column="PurchGr" />
+      <return-property name="ShipIns" column="ShipIns" />
+      <return-property name="RelReq" column="RelReq" />
+      <return-property name="Mission" column="Mission" />
+      <return-property name="ContingentId" column="ContingentId" />
+    </return>
+    <![CDATA[ 
+     EXEC GetOrderList @Period=:Period, @PeriodYear=:PeriodYear
+    ]]>
+  </sql-query>
+
+</hibernate-mapping>

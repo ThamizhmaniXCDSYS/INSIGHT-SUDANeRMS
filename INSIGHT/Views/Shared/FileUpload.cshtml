@@ -1,0 +1,73 @@
+﻿<style>
+    .CSSDropDownList
+    {
+        background-color: white;
+        border: #006699 1px solid;
+        color: #666666;
+        font: normal 11px Verdana,Arial,sans-serif;
+        height: 20px;
+        width: 154px;
+    }
+    .WithoutBorder
+    {
+        border: none;
+        font: normal 11px Verdana,Arial,sans-serif; /*padding-top: 5px;*/
+        margin: 5px 0px 5px 0px;
+    }
+    
+    .WithoutBorder th
+    {
+        font: bold 11px Arial;
+        border: none;
+        text-align: left;
+        padding-top: 5px;
+    }
+    
+    .WithoutBorder td
+    {
+        font: normal 11px Arial;
+        border: none;
+        text-align: left;
+        padding-top: 5px;
+    }
+    
+    
+    fieldset
+    {
+        margin: 5px 0px 5px 0px; /* margin: 0.5em 0px;*/ /*padding: 0.1em;*/
+        border: 1px solid #ccc;
+        padding-bottom: 5px;
+        padding-top: 0px;
+        padding-left: 0px;
+    }
+</style>
+<table class="WithBorderOnly" width="100%" id="DocumentsSection">
+    <tr>
+        @*<th>
+            Document Type
+        </th>*@
+        <th>
+            Document Name
+        </th>
+    </tr>
+    <tr>
+        @*<td width="50%">
+            @Html.DropDownList("ddlDocumentType", new SelectList(new[]
+                                          {
+                                              new{Value=" ",Text="Select One"},
+                                              new{Value="2",Text="Letter"},
+                                              new{Value="3",Text="Mail"},
+                                          },
+          "Value", "Text", ""), new { @Class = "CSSDropDownList" })
+        </td>*@
+        <td>
+            <input type="file" id="file1" name="file1" />
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <input type="submit" value="Upload" name="DocUpload" id="Upload" />
+        </td>
+    </tr>
+    
+</table>

@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.DashboardEntities.LossBecauseOfSubstitutions_vw" namespace="INSIGHT.Entities.DashboardEntities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.DashboardEntities.LossBecauseOfSubstitutions_vw, INSIGHT.Entities" table="LossBecauseOfSubstitutions_vw" lazy="false" >
+    <id name="Id" column="Id">
+      <generator class="identity" />
+    </id>
+    <property name="OrderId" column="OrderId" type="Int64" />
+    <property name="ControlId" column="ControlId" type="string" />
+    <property name="Name" column="Name" type="string" />
+    <property name="ContingentType" column="ContingentType" type="string" />
+    <property name="Period" column="Period" type="string" />
+    <property name="Sector" column="Sector" type="string" />
+
+    <property name="Week" column="Week" type="Int64" />
+    <property name="Location" column="Location" type="string" />
+    <property name="PeriodYear" column="PeriodYear" type="string" />
+    <property name="UNCode" column="UNCode" type="Int64" />
+    <property name="ItemName" column="ItemName" type="string" />
+    <property name="SubstituteItemCode" column="SubstituteItemCode" type="Int64" />
+    <property name="SubstituteItemName" column="SubstituteItemName" type="string" />
+    <property name="ActualItemPrice" column="ActualItemPrice" type="decimal" />
+    
+    <property name="SubstituteItemPrice" column="SubstituteItemPrice" type="decimal" />
+    <property name="InvoiceValue" column="InvoiceValue" type="decimal" />
+    <property name="Status" column="Status" type="string" />
+    <property name="InvoiceQty" column="InvoiceQty" type="decimal" />
+    <property name="ActualItemValue" column="ActualItemValue" type="decimal" />
+    <property name="SubsItemValue" column="SubsItemValue" type="decimal" />
+    <property name="Loss" column="Loss" type="decimal" />
+    <property name="DeliveredQty" column="DeliveredQty" type="decimal"/>
+
+
+  </class>
+</hibernate-mapping>

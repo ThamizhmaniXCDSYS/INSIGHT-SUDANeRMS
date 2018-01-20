@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping assembly="INSIGHT.Entities.TicketingSystem" namespace="INSIGHT.Entities.TicketingSystem" xmlns="urn:nhibernate-mapping-2.2">
+	<class name="TicketDashBoardReport_vw" table="TicketDashBoardReport_vw" lazy="true" >
+		<id name="Id" column="Id" type="Int64">
+			<generator class="identity" />
+		</id>
+		<property name="Performer" column="Performer" type="string"/>
+		<property name="GeneralAvailable" column="GeneralAvailable" type="Int64"/>
+		<property name="RejectedCount" column="RejectedCount" type="Int64"/>
+		<property name="Assigned" column="Assigned" type="Int64"/>
+		<property name="Resolved" column="Resolved" type="Int64"/>
+	<property name="Completed" column="Completed" type="Int64"/>
+	<property name="CreatedDate" column="CreatedDate" type="datetime"/>
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{63EB6B62-7466-46F0-BE24-F60E9C5C3F8B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>INSIGHT.Component</RootNamespace>
+    <AssemblyName>INSIGHT.Component</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DashboardBC.cs" />
+    <Compile Include="DocumentsBC.cs" />
+    <Compile Include="EmailBC.cs" />
+    <Compile Include="InventoryManagementBC.cs" />
+    <Compile Include="InvoicBC.cs" />
+    <Compile Include="MastersBC.cs" />
+    <Compile Include="MenuBC.cs" />
+    <Compile Include="OrdersBC.cs" />
+    <Compile Include="ProcessFlowBC.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserBC.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CustomAuthentication\CustomAuthentication.csproj">
+      <Project>{EA42D1E4-C34D-466A-B0B9-9AD807A89F73}</Project>
+      <Name>CustomAuthentication</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\INSIGHT.Entities.TicketingSystem\INSIGHT.Entities.TicketingSystem.csproj">
+      <Project>{26B16E10-350A-4E9A-BD1D-2570E2AD6EC5}</Project>
+      <Name>INSIGHT.Entities.TicketingSystem</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\INSIGHT.Entities\INSIGHT.Entities.csproj">
+      <Project>{4cb29d13-96e5-4b5a-ae56-ffc281fdb21d}</Project>
+      <Name>INSIGHT.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\INSIGHT.ServiceContract.TicketingSystem\INSIGHT.ServiceContract.TicketingSystem.csproj">
+      <Project>{307DD518-DFEF-4CA3-A6AD-29C11A81A588}</Project>
+      <Name>INSIGHT.ServiceContract.TicketingSystem</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\INSIGHT.ServiceContract\INSIGHT.ServiceContract.csproj">
+      <Project>{FBC70C4E-8FFC-42D0-8BBA-8CB2911AC191}</Project>
+      <Name>INSIGHT.ServiceContract</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PersistenceFactory\PersistenceFactory.csproj">
+      <Project>{B71FE695-8737-44F0-9702-D546C096594E}</Project>
+      <Name>PersistenceFactory</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

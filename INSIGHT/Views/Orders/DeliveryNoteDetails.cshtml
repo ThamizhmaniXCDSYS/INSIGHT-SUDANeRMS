@@ -1,0 +1,129 @@
+﻿@model INSIGHT.Entities.UploadRequest
+@{
+    ViewBag.Title = "DeliveryNoteDetails";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<style>
+    .ui-jqgrid tr.jqgrow td {
+        font-size: 10px;
+    }
+</style>
+@using (Html.BeginForm())
+{
+    <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="6" class="PanelHeading">
+                <i class="icon-chevron-right"></i>&nbsp; DeiveryNote Details
+            </td>
+        </tr>
+        <tr>
+            <td width="16%">
+                <label class="lblheader">
+                    RequestName</label><br />
+                @Html.DisplayFor(m => m.RequestName)
+                @Html.HiddenFor(m => m.RequestName)
+
+            </td>
+            <td width="16%">
+                <label class="lblheader">
+                    Period</label>
+                <br />
+                @Html.DisplayFor(m => m.Period)
+                @Html.HiddenFor(m => m.Period)
+            </td>
+            <td width="16%">
+                <label class="lblheader">
+                    Period Year</label>
+                <br />
+                @Html.DisplayFor(m => m.PeriodYear)
+                @Html.HiddenFor(m => m.PeriodYear)
+            </td>
+            <td width="16%">
+                <label class="lblheader">
+                    Created By</label>
+                <br />
+                @Html.DisplayFor(m => m.CreatedBy)
+                @Html.HiddenFor(m => m.CreatedBy)
+            </td>
+            <td width="16%">
+                <label class="lblheader">
+                    Created Date</label>
+                <br />
+                @String.Format("{0:dd/MM/yyyy }", Model.CreatedDate)
+                @*                        @Html.DisplayFor(m => m.EndDate)*@
+                @Html.HiddenFor(m => m.CreatedDate)
+            </td>
+            <td width="16%">
+
+                <input type="button" id="btnBack" value="Back To List" onclick="BackToList(); return false;" />
+            </td>
+        </tr>
+    </table>
+
+}
+<table id="DNMaster">
+</table>
+<div id="DNMasterPager">
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        jQuery("#DNMaster").jqGrid({
+            mtype: 'GET',
+            url: '@Url.Content("~/Orders/GCCDeliveryNoteJqGrid")?RequestId=' + '@Model.RequestId',
+            datatype: 'json',
+            height: '250',
+            width: '1200',
+            shrinkToFit: false,
+            colNames: ['Id', 'ControlId', 'Planned DeliveryDate', 'Delivery Number', 'Delivery Mode', 'ActualDelivery Date', 'UNCode', 'Commodity', 'Order Qty', 'SubstituteItem Code', 'SubstituteItem Name', 'Delivered Qty', 'Accepted Qty', 'Remaining Qty', 'Authorized', 'Period', 'Period Year', 'Created By', 'Created Date', 'Storer Key'],
+            colModel: [
+                { name: 'Id', index: 'Id', key: true, hidden: true },
+                { name: 'ControlId', index: 'ControlId', width: 300 },
+                { name: 'ApprovedDeliveryDate', index: 'ApprovedDeliveryDate', search: false },
+                { name: 'DeliveryNoteName', index: 'DeliveryNoteName' },
+                { name: 'DeliveryMode', index: 'DeliveryMode', search: false },
+                { name: 'ReceivedDate', index: 'ReceivedDate', search: false },
+                { name: 'UNCode', index: 'UNCode', search: false },
+                { name: 'Commodity', index: 'Commodity', width: 300, search: false },
+                { name: 'OrderedQty', index: 'OrderedQty', search: false },
+                { name: 'SubstituteItemCode', index: 'SubstituteItemCode', search: false },
+                { name: 'SubstituteItemName', index: 'SubstituteItemName', width: 300, search: false },
+                { name: 'DeliveredQty', index: 'DeliveredQty', search: false },
+                { name: 'ReceivedQty', index: 'ReceivedQty', search: false },
+                { name: 'RemainingQty', index: 'RemainingQty', search: false },
+                { name: 'Authorized', index: 'Authorized', search: false },
+                { name: 'Period', index: 'Period', search: false },
+                { name: 'PeriodYear', index: 'PeriodYear', search: false },
+                { name: 'CreatedBy', index: 'CreatedBy', search: false },
+                { name: 'CreatedDate', index: 'CreatedDate', search: false },
+                { name: 'StorerKey', index: 'StorerKey', search: false }
+            ],
+            pager: '#DNMasterPager',
+            rowNum: '100',
+            rowList: [100,500,1000,2000], // disable page size dropdown
+            sortname: 'ControlId',
+            sortorder: "Asc",
+            viewrecords: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Substitution Master'
+        });
+        $('#DNMaster').jqGrid('filterToolbar', { searchOnEnter: true, enableClear: false, afterSearch: function () { $('#DNMaster').clearGridData(); } });
+        $("#DNMaster").navGrid('#DNMasterPager', { add: false, edit: false, del: false, search: false, refresh: false }, {}, {}, {}, {});
+        $("#DNMaster").jqGrid('navButtonAdd', '#DNMasterPager', {
+            caption: "Export To Excel",
+            onClickButton: function () {
+                debugger;
+                var ExptType = "Excel";
+                var RequestId = '@Model.RequestId';
+                window.open("GCCDeliveryNoteJqGrid" + '?ExptType=' + ExptType + '&RequestId=' + RequestId + '&rows=9999' + '&sidx=' + '&sord=desc' + '&page=1');
+            }
+        });
+
+    });
+    function BackToList() {
+
+
+        window.location.href = '@Url.Content("~/Orders/GCCRevisedDNUpload")';
+
+
+    }
+
+</script>

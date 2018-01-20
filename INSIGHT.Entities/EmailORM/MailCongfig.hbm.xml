@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping assembly="INSIGHT.Entities.EmailEntities.MailConfig" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.EmailEntities.MailConfig, INSIGHT.Entities" table="MailTemplate" lazy="false" >
+    <id name="MailTemplateId"  column="MailTemplateId"  type="Int64" >
+      <generator class="identity" />
+    </id>
+    <property name="MailTemplateMasterId"  column="MailTemplateMasterId"  type="Int64" />
+    <property name="MailTemplateName"  column="MailTemplateName"  type="string" />
+    <property name="MailTemplateDescription"  column="MailTemplateDescription"  type="string" />
+    <property name="NewTemplateName"  column="NewTemplateName"  type="string" />
+    <property name="ReportName"  column="ReportName"  type="string" />
+    <property name="MailColumnId"  column="MailColumnId"  type="Int64" />
+    <property name="MailColumns"  column="MailColumns"  type="string" />
+    
+    <property name="SourceList"  column="SourceList"  type="string" />
+    <property name="DestinationList"  column="DestinationList"  type="string" />
+    <property name="EmailList"  column="EmailList"  type="string" />
+   
+    <property name="DailyMail"  column="DailyMail"  type="bool" />
+    <property name="WeeklyMail"  column="WeeklyMail"  type="bool" />
+    <property name="MonthlyMail"  column="MonthlyMail"  type="bool" />
+    
+    <property name="StartDate"  column="StartDate"  type="datetime" />
+    <property name="ScheduleNextDate"  column="ScheduleNextDate"  type="datetime" />
+    
+    <property name="QueryString"  column="QueryString"  type="string" />
+    <property name="UserName"  column="UserName"  type="string" />
+    <property name="UserRefId"  column="UserRefId"  type="Int64" />
+    <property name="CreatedBy"  column="CreatedBy"  type="string" />
+    <property name="CreatedDate"  column="CreatedDate"  type="datetime" />
+    <property name="ModifiedBy"  column="ModifiedBy"  type="string" />
+    <property name="ModifiedDate"  column="ModifiedDate"  type="datetime" />
+    
+    <property name="IsActive"  column="IsActive"  type="bool" />
+
+    <bag batch-size="20" name="MailActivityList" lazy="false" cascade="none">
+        <key column="MailTemplateId"/>
+        <one-to-many class="INSIGHT.Entities.EmailEntities.MailActivity, INSIGHT.Entities"/>
+      </bag>
+   
+     <bag batch-size="20" name="MailTemplateMasterList" lazy="false" cascade="none">
+      <key column="MailTemplateMasterId"/>
+       <one-to-many class="INSIGHT.Entities.EmailEntities.MailTemplateMaster, INSIGHT.Entities"/>
+    </bag>
+
+    <bag batch-size="20" name="MailColumnList" lazy="false" cascade="none">
+      <key column="MailColumnId"/>
+      <one-to-many class="INSIGHT.Entities.EmailEntities.MailColumn, INSIGHT.Entities"/>
+    </bag>
+
+  </class>
+</hibernate-mapping>

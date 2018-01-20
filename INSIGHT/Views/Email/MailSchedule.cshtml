@@ -1,0 +1,171 @@
+﻿@{
+    ViewBag.Title = "MailSchedule";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+
+<script type="text/javascript">
+    function EmailScheduleList() {
+        debugger;
+        $('#EmailScheduleList').jqGrid('GridUnload');
+        jQuery("#EmailScheduleList").jqGrid({
+            mtype: 'GET',
+            url: '@Url.Content("~/Email/MailScheduleListJQGrid")',
+            datatype: 'json',
+            height: '335',
+            width: '1200',
+            shrinkToFit: true,
+            colNames: ['S.No', 'Mail Template', 'Mail Period', 'Start Date', 'User Name', 'User Email', 'Created By', 'Active Status'],
+            colModel: [
+                { name: 'Id', index: 'Id', key: true},
+                { name: 'MailTemplate', index: 'MailTemplate', width: 400 },
+                { name: 'MailPeriod', index: 'MailPeriod' },
+                { name: 'ScheduleDate', index: 'ScheduleDate' },
+                { name: 'Username', index: 'Username' },
+                { name: 'Usermailid', index: 'Usermailid', width: 300 },
+                { name: 'Createdby', index: 'Createdby' },
+                { name: 'IsActive', index: 'IsActive' }
+            ],
+
+            pager: '#EmailScheduleListPager',
+            rowNum: '100',
+            rowList: [100, 200, 300, 400],
+            sortname: 'Id',
+            viewrecords: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Email Management Grid',
+            multiselect: true,
+            viewrecords: true
+        });
+        $('#EmailScheduleList').jqGrid('filterToolbar', { searchOnEnter: true, enableClear: false, afterSearch: function () { $('#RecentDownloadsList').clearGridData(); } });
+        jQuery("#EmailScheduleList")
+              .navGrid('#EmailScheduleListPager', { edit: false, add: false, del: false, search: false, refresh: false })
+
+    }
+
+    $(function () {
+        EmailScheduleList();
+        FillMailPeriod();
+        FillMailTemplate();
+
+        $("#UserName").autocomplete({
+            source: function (request, response) {
+                $.getJSON('@Url.Content("~/Account/GetUserIds")?term=' + request.term, function (data) {
+                    response(data);
+                });
+            },
+            minLength: 1,
+            delay: 100
+        });
+
+    });
+
+
+    function FillMailPeriod() {
+        $.getJSON('@Url.Content("~/Masters/FillMailPeriod/")',
+    function (modelData) {
+        var select = $("#MailPeriod");
+        select.empty();
+        select.append($('<option/>',
+    {
+        value: "",
+        text: "Select Period"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillMailTemplate() {
+        $.getJSON('@Url.Content("~/Masters/FillMailTemplate/")',
+    function (modelData) {
+        var select = $("#MailTemplate");
+        select.empty();
+        select.append($('<option/>',
+    {
+        value: "",
+        text: "Select Template"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+
+    function EmailSearch() {
+        var searchItems = $('#MailPeriod').val() + ',' + $('#MailTemplate').val() + ',' + $('#IsActive').val() + ',' + $('#UserName').val();
+        $("#EmailScheduleList").setGridParam(
+            {
+                datatype: "json",
+                url: '@Url.Content("~/Email/MailScheduleListJQGrid")?searchItems=' + searchItems,
+                page: 0
+            }).trigger("reloadGrid");
+    }
+    function ResetEamilSearch() {
+        $('#MailPeriod').val(0);
+        $('#MailTemplate').val(0);
+        $('#IsActive').val(0);
+        $('#UserName').val("");
+        $("#EmailScheduleList").clearGridData();
+    }
+
+    function NewUserConfig() {
+        window.location.href = '@Url.Action("EmailConfiguration","Email")';
+    }
+</script>
+<div id="divDocuments">
+    <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="5" class="PanelHeading">
+                <i class="icon-chevron-right"></i>&nbsp;Email Schedule Search&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td width="17%">
+                <label class="lblheader">
+                     Mail Period</label><br />
+                @Html.DropDownList("MailPeriod", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td width="17%">
+                <label class="lblheader">
+                    Mail Template</label><br />
+                @Html.DropDownList("MailTemplate", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td width="17%">
+                <label class="lblheader">
+                    Active Status</label><br />
+                @Html.DropDownList("IsActive", new SelectList(new[]
+                                          {
+                                              new{Value="",Text="Select One"},
+                                              new{Value="True",Text="Active"},
+                                              new{Value="False",Text="Deactivated"}
+                                          },
+          "Value", "Text", ""), new { @Class = "CSSDropDownList" })
+            </td>
+            <td width="17%">
+                <label class="lblheader">
+                    User name</label><br />
+                <input type="text" id="UserName" name="Username" Class = "CSSTextBox" />
+            </td>
+            <td width="32%">
+                <input type="button" id="btnSearch" value="Search" onclick="EmailSearch(); return false;" /><input
+                    type="reset" id="btnReset" value="Reset" onclick="ResetEamilSearch(); return false;" />
+                <input type="button" id="NewUser" value="New User Config" onclick="NewUserConfig(); return false;" />
+            </td>
+        </tr>
+    </table>
+</div>
+
+<table id="EmailScheduleList">
+</table>
+<div id="EmailScheduleListPager"></div>

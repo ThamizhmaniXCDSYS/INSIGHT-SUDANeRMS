@@ -1,0 +1,72 @@
+﻿@{
+    ViewBag.Title = "CurrencyMaster";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+
+<table width="100%">
+    <tr>
+        <td>
+            <table id="CurrencyMasterList">
+            </table>
+            <div id="CurrencyMasterListPager">
+            </div>
+        </td>
+    </tr>
+</table>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#CurrencyMasterList').jqGrid({
+            url: '@Url.Content("~/Masters/CurrencyMasterJqGrid")',
+            datatype: 'Json',
+            type: 'GET',
+            autowidth: true,
+            height: 300,
+            colNames: ['Currency_Id', 'Currency', 'Description', 'CreatedBy', 'CreatedDate'],
+            colModel: [
+            { name: 'Currency_Id', index: 'Currency_Id', hidden: true, key: true ,editable:true},
+            { name: 'Currency', index: 'Currency', search: true, editable: true, editrules: { custom: true, custom_func: checkvalid } },
+            { name: 'Description', index: 'Description', editable: true, search: false, editrules: { custom: true, custom_func: checkvalid } },
+            { name: 'CreatedBy', index: 'CreatedBy', editable: false, search: false },
+             { name: 'CreatedDate', index: 'CreatedDate', editable: false, search: false },
+            ],
+            rowNum: 20000,
+            rowList: [], // disable page size dropdown
+            pgbuttons: false, // disable page control like next, back button
+            pgtext: null, // disable pager text like 'Page 0 of 10'
+            sortname: 'Currency_Id',
+            sortorder: 'Asc',
+            pager: '#CurrencyMasterListPager',
+            multiselect: true,
+            viewrecords: true,
+            shrinktofit: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Currency List'
+
+        });
+        $('#CurrencyMasterList').jqGrid('filterToolbar', { searchOnEnter: true });
+        jQuery("#CurrencyMasterList").jqGrid('navGrid', '#CurrencyMasterListPager', { add: true, edit: true, del: true, search: false, refresh: true },
+          { width: 'auto', url: '@Url.Content("~/Masters/EditCurrencyMaster/")', left: '10%', top: '10%', height: '50%', width: 400, modal: false },
+        //Add options
+            { width: 'auto', url: '@Url.Content("~/Masters/AddCurrencyMaster/")', left: '10%', top: '10%', height: '50%', width: 400, modal: false },
+        //Delete options
+                               {
+                                   width: 'auto', url: '@Url.Content("~/Masters/DeleteCurrencyMaster/")', left: '10%', top: '10%', height: '50%', width: 400,
+                                   beforeShowForm: function (params) { selectedrows = $("#CurrencyMasterList").jqGrid("getGridParam", "selarrrow"); return { Id: selectedrows } }
+                               });
+        $("#CurrencyMasterList").jqGrid('navButtonAdd', '#CurrencyMasterListPager', {
+            caption: "Export To Excel",
+            onClickButton: function () {
+                var ExptType = 'Excel';
+
+                window.open('CurrencyMasterJqGrid?ExptType=' + ExptType + '&rows=9999' + '&sidx=' + '&sord=desc' + '&page=1');
+            }
+        });
+        function checkvalid(value, column) {
+            if (value == '') {
+                return [false, column + ": Field is Required"];
+            }
+            else {
+                return [true];
+            }
+        }
+    });
+</script>

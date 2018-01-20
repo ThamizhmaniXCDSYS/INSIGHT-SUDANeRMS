@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping assembly="INSIGHT.Entities.TicketingSystem" namespace="INSIGHT.Entities.TicketingSystem" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="Severity" table="Severity" lazy="true" >
+    <id name="SeverityId" column="SeverityId" type="Int64">
+      <generator class="identity" />
+    </id>
+    <property name="SeverityCode" column="SeverityCode" type="AnsiString" not-null="false" />
+    <property name="SeverityName" column="SeverityName" type="AnsiString" not-null="false" />
+  </class>
+</hibernate-mapping>

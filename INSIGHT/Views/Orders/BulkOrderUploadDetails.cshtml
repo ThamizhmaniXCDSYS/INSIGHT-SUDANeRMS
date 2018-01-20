@@ -1,0 +1,145 @@
+﻿@model INSIGHT.Entities.UploadRequest
+@{
+    ViewBag.Title = "BulkOrderUploadDetails";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var RequestId=@ViewBag.RequestId;
+        debugger;
+        jQuery("#BulkOrderUploadDetailsJqgrid").jqGrid({
+            mtype: 'GET',
+            url: '@Url.Content("~/Orders/BulkOrderUploadDetailsJqgrid")?RequestId='+RequestId,
+          
+            //postData: { userid: usersrch, appcd: appcdsrch, rlcd: rlcdsrch, depcd: depcdsrch, brncd: brncdsrch, Id: Id },
+            datatype: 'json',
+            height: '280',
+            width:'1200',
+            shrinkToFit: true,
+            colNames: ['UploadReqDetLogId', 'RequestId', 'FileName', 'UploadStatus', 'ErrDesc', 'CreatedBy', 'CreatedDate', 'ModifiedBy', 'ReferenceNo'],
+            colModel: [
+                      { name: 'UploadReqDetLogId', index: 'UploadReqDetLogId', key: true, hidden: true },
+                      { name: 'RequestId', index: 'RequestId' },
+                      { name: 'FileName', index: 'FileName', sortable: true, width: 250 },
+                      { name: 'UploadStatus', index: 'UploadStatus', sortable: true },
+                      { name: 'ErrDesc', index: 'ErrDesc', width: 60,hidden:true },
+                      { name: 'CreatedBy', index: 'CreatedBy', width: 60 },
+                      { name: 'CreatedDate', index: 'CreatedDate', width: 60 },
+                      { name: 'ModifiedBy', index: 'ModifiedBy', width: 60,hidden:true },
+                      { name: 'ReferenceNo', index: 'ReferenceNo', search: false, width: 60,hidden:true }
+                      ],
+            pager: '#BulkOrderUploadDetailsJqgridPager',
+            rowNum: '1000',
+            rowList: [100, 200, 300, 400],
+            //rowList: [], // disable page size dropdown
+           // pgbuttons: false, // disable page control like next, back button
+           // pgtext: null, // disable pager text like 'Page 0 of 10'
+            sortname: 'UploadReqDetLogId',
+            sortorder: "Asc",
+            viewrecords: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;',
+            loadComplete: function () {
+                debugger;
+                var ids = jQuery("#BulkOrderUploadDetailsJqgrid").jqGrid('getDataIDs');
+                //  $("tr.jqgrow:odd").addClass('RowBackGroundColor');
+                for (var i = 0; i < ids.length; i++) {
+                    debugger;
+                    rowData = jQuery("#BulkOrderUploadDetailsJqgrid").jqGrid('getRowData', ids[i]);
+                    debugger;
+                    if (rowData.UploadStatus == "UploadedSuccessfully") {
+                        
+                        $("#BulkOrderUploadDetailsJqgrid").setCell(ids[i], "UploadStatus", "", { "color": "#1A7F03" });
+                      
+                    }
+                    if (rowData.UploadStatus == "YetToUpload") {
+
+                        $("#BulkOrderUploadDetailsJqgrid").setCell(ids[i], "UploadStatus", "", { "color": "#3104B4" });
+                    }
+                    if (rowData.UploadStatus == "UploadFailed") {
+
+                        $("#BulkOrderUploadDetailsJqgrid").setCell(ids[i], "UploadStatus", "", { "color": "#FF0000" });
+                    }
+                    
+                  
+                    if (rowData.UploadStatus == "AlreadyExist") {
+
+                        $("#BulkOrderUploadDetailsJqgrid").setCell(ids[i], "UploadStatus", "", { "color": "#A0522D" });
+                    }
+                    //if (rowData.Status == "ADDED IN ORDERITEMS" && $('#' + ID[i] + '_OrderQty').val() == $('#' + ID[i] + '_RemainingQty').val()) {
+                    //    debugger;
+                    //    $("#OrderItemsJQGrid").setCell(ID[i], "Commodity", "", { "background-color": "#FFFFFF" });
+
+                    //}
+                }
+            }
+          //  multiselect: true
+        });
+        //jQuery("#POList").jqGrid('navGrid', '#POListPager', { edit: false, add: false, del: false });
+       // $('#OrderItemsJQGrid').jqGrid('filterToolbar', { searchOnEnter: true, enableClear: false, afterSearch: function () { $('#OrderItemsJQGrid').clearGridData(); } });
+    });
+    </script>
+ @using (Html.BeginForm())
+ {
+       <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="6" class="PanelHeading">
+                <i class="icon-chevron-right"></i>&nbsp; Bulk Upload Request Details
+            </td>
+        </tr>
+        <tr>
+            <td width="15%">
+                <label class="lblheader">
+                   
+                  RequestName</label><br />
+                  @Html.DisplayFor(m => m.RequestName)
+                    @Html.HiddenFor(m => m.RequestName)
+
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    RequestNo</label> <br />
+                       @Html.DisplayFor(m => m.RequestNo)
+                    @Html.HiddenFor(m => m.RequestNo)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Upload Status</label> <br />
+                        @Html.DisplayFor(m => m.UploadStatus)
+                    @Html.HiddenFor(m => m.UploadStatus)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Created By</label> <br />
+                        @Html.DisplayFor(m => m.CreatedBy)
+                    @Html.HiddenFor(m => m.CreatedBy)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Created Date</label> <br />
+                    @String.Format("{0:dd/MM/yyyy }", Model.CreatedDate)
+@*                        @Html.DisplayFor(m => m.EndDate)*@
+                    @Html.HiddenFor(m => m.CreatedDate)
+            </td>
+        </tr>
+    </table>
+
+ }
+<table id="BulkOrderUploadDetailsJqgrid"></table>
+
+<div id ="BulkOrderUploadDetailsJqgridPager"></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

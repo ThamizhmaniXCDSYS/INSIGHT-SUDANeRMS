@@ -1,0 +1,84 @@
+﻿@{
+    ViewBag.Title = "Change Active Periods";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        debugger;
+        var Active = '@ViewBag.IsActive';
+
+        if (Active == "InProgress")
+            $('#IsActive').val(0);
+        else if (Active == "Completed")
+            $('#IsActive').val(1);
+        else
+            $('#IsActive').val(" ");
+
+
+
+    });
+    function UpdatePeriodActive() {
+        debugger;
+        var PeriodYear = $('#PeriodYear').val();
+        var Period = $('#Period').val();
+        var Active = $('#ActiveStatus').val();
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Content("~/Invoice/UpdateActiveStatus")?Period=' + '@ViewBag.Period' + '&PeriodYear=' + '@ViewBag.PeriodYear' + '&IsActive=' + Active,
+            success: function (data) {
+                if(data=="1")
+                    SucessMsg('@ViewBag.Period' + " Period is Changed as Completed");
+                else if(data=="0") 
+                    SucessMsg('@ViewBag.Period' + " Period is Changed as InProgress");
+                $("#ChangeActivePeriods").dialog('close');
+                reloadJQgrid();
+            },
+            dataType: 'json'
+        });
+    }
+
+    
+</script>
+@using (Html.BeginForm())
+{
+    
+    <table width="100%">
+
+        @{ ViewBag.Index = "Index"; }
+        <tr>
+            <td><label class="lblheader">
+                    Period Year</label></td>
+            <td>
+              
+             @Html.TextBox("PeriodYear",(string)ViewBag.PeriodYear, new {  @Class = "CSSDropDownList", @Style ="height: 25px;",@readonly=true })
+                  </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="lblheader">
+                    Period</label></td>
+            <td>
+                @Html.TextBox("Period",(string)ViewBag.Period, new {  @Class = "CSSDropDownList", @id = "Period", @Style ="height: 25px;", @readonly=true })
+        </tr>
+        
+        <tr>
+             <td>
+                <label class="lblheader">
+                    Active Status</label></td>
+            <td>
+                @Html.DropDownList("IsActive", new SelectList(new[]
+                                          {
+                                              new{Value="",Text="Select One"},
+                                              new{Value="0",Text="InProgress"},
+                                              new{Value="1",Text="Completed"}
+                                          },
+          "Value", "Text", ""), new { @Class = "CSSDropDownList",@Style ="width: 170px;", @id = "ActiveStatus"  })
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <input type="button" onclick="UpdatePeriodActive(); return false;" value="UPDATE STATUS" />
+            </td>
+        </tr>
+    </table>
+}

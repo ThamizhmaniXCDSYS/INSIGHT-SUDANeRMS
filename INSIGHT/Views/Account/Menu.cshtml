@@ -1,0 +1,118 @@
+﻿@{
+    ViewBag.Title = "Menu";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+
+
+@using (Html.BeginForm("Masters", "Home", FormMethod.Post))
+{
+    <h3>Menu</h3>
+    <table>
+        <tr>
+            <td>
+                <table id="list4">
+                </table>
+                <div id="gridpager">
+                </div>
+            </td>
+        </tr>
+    </table>  
+
+}
+<script type="text/javascript" language="javascript">
+
+    $(document).ready(function () {
+
+        jQuery("#list4").jqGrid({
+            url: '@Url.Content("~/Account/Menujqgrid")',
+            datatype: 'json',
+            mtype: 'GET',
+            height: '300',
+            width: '1100',
+            shrinkToFit: true,
+            colNames: ['Id', 'MenuName', 'MenuLevel', 'Role', 'Controller', 'Action'],
+            colModel: [
+                { name: 'Id', index: 'Id', width: 20, hidden: true, key: true },
+                { name: 'MenuName', index: 'MenuName', width: 20, editable: true, edittype: 'text', editrules: { custom: true, custom_func: checkvalid} },
+                { name: 'MenuLevel', index: 'MenuLevel', width: 20, editable: true, hidden: true, edittype: 'text' },
+                { name: 'Role', index: 'Role', width: 20, editable: true, edittype: 'text', editrules: { custom: true, custom_func: checkvalid} },
+                { name: 'Controller', index: 'Controller', width: 20, hidden: true, editable: true, edittype: 'text' },
+                 { name: 'Action', index: 'Action', width: 20, hidden: true, editable: true, edittype: 'text' }
+                ],
+            pager: '#gridpager',
+            rowNum: '10',
+            rowList: [5, 10, 20, 50, 100, 150, 200 ],
+            sortname: 'Id',
+            sortorder: "asc",
+            labelswidth: 60,
+            viewrecords: true,
+            multiselect: false,
+            subGrid: true,
+            caption: "SubMenu Details",
+            subGridOptions: { "plusicon": "ui-icon-triangle-1-e",
+                "minusicon": "ui-icon-triangle-1-s",
+                "openicon": "ui-icon-arrowreturn-1-e",
+                // load the subgrid data only once // and the just show/hide 
+                "reloadOnExpand": false,
+                // select the row when the expand column is clicked 
+                "selectOnExpand": true
+            },
+
+            subGridRowExpanded: function (subgrid_id, ParentId) {
+                var subgrid_table_id, pager_id;
+                subgrid_table_id = subgrid_id + "_t";
+                pager_id = "p_" + subgrid_table_id;
+                $("#" + subgrid_id).html("<table id='" + subgrid_table_id + "' class='scroll'></table><div id='" + pager_id + "' class='scroll'></div>");
+                jQuery("#" + subgrid_table_id).jqGrid({
+                    url: '@Url.Content("~/Account/Menujqgrid")?ParentId=' + ParentId,
+                    datatype: "json",
+                    colNames: ['Id', 'MenuName', 'MenuLevel', 'Role', 'Controller', 'Action'],
+                    colModel: [
+                { name: 'Id', index: 'Id', width: 20, hidden: true, key: true },
+                { name: 'MenuName', index: 'MenuName', width: 20, editable: true, edittype: 'text', editrules: { custom: true, custom_func: checkvalid} },
+                { name: 'MenuLevel', index: 'MenuLevel', width: 20, editable: true, edittype: 'text', hidden: true },
+                { name: 'Role', index: 'Role', width: 20, editable: true, edittype: 'text', editrules: { custom: true, custom_func: checkvalid} },
+                { name: 'Controller', index: 'Controller', width: 20, editable: true, edittype: 'text', editrules: { custom: true, custom_func: checkvalid} },
+                 { name: 'Action', index: 'Action', width: 20, editable: true, edittype: 'text', editrules: { custom: true, custom_func: checkvalid} }
+                ],
+                    rowNum: 20,
+                    pager: pager_id,
+                    sortname: 'num',
+                    sortorder: "asc",
+                    height: '100',
+                    width: '1000',
+                    multiselect: true
+                });
+                jQuery("#" + subgrid_table_id).jqGrid('navGrid', "#" + pager_id, { edit: true, add: true, del: true },
+                //Edit options
+                    {width: 'auto', url: '@Url.Content("~/Account/AddSubMenus")?ids=' + ParentId, left: '10%', top: '10%', height: '50%', width: 400 },
+                //add options
+                    {width: 'auto', url: '@Url.Content("~/Account/AddSubMenus")?ids=' + ParentId, left: '10%', top: '10%', height: '50%', width: 400 },
+                // Delete options
+                    {width: 'auto', url: '@Url.Content("~/Account/DeleteSubMenus/")', left: '10%', top: '10%', height: '50%', width: 400, beforeShowForm: function (params) { var gsr = $("#list4").getGridParam('selrow'); var sdata = $("#list4").getRowData(gsr); return { Id: sdata.Id} } }
+                    );
+            }
+
+        });
+        jQuery("#list4").jqGrid('navGrid', '#gridpager', { add: true, edit: true, del: true },
+
+        //Edit options
+            {width: 'auto', url: '@Url.Content("~/Account/AddMenu")?edit=edit', left: '10%', top: '10%', height: '50%', width: 400 },
+        //add options
+            {width: 'auto', url: '@Url.Content("~/Account/AddMenu/")', left: '10%', top: '10%', height: '50%', width: 400 },
+        //Delete options
+            {width: 'auto', url: '@Url.Content("~/Account/DeleteMenu/")', left: '10%', top: '10%', height: '50%', width: 400, beforeShowForm: function (params) { var gsr = $("#list4").getGridParam('selrow'); var sdata = $("#list4").getRowData(gsr); return { Id: sdata.Id} } }
+
+            );
+    });
+
+    function checkvalid(value, column) {
+        if (value == '') {
+            return [false, column + ": Field is Required"];
+        }
+        else {
+            return [true];
+        }
+    }
+
+</script>

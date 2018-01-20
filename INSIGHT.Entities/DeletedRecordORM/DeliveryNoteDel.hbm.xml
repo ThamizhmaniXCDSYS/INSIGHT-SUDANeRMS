@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.DeletedRecordEntities.DeliveryNoteDel" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.DeletedRecordEntities.DeliveryNoteDel, INSIGHT.Entities" table="DeliveryNote_Del" lazy="false" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="identity" />
+    </id>
+    <property name="DeliveryNoteId"  column="DeliveryNoteId"  type="Int64" />
+    <property name="DeliveryNoteName"  column="DeliveryNoteName"  type="string" />
+    <property name="CreatedBy"  column="CreatedBy"  type="string" />
+    <property name="CreatedDate"  column="CreatedDate"  type="datetime" />
+    <property name="OrderId"  column="OrderId"  type="Int64" />
+    <property name="DeliveryStatus" column="DeliveryStatus" type="string" />
+    <property name="DeliveryMode" column="DeliveryMode" type="string" />
+
+    <property name="DeletedDate"  column="DeletedDate"  type="datetime" />
+    <property name="DeletedBy"  column="DeletedBy"  type="string" />
+  </class>
+</hibernate-mapping>

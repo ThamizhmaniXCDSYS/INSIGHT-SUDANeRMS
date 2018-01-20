@@ -1,0 +1,664 @@
+﻿@{
+    ViewBag.Title = "ImportOrder";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<style>
+
+
+    .ui-jqgrid tr.jqgrow td{font-size:10px;}
+    input[disabled], select[disabled], textarea[disabled], input[readonly], select[readonly], textarea[readonly]
+    {
+        cursor: default;
+        background-color: #FFFFFF;
+    }
+    
+    #dvLoading
+    {
+        /*background: url("../../../Images/Sun.gif") no-repeat center center;*/
+        background: url("../Images/Sun.gif") no-repeat center center;
+        height: 100%;
+        width: 100%;
+        position: fixed;
+        z-index: 1000;
+        left: 0%;
+        top: 15%;
+        margin: -25px 0 0 -25px;
+    }
+   .ui-dialog-content ui-widget-content{ style="width: 700px; min-height: 66px; height: 146px;" scrolltop="0" scrollleft="0"}
+    .icon-white icon-trash {
+    padding:0px;
+    }
+    #jqgh_OrdersList_Delete {
+        margin-top=2px;
+    }
+</style>
+<script type="text/javascript">
+    var lastsel2;
+   
+    function DateChangeDetails(cellvalue) {
+      //  debugger;
+        var Date = cellvalue.split(" ");
+        var dd = Date[0];
+        var time = Date[1];
+        var value = Date[0].split("-");
+        var mm = value[0];
+        var dd1 = value[1];
+        var yy = value[2];
+        var resultField = dd1 + "-" + mm + "-" + yy + "";
+        return resultField;
+
+    }
+   
+    function formateINVOICELink(cellvalue, options, rowObject) {
+
+        return "<a href='@Url.Content("~/Invoice/NewInvoice")?OrderId=" + rowObject[0] + "' onclick= 'return  validation1("+rowObject[0]+");'>INVOICE</a>";
+    }
+
+    function formatePODLink(cellvalue, options, rowObject) {
+
+        return "<a href='@Url.Content("~/Orders/GotoPOD")?OrderId=" + rowObject[0] + "' onclick=' return Validate(" + rowObject[0] + ");'>POD</a>";
+    }
+    function Validate(orderid) {
+        debugger;
+        date = $('#' + orderid + '_ExpectedDeliveryDate').val();
+        if (date == "") {
+            ErrMsg('Please Enter the Expected Delivery date')
+            return false;
+        }
+
+        //        3114_ModifiedBy
+        //        3114_OpeningStatus
+        //3541_InvoiceStatus
+       if($('#'+orderid+'_OpeningStatus').val()=='OPENED' &&  $('#'+orderid+'_ModifiedBy').val()!='@ViewBag.CurrentUser' )
+       {
+           if ($('#' + orderid + '_PODId').val() > 0) {
+               ErrMsg("This Order is already opened by :' " + $('#' + orderid + '_ModifiedBy').val()+"'. You are  redirected to read only page.", function () { window.location.href = '@Url.Content("~/Orders/PODItemsManagementReadOnlyPage")?PODId=' + $('#' + orderid + '_PODId').val(); });
+             
+               return false;
+           }
+       }
+
+       if ($('#' + orderid + '_InvoiceStatus').val() == 'Generated' ){
+           if ($('#' + orderid + '_PODId').val() > 0) {
+               InfoMsg("Invoice for this Order is already Generated. You are  redirected to read only page.", function () { window.location.href = '@Url.Content("~/Orders/PODItemsManagementReadOnlyPage")?PODId=' + $('#' + orderid + '_PODId').val(); });
+
+               return false;
+           }
+       }
+
+    }
+    function validation1(id) {
+      
+        if ($('#' + id + '_FinalStatus').val() != 'OrderCompleted' || $('#' + id + '_FinalStatus').val() == null) {
+            ErrMsg('POD process is not completed');
+            return false;
+        }
+    }
+    function SaveExpDelDate(orderid, date) {
+        //date = $('#txtDeliveryDate_' + orderid).val();
+
+        $.ajax({
+            url: '@Url.Content("~/Orders/updateExpectedDeliveryDate")?Orderid=' + orderid + '&ExpectedDelDate=' + date,
+            type: 'POST',
+            dataType: 'json',
+            traditional: true,
+            success: function (data) {
+
+            },
+            loadError: function (xhr, status, error) {
+                msgError = $.parseJSON(xhr.responseText).Message;
+                ErrMsg(msgError, function () { });
+            }
+        });
+
+
+    }
+   
+    function formateadorLink(cellvalue, options, rowObject) {
+        return "<a href='@Url.Content("~/Orders/OrderItemsForm")?OrderId=" + rowObject[0] + "'>" + cellvalue + "</a>";
+    }
+    function FormatteOfflinerDocLink(cellvalue, options, rowObject) {
+        return '<a href="#" class="btnAddOfflineDoc" frmId=' + rowObject[0] + ' Id=' + rowObject[0] + ' >Notes</a>';
+    }
+    //Formatter icon for delte order
+
+    function frmtrDel(cellvalue, options, rowdata) {
+
+        var delBtn = "";
+        delBtn = "<span id='T1btnDel_" + options.rowId + "'class='ui-icon ui-icon-trash T1CompDel' rowid='" + options.rowId + "' title='Delete'></span>";
+        return delBtn;
+    }
+
+
+    function GetOrdersList() {
+    
+
+        $('#dvLoading').hide() // hide it initially.
+        .ajaxStart(function () {
+            $(this).show(); // show on any Ajax event.
+        })
+
+         .ajaxStop(function () {
+             $(this).hide(); // hide it when it is done.
+         });
+
+         
+        $('#OrdersList').jqGrid('GridUnload');
+        jQuery("#OrdersList").jqGrid({
+            mtype: 'GET',
+            url: '@Url.Content("~/Orders/OrdersListJQGrid")',
+            datatype: 'json',
+            height: '335',
+            width: '1200',
+            // width: $("#OrdersList").closest("fieldset").innerWidth() - 10,
+            shrinkToFit: true,
+            colNames: ['OrderId', 'ControlId', 'Contigent', 'Location','Period','StartDate', 'EndDate', 'Troops', 'TotalAmt', 'OrdItems', 'WithoutEggs', 'EggsWeight', 'TotalWeight', 'Exp DelDate', 'LocationCMR', 'ControlCMR','','','','','', 'Invoice', 'POD'],
+            colModel: [
+                        { name: 'OrderId', index: 'OrderId', key: true, hidden: true, editable: true },
+                        { name: 'ControlId', index: 'ControlId', formatter: formateadorLink, width:530 },
+                        { name: 'Name', index: 'Name', width: 150,search:false },
+                        { name: 'Location', index: 'Location', width: 120,search:false },
+                        { name: 'Period', index: 'Period', width: 110,search:false },
+                        { name: 'StartDate', index: 'StartDate', width: 160,search:false },
+                        { name: 'EndDate', index: 'EndDate', width: 160,search:false },
+                        { name: 'Troops', index: 'Troops',width:110,search:false},
+                        { name: 'TotalAmount', index: 'TotalAmount',search:false },
+                        { name: 'LineItemsOrdered', index: 'LineItemsOrdered',search:false },
+                        { name: 'KgOrderedWOEggs', index: 'KgOrderedWOEggs',hidden:true,search:false },
+                        { name: 'EggsWeight', index: 'EggsWeight',hidden:true,search:false },
+                        { name: 'TotalWeight', index: 'TotalWeight',search:false },
+                     // { name: 'ExpectedDeliveryDate', index: 'ExpectedDeliveryDate',editable:true },
+                        {name: 'ExpectedDeliveryDate', index: 'ExpectedDeliveryDate', width: 190,search:false, required: true, editable: true,
+                        editoptions: { style: "font-size:10px;",
+                            dataInit: function (el) {
+                                $(el).datepicker({
+                                    dateFormat: 'dd-mm-yy',
+                                    onSelect: function (dateText, inst) {
+                                        SaveExpDelDate(parseInt($(this).attr("id")), dateText);
+                                    }
+                                }).attr('readonly', 'readonly');
+                            }
+                        }
+                    },
+            //, formatter: CreateDeldatetxtbox },
+            // {name: 'ExpectedDeliveryDate', index: 'ExpectedDeliveryDate',width:190,editable: true, editoptions: { dataInit: function (el) { $(el).datepicker({ dateFormat: 'dd-mm-yy' }).attr('readonly', 'readonly'); } } },
+                        {name: 'LocationCMR', index: 'LocationCMR', hidden: true },
+                        { name: 'ControlCMR', index: 'ControlCMR', hidden: true },
+                        { name: 'FinalStatus', index: 'FinalStatus', hidden: true, editable: true },
+                        { name: 'OpeningStatus', index: 'OpeningStatus', hidden: true, editable: true },
+                          { name: 'InvoiceStatus', index: 'InvoiceStatus',hidden:true,  editable: true },
+                        { name: 'ModifiedBy', index: 'ModifiedBy', hidden: true, editable: true },
+                        { name: 'PODId', index: 'PODId', hidden: true, editable: true },
+                        { name: 'Invoice', index: 'Invoice', formatter: formateINVOICELink, search: false },
+                        { name: 'POD', index: 'POD', formatter: formatePODLink, search: false }
+                       //  { name: 'Delete', index: 'Delete', align: 'center', formatter: frmtrDel,width:60, search: false }
+                      
+                        ],
+
+            onSelectRow: function (id) {
+                if (id && id !== lastsel2) {
+                    jQuery('#OrdersList').jqGrid('restoreRow', lastsel2);
+                    jQuery('#OrdersList').jqGrid('editRow', id, true);
+                    lastsel2 = id;
+                }
+
+            },
+            loadComplete: function () {
+                var $this = $(this), rows = this.rows, l = rows.length, i, row;
+                $(this).hide();
+                for (i = 1; i < l; i++) {
+                    row = rows[i];
+                    if ($(row).hasClass("jqgrow")) {
+                        $this.jqGrid('editRow', row.id);
+                    }
+                }
+                $(this).show();
+            },
+            gridComplete: function () {
+
+                //                $("#OrdersList").css("width", "25px");
+                //                $("#OrdersList tbody tr").children().first("td").css("width", "30px");
+                ID = $('#OrdersList').jqGrid('getDataIDs');
+
+                //debugger;
+                for (var i = 0, list = ID.length; i < list; i++) {
+                    var Id = ID[i];
+                    $('#txtDeliveryDate_' + Id).datepicker({ dateFormat: 'dd-mm-yy' });
+                }
+                var rdata = $("#OrdersList").getRowData();
+
+                if (rdata.length > 0) {
+                    $('.T1CompDel').click(function () { DeleteComponentDtls($(this).attr('rowid')); });
+                }
+                $('#jqgh_OrdersList_Delete').toggleClass('icon-white icon-trash');
+            },
+
+            serializeRowData: function (postData) {
+                //debugger;
+                postData.ExpectedDeliveryDate = DateChangeDetails(postData.ExpectedDeliveryDate);
+                $("#OrdersList").trigger("reloadGrid");
+                return postData;
+            },
+            editurl: '@Url.Content("~/Orders/UpdateOrders")',
+            pager: '#OrdersListPager',
+            rowNum: '100',
+             rowList: [100, 200, 400, 1000],
+           // rowList: [], // disable page size dropdown
+           // pgbuttons: false, // disable page control like next, back button
+            //pgtext: null, // disable pager text like 'Page 0 of 10'
+            sortname: 'OrderId',
+            sortorder: "Desc",
+            viewrecords: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Orders List',
+           multiselect: true
+
+        });
+        jQuery("#OrdersList").jqGrid('navGrid', '#OrdersListPager', { edit: false, add: false, del: false, search: false, refresh: false },{},{},{
+            width: 'auto', url: '@Url.Content("~/Orders/DeleteOrders")?OrdersId='+ $("#OrdersList").jqGrid("getGridParam", "selarrrow"), left: '10%', top: '10%', height: '50%', width: 400,
+            afterShowForm: function (params) { selectedrows = $("#OrdersList").jqGrid("getGridParam", "selarrrow"); return { OrdersId: selectedrows } }
+        });
+
+        $('#OrdersList').jqGrid('filterToolbar', { searchOnEnter: true, enableClear: false, afterSearch: function () { $('#OrdersList').clearGridData(); } });
+
+
+        $("#OrdersList").jqGrid('navButtonAdd', '#OrdersListPager', {
+           buttonicon: "ui-icon-trash",
+           caption: "Delete Orders",
+            onClickButton: function () {
+                var  id = $('#OrdersList').jqGrid('getGridParam', 'selarrrow');
+                DeleteOrders(id);
+            }
+        });
+
+        $("#OrdersList").jqGrid('navButtonAdd', '#OrdersListPager', {
+            caption: "Orders Zip Download",
+            onClickButton: function () {
+                var searchItems = ',' + ',' + ',' + $('#Period').val() + ',' + $('#PeriodYear').val();
+                var Period = $('#Period').val();
+                if (Period == "") {
+                    ErrMsg("Please Select Period");
+                    return false;
+                }
+                if ($('#PeriodYear').val() == "") {
+                    ErrMsg("Please Select Period Year");
+                    return false;
+                }
+                else {
+                    window.open('@Url.Content("~/Orders/DownloadZipFiles")?searchItems=' + searchItems + '&PDF=' + false + '&EXCEL=' + true + '&invType=' + "Orders", '_blank');
+                }
+            }
+        });
+    }
+    $(function () {
+        GetOrdersList();
+        /*File Upload Related Start*/
+        /* upload button code //Ajax File Uploading */
+        function SpecialCharacters(strValidate) {
+            if (strValidate.indexOf('&') != -1 || strValidate.indexOf("'") != -1 ||
+                strValidate.indexOf(";") != -1 || strValidate.indexOf("#") != -1) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        //function validateDocReq(msg, reqField, isValid) {
+        //    var fieldVal = $('#' + reqField).val();
+        //    if ((typeof isValid != 'undefined' && isValid) || fieldVal == null || fieldVal == "") {
+        //        ErrMsg(msg, function () { $('#' + reqField).focus(); });
+        //        return false;
+        //    } else {
+        //        return true;
+        //    }
+        //}
+
+        //$('#btnUploadDoc').click(function () {
+        //    var splitstr = $('#uploadedFile').val().split('\\');
+        //    var fileName = splitstr[splitstr.length - 1];
+        //    var DocTypeText = $('#doctype option:selected').text();
+        //    if (!validateDocReq("No document found. Please select a file to upload!!!", 'uploadedFile')) { }
+        //    else if (!validateDocReq("Special characters (&,#,;') are not supported in document file names. Please amend the file name before upload!!!", 'uploadedFile', SpecialCharacters(fileName))) { }
+        //    else if (!validateDocReq("The attached file does not contain file extension.", 'uploadedFile', (fileName.lastIndexOf('.') == -1))) { }
+        //    else {
+        //        ajaxUploadDocs();
+        //        return false;
+        //    }
+        //});
+
+        ////function ajaxUploadDocs() {
+        ////    debugger;
+
+        ////   // var DocTypeText = $('#doctype option:selected').text();
+        ////    $.ajaxFileUpload({
+        ////        url: 'ImportOrder',
+        ////        secureuri: false,
+        ////        fileElementId: 'uploadedFile',
+        ////        dataType: 'json',
+        ////        success: function (data, status) {
+        ////            //debugger;
+        ////            $('#OrdersList').trigger("reloadGrid");
+        ////            $('#uploadedFile').val('');
+        ////            if (typeof data.result != 'undefined' && data.result != '') {
+        ////                if (typeof data.success != 'undefined' && data.success == true) {
+        ////                //$("#textDialogBox").html("test<br/>test2");
+        ////                    InfoMsg(data.result);
+        ////                } else {
+        ////                    ErrMsg(data.result);
+        ////                }
+        ////            }
+        ////        },
+        ////        error: function (data, status, e) {
+
+        ////        }
+        ////    });
+        ////}
+        /*File Upload Related End*/
+    });
+
+    $(function () {
+
+        FillSector();
+        FillContingent();
+        FillPeriod();
+        FillLocation();
+        FillPeriodYear();
+        $("#Sector").change(function () {
+            FillContingent($(this).val());
+        });
+        $("#Contingent").change(function () {
+            FillLocation($("#Sector").val(), $(this).val());
+        });
+        $("#btnPDF").click(function () {
+            window.open('@Url.Content("~/PdfGeneration/InvoicePrint")?OrderId=' + 61, '_blank');
+        });
+
+        //        $("#btnInvoice").click(function () {
+        //                window.location.href = '@Url.Action("NewInvoice", "Invoice")';
+        //        });
+    });
+
+    function FillSector() {
+        $.getJSON('@Url.Content("~/Masters/FillSectorbyUser/")',
+    function (modelData) {
+        var select = $("#Sector");
+        select.empty();
+        select.append($('<option/>',
+    {
+        value: "",
+        text: "Select Sector"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    function FillContingent(SectorCode) {
+        $.getJSON('@Url.Content("~/Masters/FillContingentbyUser/")?SectorCode=' + SectorCode,
+    function (modelData) {
+        var select = $("#Contingent");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Contingent"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillLocation(SectorCode, ContingentCode) {
+        $.getJSON('@Url.Content("~/Masters/FillLocationbyUser/")?SectorCode=' + SectorCode + '&ContingentCode=' + ContingentCode,
+    function (modelData) {
+        var select = $("#Location");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Location"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillPeriod() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriod/")',
+    function (modelData) {
+        var select = $("#Period");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Period"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    function OrdersSearch() {
+
+        var Sector = $('#Sector').val();
+        var Contingent = $('#Contingent').val();
+        var ClientName = $('#Location').val();
+        var Location = $('#Period').val();
+        var searchItems = $('#Sector').val() + ',' + $('#Contingent').val() + ',' + $('#Location').val() + ',' + $('#Period').val() + ',' + $('#PeriodYear').val();
+
+
+        $("#OrdersList").setGridParam(
+            {
+                datatype: "json",
+                url: '@Url.Content("~/Orders/OrdersListJQGrid")?searchItems=' + searchItems,
+                //postData: { ProjectCode: ProjectCode, ProjectType: ProjectType, ClientName: ClientName, City: City, ContactPerson: ContactPerson },
+                page: 0
+            }).trigger("reloadGrid");
+    }
+
+
+    function ResetOrderSearch() {
+        var searchItems = "";
+        $('#Sector').val(0);
+        $('#Contingent').val(0);
+        $('#contingentType').val("");
+        $('#Period').val(0);
+        $('#PeriodYear').val(0);
+        $("#OrdersList").clearGridData();
+        //$("#OrdersList").setGridParam(
+        //    {
+        //        datatype: "json",
+        //        url: '/Orders/OrdersListJQGrid',
+        //        page: 1
+        //    }).trigger("reloadGrid");
+    }
+    //Deleting orders
+
+    function DeleteComponentDtls(id) {
+    
+        //$("#dialog-confirm").dialog({
+        //    resizable: false,
+        //    height: 140,
+        //    modal: true,
+
+        //    buttons: {
+
+        //        "Yes": function () {
+                    deleteTaskListRecords(id);
+        //            $(this).dialog("close");
+        //        },
+        //        "No": function () {
+        //            $(this).dialog("close");
+        //        }
+
+
+        //    }
+        //});
+
+
+        //var DeliveredQty = $('#PODItemsJQGrid').jqGrid("getCell", id, "DeliveredQty");
+        //var RemainingQty = $('#PODItemsJQGrid').jqGrid("getCell", id, "RemainingQty");
+        //var LineId = $('#PODItemsJQGrid').jqGrid("getCell", id, "LineId");
+
+    }
+
+
+
+    function DeleteOrders(id) {
+       // alert(id);
+        if (confirm("Are you sure you want to delete this item?")) {
+            $.ajax({
+                url: '@Url.Content("~/Orders/DeleteOrders")?OrdersId=' + id,
+                type: 'POST',
+                dataType: 'json',
+                traditional: true,
+                success: function (data) {
+                    if (data == false)
+                        window.location.href = '@Url.Action("LogOn", "Account")';
+                    else {
+                        InfoMsg("Orders Deleted Successfully.");
+                        $("#OrdersList").trigger("reloadGrid");
+                    }
+                },
+                loadError: function (xhr, status, error) {
+                    msgError = $.parseJSON(xhr.responseText).Message;
+                    ErrMsg(msgError, function () { });
+                }
+            });
+        }
+
+    }
+
+    function FillPeriodYear() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriodYear")',
+    function (modelData) {
+        var select = $("#PeriodYear");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Year"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+</script>
+
+@using (Html.BeginForm())
+{
+@*<div id="divDocuments">*@
+    <table width="100%" style="border: 1px; border: 1px solid #ccc; font: normal 11px Verdana,Arial,sans-serif;
+        margin: 5px 0px 5px 0px;">
+@*        <tr class="PanelHeading">
+            <th colspan="6" align="left">
+                &nbsp;<b><i class="icon-chevron-right"></i>&nbsp; Import Orders</b>
+            </th>
+        </tr>*@
+@*        <tr id="docPanel">
+            <td>
+                <table>
+                    <tr>
+                        <td colspan="6">
+                            <input type="file" name="uploadedFile" id="uploadedFile" value="" multiple="multiple" class="CuboidButton" />
+                            <input type="button" value="Import PO" id="btnUploadDoc" />
+
+                           
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>*@
+    </table>
+@*</div>
+<div id="divDocuments">*@
+    <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="6" class="PanelHeading">
+                <i class="icon-chevron-right"></i>&nbsp;Orders List&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="lblheader">
+                    Sector</label><br />
+                @Html.DropDownList("Sector", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Contingent</label><br />
+                @Html.DropDownList("Contingent", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Location</label><br />
+                @Html.DropDownList("Location", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Period Year</label><br />
+                @Html.DropDownList("PeriodYear", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Period</label><br />
+                @Html.DropDownList("Period", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <input type="button" id="btnSearch" value="Search" onclick="OrdersSearch();return false;" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                    type="reset" id="btnReset" onclick="ResetOrderSearch();return false;" />
+            </td>
+        </tr>
+    </table>
+@*</div>*@
+<fieldset>
+    <table id="OrdersList">
+    </table>
+    <div id="OrdersListPager">
+    </div>
+</fieldset>
+<div id="dvLoading">
+</div>
+@*<p id = "textDialogBox"></p>*@
+
+@*<div id="dialog-confirm" title="Delete the Task?">
+    <p>
+        <span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>
+        "Are you sure you want to delete this Order?"</p>
+</div>*@
+}
+
+
+
+
+
+
+

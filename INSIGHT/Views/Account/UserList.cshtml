@@ -1,0 +1,134 @@
+﻿@model INSIGHT.Entities.User
+@{
+    ViewBag.Title = "UserList";
+    Layout = null;
+}
+@*
+<h3>User List</h3>*@
+<script type="text/javascript">
+    $(document).ready(function () {
+        var UserId = $("#txtUserId").val();
+        var UserName = $("#txtName").val();
+        var UserType = $("#txtUserType").val();
+        var EmailId = $("#txtEmailId").val();
+        $("#UserList").jqGrid({
+            url: '@Url.Content("~/Account/UserListJQGrid")',
+            postData: { UserId: UserId, UserName: UserName, UserType: UserType, EmailId: EmailId },
+            datatype: 'json',
+            type: 'GET',
+            colNames: ['Id','User Id', 'User Name', 'User Type', 'Email Id', 'Password','Is Active'],
+            colModel: [
+                      { name: 'Id', index: 'Id', sortable: true,hidden:true,key:true },
+                      { name: 'UserId', index: 'UserId', sortable: true },
+                      { name: 'UserName', index: 'UserName', sortable: true },
+                      { name: 'UserType', index: 'UserType', sortable: true },
+                      { name: 'EmailId', index: 'EmailId', sortable: true },
+                      { name: 'Password', index: 'Password', sortable: true },
+                      { name: 'IsActive', index: 'IsActive', sortable: true, hidden: false },
+                     ],
+            pager: '#UserListPager',
+            rowNum: '50',
+            rowList: [5, 10, 20, 50, 100, 150, 200 ],
+            sortname: 'Id',
+            sortorder: 'Desc',
+            width: 1250,
+            autowidth: true,
+            height: 250,
+            viewrecords: true,
+            caption: 'User List',
+            onSelectRow: function (rowid) {
+                if (rowid == null) {
+                    ids = 0;
+                    ul = jQuery("#UserList").jqGrid('getRowData', rowid);
+                    $('#UserId').val(ul.UserId);
+                    $('#UserName').val(ul.UserName);
+                    $('#ddlUserType').val(ul.UserType);
+                    $('#EmailId').val(ul.EmailId);
+//                    $('#Password').val(ul.Password);
+                    $('#IsActive').val(ul.IsActive);
+                    $('#DivUserSearch').dialog('close');
+                } else {
+                    ul = jQuery("#UserList").jqGrid('getRowData', rowid);
+                    $('#UserId').val(ul.UserId);
+                    $('#UserName').val(ul.UserName);
+                    $('#ddlUserType').val(ul.UserType);
+                    $('#EmailId').val(ul.EmailId);
+//                    $('#Password').val(ul.Password);
+                    $('#IsActive').val(ul.IsActive);
+                    $('#DivUserSearch').dialog('close');
+                }
+            }
+        });
+        $("#UserList").navGrid('#UserListPager', { add: false, edit: false, del: false, search: false, refresh: false });
+        //        jQuery("#UserList").jqGrid('navButtonAdd', '#UserListPager', {
+        //            caption: "Export To Excel",
+        //            onClickButton: function () {
+        //                window.open("UserListJQGrid" + '?cam=' + cam + '&gra=' + gra + '&sect=' + sect + '&sub=' + sub + '&AssignmentName=' + AssignmentName + '&AssCompGrp=' + AssCompGrp + '&rows=9999' + '&ExptXl=1');
+        //            }
+        //        });
+
+        $("#Search").click(function () {
+            var UserId = $("#txtUserId").val();
+            var UserName = $("#txtName").val();
+            var UserType = $("#txtUserType").val();
+            var EmailId = $("#txtEmailId").val();
+            var brUrl1 = '@Url.Content("~/Account/UserListJqGrid")?UserId=' + UserId + '&UserName=' + UserName + '&UserType=' + UserType + '&EmailId=' + EmailId;
+            LoadSetGridParam($('#UserList'), brUrl1);
+        });
+
+        $("#reset").click(function () {
+            $("#txtUserId").val("");
+            $("#txtName").val("");
+            $("#txtUserType").val("");
+            $("#txtEmailId").val("");
+        });
+    });
+</script>
+<br />
+<table class="WithBorderOnly" width="100%">
+    <tr>
+        <th style="width: 80px">
+            User ID
+        </th>
+        <th style="width: 80px">
+            User Name
+        </th>
+        <th style="width: 80px">
+            User Type
+        </th>
+        <th style="width: 80px">
+            Email Id
+        </th>
+    </tr>
+    <tr id="srchKeyPress">
+        <td>
+            <input type="text" id="txtUserId" class="CSSTextBox" style="width: 80px" />
+        </td>
+        <td>
+            <input type="text" id="txtName" class="CSSTextBox" style="width: 80px" />
+        </td>
+        <td>
+            <input type="text" id="txtUserType" class="CSSTextBox" style="width: 80px" />
+        </td>
+        <td>
+            <input type="text" id="txtEmailId" class="CSSTextBox" style="width: 80px" />
+            @Html.Hidden("campus")
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <input type="button" value="Search" id="Search" />
+        </td>
+        <td>
+            <input type="button" value="Reset" id="reset" />
+        </td>
+    </tr>
+    <tr>
+        <td colspan="6">
+            <table id="UserList">
+            </table>
+            <div id="UserListPager">
+            </div>
+        </td>
+    </tr>
+</table>

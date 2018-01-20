@@ -1,0 +1,211 @@
+﻿@{
+    ViewBag.Title = "ItemsPerOrderReport";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<h3>
+    Items Count Per POd</h3>
+<script type="text/javascript">
+    $(document).ready(function () {
+        FillSector();
+        FillContingent();
+        FillPeriod();
+        $("#Sector").change(function () {
+            FillContingent($(this).val());
+        });
+
+        $("#btnSearch").click(function () {
+            var Sector = $("#Sector").val();
+            var Contingent = $("#Contingent").val();
+            var Period = $("#Period").val();
+            $("#PODItemsCount").clearGridData();
+            $("#PODItemsCount").setGridParam(
+                {
+                    datatype: "json",
+                    url: '@Url.Content("~/Reports/PODItemsCountJqGrid/")',
+                    postData: { Sector: Sector, Contingent: Contingent, Period: Contingent },
+                    page: 1
+                }).trigger("reloadGrid");
+
+        });
+
+        jQuery("#PODItemsCount").jqGrid({
+            url: '@Url.Content("~/Reports/PODItemsCountJqGrid")',
+            datatype: 'json',
+            mtype: 'GET',
+            colNames: ['Id', 'Sector', 'Contingent', 'Period', 'POD Id', 'Items Count'],
+            colModel: [
+              { name: 'Id', index: 'Id', hidden: true },
+              { name: 'Sector', index: 'Sector' },
+              { name: 'Contingent', index: 'Contingent' },
+              { name: 'Period', index: 'Period' },
+              { name: 'PODId', index: 'PODId' },
+              { name: 'Count', index: 'Count' },
+              ],
+            pager: '#PODItemsCountPager',
+            rowNum: '10',
+            rowList: [5, 10, 20, 50],
+            sortname: 'Id',
+            sortorder: 'Desc',
+            height: '200',
+            width: 750,
+            //  autowidth: true,
+            //   shrinkToFit: true,
+            viewrecords: true,
+            caption: 'POD Items Count Report',
+            forceFit: true
+        });
+        $("#PODItemsCount").navGrid('#PODItemsCountPager', { add: false, edit: false, del: false, search: false, refresh: false });
+
+        $("#PODItemsCount").jqGrid('navButtonAdd', '#PODItemsCountPager', {
+            caption: "Export To Excel",
+            onClickButton: function () {
+                var Sector = $("#Sector").val();
+                var Contingent = $("#Contingent").val();
+                var Period = $("#Period").val();
+                var ExptType = 'Excel';
+                window.open("PODItemsCountJqGrid" + '?Sector=' + Sector + '&Contingent=' + Contingent + '&Period=' + Period + '&rows=9999' + '&ExptType=' + ExptType);
+            }
+        });
+        $("#PODItemsCount").jqGrid('filterToolbar', { stringResult: false, searchOnEnter: true, beforeSearch: function () {
+            $('#PODItemsCount').clearGridData();
+            return false;
+        }
+        });
+
+
+        $("#btnReset").click(function () {
+            window.location.href = '@Url.Action("PODItemsCountReport", "Reports")';
+        });
+
+
+    });
+
+    function FillSector() {
+        $.getJSON('@Url.Content("~/Masters/FillSector/")',
+            function (modelData) {
+                var select = $("#Sector");
+                select.empty();
+                select.append($('<option/>'
+                               , {
+                                   value: "",
+                                   text: "Select Sector"
+                               }));
+                $.each(modelData, function (index, itemData) {
+
+                    select.append($('<option/>',
+                                  {
+                                      value: itemData.Value,
+                                      text: itemData.Text
+                                  }));
+                });
+            });
+    }
+    function FillContingent(SectorCode) {
+        $.getJSON('@Url.Content("~/Masters/FillContingent/")', { SectorCode: SectorCode },
+            function (modelData) {
+                var select = $("#Contingent");
+                select.empty();
+                select.append($('<option/>'
+                               , {
+                                   value: "",
+                                   text: "Select Contingent"
+                               }));
+                $.each(modelData, function (index, itemData) {
+
+                    select.append($('<option/>',
+                                  {
+                                      value: itemData.Value,
+                                      text: itemData.Text
+                                  }));
+                });
+            });
+    }
+    function FillPeriod() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriod/")',
+            function (modelData) {
+                var select = $("#Period");
+                select.empty();
+                select.append($('<option/>'
+                               , {
+                                   value: "",
+                                   text: "Select Period"
+                               }));
+                $.each(modelData, function (index, itemData) {
+
+                    select.append($('<option/>',
+                                  {
+                                      value: itemData.Value,
+                                      text: itemData.Text
+                                  }));
+                });
+            });
+    }
+
+    
+</script>
+@using (Html.BeginForm("PODItemsCountReport", "Reports", FormMethod.Post))
+{
+    <table class="WithBorderOnly" width="100">
+        <tr>
+            <td width="20" valign="top">
+                <table>
+                    <tr style="background-color: #B6B6B6; height: 25px; color: White;">
+                        <td colspan="4">
+                            Search Panel
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="lblheader">
+                                Sector</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.DropDownList("Sector", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="lblheader">
+                                Contingent</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.DropDownList("Contingent", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="lblheader">
+                                Period</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.DropDownList("Period", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button type="button" class="btn btn-mini btn-primary" id="btnSearch">
+                                <i class="icon-search" style="vertical-align: middle"></i>Search
+                            </button>
+                            <button type="button" class="btn btn-mini btn-primary" id="btnReset">
+                                <i class="icon-repeat" style="vertical-align: middle"></i>Reset
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td width="80%">
+                <table id="PODItemsCount">
+                </table>
+                <div id="PODItemsCountPager">
+                </div>
+            </td>
+            
+        </tr>
+    </table>
+}

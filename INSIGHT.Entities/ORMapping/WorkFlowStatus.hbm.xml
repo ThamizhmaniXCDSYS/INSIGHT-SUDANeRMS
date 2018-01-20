@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping assembly="INSIGHT.Entities" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="WorkFlowStatus" table="WORKFLOWSTATUS" lazy="true" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="native" />
+    </id>
+    <property name="TemplateId" column="TEMPLATEID" type="Int64" not-null="false" />
+    <property name="WFStatus" column="WFSTATUS" type="string" not-null="false" />
+    <property name="Description" column="DESCRIPTION" type="string" not-null="false" />
+    <property name="ActivityOrder" column="ACTIVITYORDER" type="Int32" not-null="false" />
+    <property name="PreviousActOrder" column="PREVIOUSACTORDER" type="Int32" not-null="false" />
+    <property name="NextActOrder" column="NEXTACTORDER" type="Int32" not-null="false" />
+    <property name="Performer" column="PERFORMER" type="string" not-null="false" />
+    <property name="IsRejectionRequired" column="IsRejectionRequired" type="bool" not-null="false" />
+    <property name="RejectionFor" column="RejectionFor" type="Int32" not-null="false" />
+    <property name="IsOptional" column="IsOptional" type="bool" not-null="false" />
+    <property name="OptionalFor" column="OptionalFor" type="Int32" not-null="false" />
+  </class>
+</hibernate-mapping>

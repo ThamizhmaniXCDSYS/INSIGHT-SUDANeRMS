@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.OrdersPerMonth_vw" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.OrdersPerMonth_vw, INSIGHT.Entities " table="OrdersPerMonth_vw" lazy="false" >
+    <id name="Id" column="Id" type="Int32">
+      <generator class="identity"></generator>
+    </id>
+    <property name="Year" column="Year" type="Int32"></property>
+    <property name="Jan" column="Jan" type="Int32"></property> 
+    <property name="Feb" column="Feb" type="Int32"></property>
+    <property name="Mar" column="Mar" type="Int32"></property>
+    <property name="Apr" column="Apr" type="Int32"></property>
+    <property name="May" column="May" type="Int32"></property>
+    <property name="Jun" column="Jun" type="Int32"></property>
+    <property name="Jul" column="Jul" type="Int32"></property>
+    <property name="Aug" column="Aug" type="Int32"></property>
+    <property name="Sep" column="Sep" type="Int32"></property>
+    <property name="Oct" column="Oct" type="Int32"></property>
+    <property name="Nov" column="Nov" type="Int32"></property>
+    <property name="Dec" column="Dec" type="Int32"></property>
+    
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.UNSectorDetailedItemPrice" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.UNSectorDetailedItemPrice, INSIGHT.Entities" table="UNSectorDetailedItemPrice" lazy="false" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="identity" />
+    </id>
+    <property name="UNCode" column="UNCode" type="Int64" />
+    <property name="Commodity" column="Commodity" type="string" />
+    <property name="SectorCode" column="SectorCode" type="string" />
+    <property name="UnitPrice_Halal" column="UnitPrice_Halal" type="decimal" />
+
+    <property name="UnitPrice_NonHalal" column="UnitPrice_NonHalal" type="decimal"/>
+    <property name="TransportationCost" column="TransportationCost" type="decimal"/>
+    <property name="InsuranceCost" column="InsuranceCost" type="decimal"/>
+    <property name="Surfacedeliveries_Halal" column="Surfacedeliveries_Halal" type="decimal"/>
+    <property name="Surfacedeliveries_NonHalal" column="Surfacedeliveries_NonHalal" type="decimal"/>
+    <property name="AirCostfromRegional" column="AirCostfromRegional" type="decimal"/>
+
+    <property name="AirCostfromOriginal" column="AirCostfromOriginal" type="decimal"/>
+    <property name="AirCostfromKhartoum" column="AirCostfromKhartoum" type="decimal"/>
+    <property name="Warehouse" column="Warehouse" type="string"/>
+     <property name="CreatedBy" column="CreatedBy" type="string"/>
+    <property name="CreatedDate" column="CreatedDate" type="datetime"/>
+    <property name="ModifiedBy" column="ModifiedBy" type="string"/>
+     <property name="ModifiedDate" column="ModifiedDate" type="datetime"/>
+
+  </class>
+</hibernate-mapping>

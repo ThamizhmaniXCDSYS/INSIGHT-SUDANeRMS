@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.UserAppRole" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.UserAppRole, INSIGHT.Entities" table="UserAppRole" lazy="false" >
+    <id name="Id" column="Id" type="Int32">
+      <generator class="identity" />
+    </id>
+
+    <property name="UserId" column="UserId" type="string"/>
+    <property name="AppCode" column="AppCode" type="string" />
+    <property name="AppName" column="AppName" type="string" />
+    <property name="SectorCode" column="SectorCode" type="string" />
+    <property name="ContingentCode" column="ContingentCode" type="string" />
+    <property name="Location" column="Location" type="string" />
+    <property name="RoleCode" column="RoleCode" type="string" />
+    <property name="RoleName" column="RoleName" type="string" />
+    <property name="Email" column="Email" type="string" />
+    <property name="IsActive" column="IsActive" type="bool" />
+  </class>
+</hibernate-mapping>

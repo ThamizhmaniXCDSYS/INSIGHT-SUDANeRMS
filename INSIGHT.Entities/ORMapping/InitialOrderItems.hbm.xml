@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.InitialOrderItems" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.InitialOrderItems, INSIGHT.Entities" table="InitialOrderItems" lazy="false" >
+    <id name="LineId" column="LineId">
+      <generator class="identity" />
+    </id>
+    <property name="OrderId" column="OrderId" type="Int64" />
+    <property name="UNCode" column="UNCode" type="Int64" />
+    <property name="Commodity" column="Commodity" type="string" />
+    <property name="OrderQty" column="OrderQty" type="decimal" />
+
+    <property name="SectorPrice" column="SectorPrice" type="decimal" />
+    <property name="Total" column="Total" type="decimal" />
+    <property name="CreatedBy" column="CreatedBy" type="string" />
+    <property name="CreatedDate" column="CreatedDate" type="datetime" />
+
+    <property name="AcceptedOrdQty" column="AcceptedOrdQty" type="decimal" />
+    <property name="DeliveredOrdQty" column="DeliveredOrdQty" type="decimal" />
+    <property name="RemainingOrdQty" column="RemainingOrdQty" type="decimal" />
+
+    <property name="ModifiedBy" column="ModifiedBy" type="string" />
+    <property name="ModifiedDate" column="ModifiedDate" type="datetime" />
+    <property name="Status" column="Status" type="string" />
+    <property name="SubstituteItemCode"  column="SubstituteItemCode"  type="Int64" />
+    <property name="SubstituteItemName"  column="SubstituteItemName"  type="string" />
+    <property name="InvoiceQty" column="InvoiceQty" type="decimal" />
+    <property name="InvoiceValue" column="InvoiceValue" type="decimal" />
+    <property name="DiscrepancyCode"  column="DiscrepancyCode"  type="string" />
+
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.SectorMaster" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.SectorMaster, INSIGHT.Entities" table="SectorMaster" lazy="false" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="identity" />
+    </id>
+    <property name="SectorCode" column="SectorCode" type="string" />
+    <property name="SectorName" column="SectorName" type="string" />
+    <property name="Description" column="Description" type="string" />
+    <property name="Location" column="Location" type="string" />
+    <property name="DateCreated" column="DateCreated" type="datetime"/>
+    <property name="CreatedBy" column="CreatedBy" type="string"/>
+    <property name="DateModified" column="DateModified" type="datetime"/>
+    <property name="ModifiedBy" column="ModifiedBy" type="string"/>
+  </class>
+</hibernate-mapping>

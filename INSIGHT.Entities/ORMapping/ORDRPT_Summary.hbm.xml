@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.ORDRPT_Summary" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.ORDRPT_Summary, INSIGHT.Entities" table="ORDRPT_Summary" lazy="false" >
+    <id name="Id" column="Id">
+      <generator class="identity" />
+    </id>
+    <property name="Temperature" column="Temperature" type="string" />
+    <property name="Total" column="Total" type="decimal" />
+    <property name="WeekTotal" column="WeekTotal" type="decimal" />
+    <property name="DayTotal" column="DayTotal" type="decimal" />
+      
+    
+     </class>
+
+  <sql-query name="GetSummaryList" callable="true">
+    <query-param name="Period" type="string"/>
+    <query-param name="PeriodYear" type="string"/>
+    <return class="INSIGHT.Entities.ORDRPT_Summary, INSIGHT.Entities">
+      <return-property name="Id" column="Id" />
+      <return-property name="Temperature" column="Temperature" />
+      <return-property name="Total" column="Total"  />
+      <return-property name="WeekTotal" column="WeekTotal" />
+      <return-property name="DayTotal" column="DayTotal" />
+    
+         </return>
+    <![CDATA[ 
+     EXEC [ORDRPT_Summary] @spPeriod=:Period , @spPeriodYear=:PeriodYear 
+    ]]>
+  </sql-query>
+</hibernate-mapping>

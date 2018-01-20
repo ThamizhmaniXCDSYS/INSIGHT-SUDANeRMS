@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping assembly="INSIGHT.Entities.TicketingSystem" namespace="INSIGHT.Entities.TicketingSystem" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="TicketStatus" table="TicketStatus" lazy="true" >
+    <id name="StatusId" column="StatusId" type="Int64">
+      <generator class="identity" />
+    </id>
+    <property name="StatusCode" column="StatusCode" type="AnsiString" not-null="false" />
+    <property name="StatusName" column="StatusName" type="AnsiString" not-null="false" />
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,82 @@
+﻿@{
+    ViewBag.Title = "UploadOrdersTest";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+
+<script type="text/javascript">
+
+    $(function () {
+        $('#txtName').val('ADSFSAD');
+        if ($('#txtName').val() == "")
+        {
+            $('#lnkupload').hide();
+
+        }
+
+
+
+        $('#file_upload').uploadify({
+            'auto': false,
+            //'onSelect': function (file) {
+            //    if ($('#txtName').val() == "") {
+            //        debugger;
+                 
+            //        
+
+            //    }
+            //},
+          
+            'swf': "@Url.Content("~/Content/BootStrap/uploadify.swf")",
+            //this is where the file posts when it uploads.
+            'uploader': "@Url.Action("OrderuploadTest", "Orders")",
+            'onUploadSuccess': function (file, data, response) {
+            //data is whatever you return from the server
+            //we're sending the URL from the server so we append this as an image to the #uploaded div
+            //$("#uploaded").append("<img src='" + data + "' alt='Uploaded Image' />");
+                $("#uploaded").append("<img src='" + data + "' alt=''  />");
+        },
+
+            
+            'onQueueComplete': function (queueData) {
+                debugger;
+                
+               alert(queueData.uploadsSuccessful + ' files were successfully uploaded.');
+                $.ajax({
+            //url: '/Orders/callParallel',
+            type: 'POST',
+            dataType: 'json',
+            traditional: true,
+                      
+            success: function (data) {
+                           
+        },
+            loadError: function (xhr, status, error) {
+                           msgError = $.parseJSON(xhr.responseText).Message;
+                           ErrMsg(msgError, function () { });
+        },
+                       
+        });
+        }
+           
+        });
+
+
+    });
+
+
+
+</script>
+
+
+@using (Html.BeginForm())
+{
+<table><tr><td>
+    <input type="text" id="txtName" />
+<input type="file" name="file_upload" id="file_upload">
+    <p><input type="button" id="lnkupload" onclick="javascript:$('#file_upload').uploadify('upload')" value="Upload Files"></p>
+<div id="uploaded">
+</div>
+</td></tr></table>
+    
+
+}

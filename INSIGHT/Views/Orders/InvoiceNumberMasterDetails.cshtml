@@ -1,0 +1,113 @@
+﻿@model INSIGHT.Entities.UploadRequest
+@{
+    ViewBag.Title = "InvoiceNumberMasterDetails";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+
+<style>
+    .ui-jqgrid tr.jqgrow td {
+        font-size: 10px;
+    }
+</style>
+@using (Html.BeginForm())
+{
+    <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="6" class="PanelHeading">
+                <i class="icon-chevron-right"></i>&nbsp; InvoiceNumber Master Details
+            </td>
+        </tr>
+        <tr>
+            <td width="16%">
+                <label class="lblheader">
+                    RequestName</label><br />
+                @Html.DisplayFor(m => m.RequestName)
+                @Html.HiddenFor(m => m.RequestName)
+
+            </td>
+            <td width="16%">
+                <label class="lblheader">
+                    Period Year</label>
+                <br />
+                @Html.DisplayFor(m => m.PeriodYear)
+                @Html.HiddenFor(m => m.PeriodYear)
+            </td>
+            <td width="16%">
+                <label class="lblheader">
+                    Period</label>
+                <br />
+                @Html.DisplayFor(m => m.Period)
+                @Html.HiddenFor(m => m.Period)
+            </td>
+            <td width="16%">
+                <label class="lblheader">
+                    Created By</label>
+                <br />
+                @Html.DisplayFor(m => m.CreatedBy)
+                @Html.HiddenFor(m => m.CreatedBy)
+            </td>
+            <td width="16%">
+                <label class="lblheader">
+                    Created Date</label>
+                <br />
+                @String.Format("{0:dd/MM/yyyy }", Model.CreatedDate)
+                @Html.HiddenFor(m => m.CreatedDate)
+            </td>
+            <td width="16%">
+                <input type="button" id="btnBack" value="Back To List" onclick="BackToList(); return false;" />
+            </td>
+        </tr>
+    </table>
+}
+<table id="InvoiceNumberMasterList">
+</table>
+<div id="InvoiceNumberMasterListPager">
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        jQuery("#InvoiceNumberMasterList").jqGrid({
+            mtype: 'GET',
+            url: '@Url.Content("~/Orders/InvoiceNumberMasterListJqGrid")?RequestId=' + '@Model.RequestId',
+            datatype: 'json',
+            height: '250',
+            width: '1200',
+            shrinkToFit: true,
+            colNames: ['InvoiceMasterId', 'ControlId', 'InvoiceNumber', 'PeriodYear', 'Period', 'Week','Status', 'OrderId', 'RequestId', 'CreatedBy', 'CreatedDate', 'ModifiedBy', 'ModifiedDate'],
+            colModel: [
+                        { name: 'InvoiceMasterId', index: 'InvoiceMasterId', key: true, hidden: true, editable: true },
+                        { name: 'ControlId', index: 'ControlId', width: 250, search: true },
+                        { name: 'InvoiceNumber', index: 'InvoiceNumber', width: 100, search: false },
+                        { name: 'PeriodYear', index: 'PeriodYear', width: 60, search: false },
+                        { name: 'Period', index: 'Period', width: 60, search: false },
+                        { name: 'Week', index: 'Week', width: 60, search: false },
+                        { name: 'Status', index: 'IsValid', width: 60, search: false },
+                        { name: 'OrderId', index: 'OrderId', width: 430, search: false, hidden: true },
+                        { name: 'RequestId', index: 'RequestId', width: 80, search: false, hidden: true },
+                        { name: 'CreatedBy', index: 'CreatedBy', hidden: true, search: false },
+                        { name: 'CreatedDate', index: 'CreatedDate', search: false, hidden: true },
+                        { name: 'ModifiedBy', index: 'ModifiedBy', search: false, hidden: true },
+                        { name: 'ModifiedDate', index: 'ModifiedDate', search: false, hidden: true },
+            ],
+            pager: '#InvoiceNumberMasterListPager',
+            rowNum: '20000',
+            rowList: [], // disable page size dropdown
+            sortname: 'InvoiceMasterId',
+            sortorder: "Asc",
+            viewrecords: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;InvoiceNumber Master'
+        });
+        $('#InvoiceNumberMasterList').jqGrid('filterToolbar', { searchOnEnter: true, enableClear: false, afterSearch: function () { $('#InvoiceNumberMasterList').clearGridData(); } });
+        jQuery("#InvoiceNumberMasterList").jqGrid('navGrid', '#InvoiceNumberMasterListPager', { add: false, edit: false, del: false, search: false, refresh: false }, {});
+        $('#InvoiceNumberMasterList').jqGrid('navButtonAdd', '#InvoiceNumberMasterListPager', {
+            caption: "Export To Excel",
+            onClickButton: function () {
+                window.open('InvoiceNumberMasterListJqGrid?RequestId=' + '@Model.RequestId' + '&ExptType=Excel' + '&rows=9999' + '&sidx=' + '&sord=desc' + '&page=1');
+            }
+        });
+    });
+    function BackToList() {
+        window.location.href = '@Url.Content("~/Orders/InvoiceNumberMasterUpload")';
+    }
+
+</script>
+

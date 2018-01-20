@@ -1,0 +1,288 @@
+﻿@{
+    ViewBag.Title = "AllInvoiceGeneration";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<script type="text/javascript">
+    function GetInvoiceList() {
+        debugger;
+        $('#InvoiceList').jqGrid('GridUnload');
+        jQuery("#InvoiceList").jqGrid({
+            mtype: 'GET',
+            url: '@Url.Content("~/Invoice/InvoiceListJQGrid")?InvGeneration=' + true,
+            datatype: 'json',
+            height: '335',
+            width: '1200',
+            shrinkToFit: true,
+            colNames: ['Id', 'Invoice Code', 'Contract', 'Invoice Date', 'Period', 'Sector', 'Contingent', 'ContingentType', 'Location', 'CMR', 'Created Date', 'Strength', 'Mandays', 'Year'],
+            colModel: [
+            { name: 'Id', index: 'Id', key: true, hidden: true },
+            { name: 'InvoiceCode', index: 'InvoiceCode', width: 300 },
+            { name: 'Contract', index: 'Contract', hidden: true },
+            { name: 'InvoiceDate', index: 'InvoiceDate' },
+            { name: 'Period', index: 'Period' },
+            { name: 'Sector', index: 'Sector' },
+            { name: 'Name', index: 'Name' },
+            { name: 'ContingentType', index: 'ContingentType' },
+            { name: 'Location', index: 'Location' },
+            { name: 'LocationCMR', index: 'LocationCMR' },
+            { name: 'CreatedDate', index: 'CreatedDate' },
+            { name: 'TotalFeedTroopStrength', index: 'TotalFeedTroopStrength', hidden: true },
+            { name: 'TotalMadays', index: 'TotalMadays', hidden: true },
+            { name: 'PeriodYear', index: 'PeriodYear' }
+            ],
+            pager: '#InvoiceListPager',
+            rowNum: '100',
+            rowList: [100, 200, 300, 400],
+            sortname: 'Id',
+            sortorder: "ASC",
+            viewrecords: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Invoice Management',
+            multiselect: true,
+            viewrecords: true
+        });
+        $('#InvoiceList').jqGrid('filterToolbar', { searchOnEnter: true, enableClear: false, afterSearch: function () { $('#InvoiceList').clearGridData(); } });
+        jQuery("#InvoiceList")
+              .navGrid('#InvoiceListPager', { edit: false, add: false, del: false, search: false, refresh: false })
+    }
+
+    $(function () {
+        GetInvoiceList();
+        FillSector();
+        FillContingent();
+        FillPeriod();
+        FillLocation();
+        FillPeriodYear();
+        //        $("#btnPDF").disable = "true";
+
+        $("#Sector").change(function () {
+            FillContingent($(this).val());
+        });
+
+        $("#Contingent").change(function () {
+            FillLocation($("#Sector").val(), $(this).val());
+
+            var Contigent = $("#Contingent").val();
+            if (Contigent != "") {
+                var result = Contigent.indexOf("FPU") > -1;
+                if (result == true) {
+                    $("#contingentType").val("FPU");
+                }
+                else
+                    $("#contingentType").val("MIL")
+            }
+        });
+        $("#Period").change(function () {
+            var Period = $("#Period").val();
+            if (Period != "") {
+                $('#btnPDF').attr('disabled', false);
+                $('#btnExcel').attr('disabled', false);
+            }
+            else {
+                $('#btnPDF').attr('disabled', true);
+                $('#btnExcel').attr('disabled', true);
+            }
+        });
+
+
+
+        $("#btnInvoice").click(function () {
+            var searchItems = $('#Sector').val() + ',' + $('#Contingent').val() + ',' + $('#contingentType').val() + ',' + $('#Period').val() + ',' + $('#PeriodYear').val();
+            var Period = $('#Period').val();
+            LoadPopupDynamicaly('@Url.Content("~/Invoice/GenerateInvoice")?SearchItems=' + searchItems, $('#DivGenerateInvoice'),
+            function () {
+            }, "", 457, 338, "Generate Invoice");
+        });
+    });
+
+    function FillSector() {
+        $.getJSON('@Url.Content("~/Masters/FillSectorbyUser/")',
+    function (modelData) {
+        var select = $("#Sector");
+        select.empty();
+        select.append($('<option/>',
+    {
+        value: "",
+        text: "Select Sector"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    function FillContingent(SectorCode) {
+        $.getJSON('@Url.Content("~/Masters/FillContingentbyUser/")?SectorCode=' + SectorCode,
+    function (modelData) {
+        var select = $("#Contingent");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Contingent"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillLocation(SectorCode, ContingentCode) {
+        $.getJSON('@Url.Content("~/Masters/FillLocationbyUser/")?SectorCode=' + SectorCode + '&ContingentCode=' + ContingentCode,
+    function (modelData) {
+        var select = $("#Location");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Location"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillPeriod() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriod/")',
+    function (modelData) {
+        var select = $("#Period");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Period"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function InvoiceSearch() {
+
+        var Sector = $('#Sector').val();
+        var Contingent = $('#Contingent').val();
+        var ClientName = $('#Location').val();
+        var Location = $('#Period').val();
+        var searchItems = $('#Sector').val() + ',' + $('#Contingent').val() + ',' + $('#contingentType').val() + ',' + $('#Period').val() + ',' + $('#PeriodYear').val();
+
+        $("#InvoiceList").setGridParam(
+            {
+                datatype: "json",
+                url: '@Url.Content("~/Invoice/InvoiceListJQGrid")?InvGeneration=' + true + '&searchItems=' + searchItems,
+                page: 0
+            }).trigger("reloadGrid");
+        }
+        function ResetInvoiceSearch() {
+            var searchItems = "";
+            $('#Sector').val(0);
+            $('#Contingent').val(0);
+            $('#contingentType').val("");
+            $('#Period').val(0);
+            $('#PeriodYear').val(0);
+            $("#InvoiceList").clearGridData();
+        }
+
+        function FillPeriodYear() {
+            $.getJSON('@Url.Content("~/Masters/FillPeriodYear")',
+    function (modelData) {
+        var select = $("#PeriodYear");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Year"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    //Added by kingston to generate the sequence for order qty and invoice qty 
+    //Actual Delivery,Replacements,Substitutions
+    function SequencingOrdQtyAndInvQty() {
+        LoadPopupDynamicaly('@Url.Content("~/Invoice/GenerateDeliverySequence")', $('#DivDeliverySequence'),
+           function () {
+           }, "", 350, 200, "Generate DeliverySequence");
+
+    }
+</script>
+<div id="divDocuments">
+    <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="6" class="PanelHeading">
+                <i class="icon-chevron-right"></i>&nbsp;Invoice&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="lblheader">
+                    Sector</label><br />
+                @Html.DropDownList("Sector", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Contingent Type</label><br />
+                @Html.DropDownList("contingentType", new SelectList(new[]
+                                          {
+                                              new{Value="",Text="Select One"},
+                                              new{Value="FPU",Text="FPU"},
+                                              new{Value="MIL",Text="MIL"}
+                                          },
+          "Value", "Text", ""), new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Contingent</label><br />
+                @Html.DropDownList("Contingent", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Period Year</label><br />
+                @Html.DropDownList("PeriodYear", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Period</label><br />
+                @Html.DropDownList("Period", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+
+            <td>
+                <input type="button" id="btnSearch" value="Search" onclick="InvoiceSearch(); return false;" /><input
+                    type="reset" id="btnReset" value="Reset" onclick="ResetInvoiceSearch(); return false;" />
+                <input type="button" id="btnInvoice" value="Generate Invoice" />
+                <input type="button" id="SequencingInvQty" value="Sequence Generation" onclick="SequencingOrdQtyAndInvQty(); return false;" />
+            </td>
+        </tr>
+    </table>
+</div>
+<table id="InvoiceList">
+</table>
+<div id="InvoiceListPager">
+</div>
+<div id="DivGenerateInvoice" title="GenerateInvoice"></div>
+<div id="DivDeliverySequence" title="Generate Delivery Sequence"></div>

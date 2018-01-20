@@ -1,0 +1,169 @@
+﻿@model INSIGHT.Entities.InventoryManagementEntities.Inventory_PurchaseOrder
+@{
+    ViewBag.Title = "PurchaseOrderInvoice";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js"></script>
+<style>
+    #dvLoading {
+        background: url("../Images/Sun.gif") no-repeat center center;
+        height: 100%;
+        width: 100%;
+        position: fixed;
+        z-index: 1000;
+        left: 0%;
+        top: 15%;
+        margin: -25px 0 0 -25px;
+    }
+
+    .ui-jqgrid tr.jqgrow td {
+        font-size: 10px;
+    }
+</style>
+@using (Html.BeginForm())
+{
+    <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="6" class="PanelHeading">
+                <i class="icon-chevron-right"></i>&nbsp;Search Panel
+            </td>
+        </tr>
+        <tr>
+            <td width="15%">
+                <label class="lblheader">
+                    PO #
+                </label>
+                <br />
+                @Html.DropDownListFor(a => a.PO, new SelectList(Enumerable.Empty<SelectListItem>()), "", new { @id = "ddlPONumber", @Class = "CSSDropDownList", @multiple = "multiple", @style = "width:300px;" })
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Invoice Number
+                </label>
+                <br />
+                <input type="text" id="txtInvoiceNumberautosuggest" class="CSSTextBox" />
+            </td>
+            <td>
+                <input type="button" id="btnGetPO" value="Get PO Details" />
+            </td>
+        </tr>
+    </table>
+    <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="10" class="PanelHeading">
+                <i class="icon-chevron-right"></i>&nbsp;Invoice Details
+            </td>
+        </tr>
+        <tr>
+
+            <td width="10%">
+                <label class="lblheader">
+                    Supplier Name
+                </label>
+                <br />
+                <input type="text" id="txtSupplierName" class="CSSTextBox" readonly />
+            </td>
+            <td width="10%">
+                <label class="lblheader">
+                    Supplier Number
+                </label>
+                <br />
+                <input type="text" id="txtSupplierNumber" class="CSSTextBox" readonly />
+            </td>
+            <td width="10%">
+                <label class="lblheader">
+                    Invoice Currency
+                </label>
+                <br />
+                <input type="text" id="txtInvCurrency" class="CSSTextBox" readonly />
+            </td>
+            <td width="10%">
+                <label class="lblheader">
+                    Invoice Amount(Inv.Currency)
+                </label>
+                <br />
+                <input type="text" id="txtTotInvoiceAmount" onkeypress="AllowNumericValue(this);" class="CSSTextBox" />
+            </td>
+            <td width="10%">
+                <label class="lblheader">
+                    Invoice Amount(USD)
+                </label>
+                <br />
+                <input type="text" id="txtInvAmtUSD" class="CSSTextBox" readonly />
+            </td>
+            <td width="10%">
+                <label class="lblheader">
+                    Amount Difference
+                </label>
+                <br />
+                <input type="text" id="txtInvDifference" class="CSSTextBox" readonly />
+            </td>
+            <td width="5%">
+                <label class="lblheader">
+                    Exchange Rate
+                </label>
+                <br />
+                <input type="text" id="txtExchangeRate" onkeypress="AllowNumericValue(this);" class="CSSTextBox" readonly/>
+            </td>
+        </tr>
+        <tr>
+            <td width="10%">
+                <label class="lblheader">
+                    Invoice Number
+                </label>
+                <br />
+                <input type="text" id="txtInvoiceNumber" />
+            </td>
+            <td>
+                <label class="lblheader">
+                    Invoice Date
+                </label>
+                <br />
+                <input type="text" id="txtInvoiceDate" class="datepicker" readonly style="width: 80%" />
+            </td>
+            <td width="10%">
+                <label class="lblheader">
+                    Bill of Lading Number
+                </label>
+                <br />
+                <input type="text" id="txtBLNo" />
+            </td>
+            <td width="10%">
+                <label class="lblheader">
+                    Container Number
+                </label>
+                <br />
+                <input type="text" id="txtContainerNumber" />
+            </td>
+            <td width="10%">
+                <label class="lblheader">
+                    GL Date
+                </label>
+                <br />
+                <input type="text" id="txtGLDate" class="datepicker" readonly style="width: 80%" />
+            </td>
+            <td width="10%">
+                <label class="lblheader">
+                    Voucher No
+                </label>
+                <br />
+                <input type="text" id="txtVoucherNo" onkeypress="AllowNumericValue(this);" />
+            </td>
+            <td>
+                <input type="button" id="btnSave" value="Save" style="width: 40%" />
+                <input type="button" id="btnComplete" value="Complete" style="width: 50%" />
+            </td>
+        </tr>
+    </table>
+    @Html.Hidden("hiddenAutosuggestInvoiceId");
+    @Html.Hidden("hiddenInvoiceId");
+    @Html.Hidden("hiddenInvoiceItemLineId");
+}
+<table id="PODetailsList"></table>
+<div id="PODetailsListPager">
+</div>
+<div id="dvLoading">
+</div>
+<script src='@Url.Content("~/Scripts/InventoryManagementScripts/InvoiceManagementScript.js")'></script>
+

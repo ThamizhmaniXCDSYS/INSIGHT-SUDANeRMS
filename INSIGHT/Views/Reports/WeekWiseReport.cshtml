@@ -1,0 +1,320 @@
+﻿@{
+    ViewBag.Title = "WeekWiseReport";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        debugger;
+        $('#WeekReportList').jqGrid({
+            url: '@Url.Content("~/Reports/WeekWiseReportjqGrid")',
+            datatype: 'Json',
+            type: 'GET',
+            height: 250,
+            width: 1200,
+            shrinkToFit: false,
+            colNames: ['Id', 'Name', 'Sector', 'Period', 'ContType','Year', 'WK', 'OrdQty', 'DelQty', 'AccQty', 'InvQty', 'InvVal', 'WK', 'OrderQty', 'DelQty', 'AccQty', 'InvQty', 'InvVal', 'WK', 'OrderQty', 'DelQty', 'AccQty', 'InvQty', 'InvVal', 'WK', 'OrderQty', 'DelQty', 'AccQty', 'InvQty', 'InvVal'],
+            colModel: [
+            { name: 'Id', index: 'Id', hidden: true },
+            { name: 'Name', index: 'Name', width: 100 },
+            { name: 'Sector', index: 'Sector', width: 40, hidden: false, search: false },
+            { name: 'Period', index: 'Period', width: 40, hidden: false, search: false },
+            { name: 'ContingentType', index: 'ContingentType', width: 40, hidden: false, search: false },
+            { name: 'PeriodYear', index: 'PeriodYear', width: 40, hidden: false, search: false },
+            { name: 'Week1', index: 'Week1', align: "center", width: 40, search: false },
+            { name: 'OrderQty1', index: 'OrderQty1', search: false, width: 80 },
+            { name: 'DeliveredQty1', index: 'DeliveredQty1', search: false, width: 80 },
+            { name: 'AcceptedQty1', index: 'AcceptedQty1', search: false, width: 80 },
+            { name: 'InvoiceQty1', index: 'InvoiceQty1', search: false, width: 80 },
+            { name: 'InvoiceValue1', index: 'InvoiceValue1', search: false, width: 80 },
+            { name: 'Week2', index: 'Week2', width: 40, search: false },
+            { name: 'OrderQty2', index: 'OrderQty2', search: false, width: 80 },
+            { name: 'DeliveredQty2', index: 'DeliveredQty2', search: false, width: 80 },
+            { name: 'AcceptedQty2', index: 'AcceptedQty2', search: false, width: 80 },
+            { name: 'InvoiceQty2', index: 'InvoiceQty2', search: false, width: 80 },
+            { name: 'InvoiceValue2', index: 'InvoiceValue2', search: false, width: 80 },
+            { name: 'Week3', index: 'Week3', width: 40, search: false },
+            { name: 'OrderQty3', index: 'OrderQty3', search: false, width: 80 },
+            { name: 'DeliveredQty3', index: 'DeliveredQty3', search: false, width: 80 },
+            { name: 'AcceptedQty3', index: 'AcceptedQty3', search: false, width: 80 },
+            { name: 'InvoiceQty3', index: 'InvoiceQty3', search: false, width: 80 },
+            { name: 'InvoiceValue3', index: 'InvoiceValue3', search: false, width: 80 },
+            { name: 'Week4', index: 'Week4', width: 40, search: false },
+            { name: 'OrderQty4', index: 'OrderQty4', search: false, width: 80 },
+            { name: 'DeliveredQty4', index: 'DeliveredQty4', search: false, width: 80 },
+            { name: 'AcceptedQty4', index: 'AcceptedQty4', search: false, width: 80 },
+            { name: 'InvoiceQty4', index: 'InvoiceQty4', search: false, width: 80 },
+            { name: 'InvoiceValue4', index: 'InvoiceValue4', search: false, width: 80 }, ],
+            rowNum: 100000,
+            rowList: [100, 200, 400, 1000],
+            autowidth: true,
+            sortorder: 'Asc',
+            sortname: 'Name',
+            viewrecords: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Week Wise Report',
+            pager: 'WeekReportPager'
+
+        });
+        jQuery("#WeekReportList").jqGrid('setGroupHeaders', {
+            useColSpanStyle: false,
+            groupHeaders: [
+	{ startColumnName: 'Week1', numberOfColumns: 5, titleText: '<em>Week1</em>' },
+	{ startColumnName: 'Week2', numberOfColumns: 5, titleText: 'Week 2' },
+    { startColumnName: 'Week3', numberOfColumns: 5, titleText: 'Week 3' },
+	{ startColumnName: 'Week4', numberOfColumns: 5, titleText: 'Week 4' }
+            ]
+        });
+        $("#WeekReportList").navGrid('#WeekReportPager', { add: false, edit: false, del: false, search: false, refresh: false });
+        $("#WeekReportList").jqGrid('filterToolbar', { searchOnEnter: true, enableClear: false, afterSearch: function () { $('#WeekReportList').clearGridData(); } });
+        jQuery("#WeekReportList").jqGrid('navButtonAdd', '#WeekReportPager', {
+            caption: "Export To Excel",
+            onClickButton: function () {
+                var ExportType = "Excel";
+                window.open('/Reports/WeekWiseReportExcel' + '?rows=9999' + '&sidx=' + '&sord=desc' + '&page=1');
+            }
+        });
+        
+    });
+
+    $(function () {
+        FillSector();
+        FillContingent();
+        FillPeriod();
+        FillLocation();
+        FillWeek();
+        FillPeriodYear();
+        $("#Sector").change(function () {
+            FillContingent($(this).val());
+        });
+        $("#Contingent").change(function () {
+            FillLocation($("#Sector").val(), $(this).val());
+
+            var Contigent = $("#Contingent").val();
+            if (Contigent != "") {
+                var result = Contigent.indexOf("FPU") > -1;
+                if (result == true) {
+                    $("#contingentType").val("FPU");
+                }
+                else
+                    $("#contingentType").val("MIL")
+            }
+        });
+        $("#Period").change(function () {
+            FillWeek($("#Period").val(), $(this).val());
+        });
+        //        $("#Week").change(function () {
+        //            FillPeriod($(this).val());
+        //        });
+    });
+    function FillSector() {
+        $.getJSON('@Url.Content("~/Masters/FillSectorbyUser/")',
+    function (modelData) {
+        var select = $("#Sector");
+        select.empty();
+        select.append($('<option/>',
+    {
+        value: "",
+        text: "Select Sector"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    function FillContingent(SectorCode) {
+        $.getJSON('@Url.Content("~/Masters/FillContingentbyUser/")?SectorCode=' + SectorCode,
+    function (modelData) {
+        var select = $("#Contingent");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Contingent"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillLocation(SectorCode, ContingentCode) {
+        $.getJSON('@Url.Content("~/Masters/FillLocationbyUser/")?SectorCode=' + SectorCode + '&ContingentCode=' + ContingentCode,
+    function (modelData) {
+        var select = $("#Location");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Location"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillPeriod() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriod/")',
+    function (modelData) {
+        var select = $("#Period");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Period"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillWeek(Period) {
+        debugger;
+        $.getJSON('@Url.Content("~/Masters/FillWeek/")?Period=' + Period,
+    function (modelData) {
+        var select = $("#Week");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Week"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    function WeekWiseReportSearch() {
+        debugger;
+        var Sector = $('#Sector').val();
+        var ContingentType = $('#contingentType').val();
+        var Name = $('#Contingent').val();
+        var Period = $('#Period').val();
+        var Week = $('#Week').val();
+        var searchItems = $('#Sector').val() + ',' + $('#contingentType').val() + ',' + $('#Contingent').val() + ',' + $('#Period').val() + ',' + $('#PeriodYear').val();
+        $("#WeekReportList").setGridParam(
+            {
+                datatype: "json",
+                url: '@Url.Content("~/Reports/WeekWiseReportjqGrid")?searchItems=' + searchItems,
+                //                url: '/Reports/ConsolidateInvoicejqGrid',
+                //                postData: { Sector: Sector, ContingentType: contingentType, Name: Contingent, Period: Period },
+                page: 0
+            }).trigger("reloadGrid");
+    }
+    function ResetSearch() {
+        var searchItems = "";
+        $('#Sector').val(0);
+        $('#Contingent').val(0);
+        $('#contingentType').val("");
+        $('#Period').val(0);
+        $('#Week').val(0);
+        $("#WeekReportList").clearGridData();
+    }
+    function FillPeriodYear() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriodYear")',
+    function (modelData) {
+        var select = $("#PeriodYear");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Year"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+</script>
+
+<div id="divDocuments">
+    <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="7" class="PanelHeading">
+                <i class="icon-chevron-right"></i>&nbsp;Search&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="lblheader">
+                    Sector</label><br />
+                @Html.DropDownList("Sector", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Contingent Type</label><br />
+                @Html.DropDownList("contingentType", new SelectList(new[]
+                                          {
+                                              new{Value="",Text="Select One"},
+                                              new{Value="FPU",Text="FPU"},
+                                              new{Value="MIL",Text="MIL"}
+                                          },
+          "Value", "Text", ""), new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Contingent</label><br />
+                @Html.DropDownList("Contingent", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Period Year</label><br />
+                @Html.DropDownList("PeriodYear", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Period</label><br />
+                @Html.DropDownList("Period", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            @*             <td>
+                <label class="lblheader">
+                    Week</label><br />
+                @Html.DropDownList("Week", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>*@
+            <td>
+                <input type="button" id="btnSearch" value="Search" onclick="WeekWiseReportSearch(); return false;" />
+                <input type="reset" id="btnReset"
+                    value="Reset" onclick="ResetSearch(); return false;" />
+            </td>
+            <td colspan="3">&nbsp;
+            </td>
+        </tr>
+    </table>
+</div>
+<div id="WeekWiseReportDetails">
+    <table id="WeekReportList">
+    </table>
+    <div id="WeekReportPager">
+    </div>
+</div>

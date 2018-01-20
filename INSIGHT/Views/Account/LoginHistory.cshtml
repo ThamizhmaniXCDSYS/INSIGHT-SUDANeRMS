@@ -1,0 +1,154 @@
+﻿@model INSIGHT.Entities.Session
+@{
+    ViewBag.Title = "LoginHistory";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<h3>
+    Login History</h3>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var UserId = $("#txtUserId").val();
+        var FrmDate = $("#txtFrmDate").val();
+        var usertyp = $("#ddlUserType").val();
+        var srchtyp = $("#ddlSearchType").val();
+        
+        $("#LoginList").jqGrid({
+            url: '@Url.Content("~/Account/LoginListJQGrid")',
+            postData: { UserId: UserId, FrmDate: FrmDate, usertyp: usertyp, srchtyp: srchtyp },
+            datatype: 'json',
+            type: 'GET',
+            colNames: ['Id', 'User Id', 'User Type', 'Time In', 'Time Out', 'IP Address', 'Browser Name', 'Browser Version', 'Browser Type', 'Platform'],
+            colModel: [
+                      { name: 'Id', index: 'Id', hidden: true },
+                      { name: 'UserId', index: 'UserId'  },
+                      { name: 'UserType', index: 'UserType', sortable: true },
+                      { name: 'TimeIn', index: 'TimeIn', sortable: true },
+                      { name: 'TimeOut', index: 'TimeOut', sortable: true },
+                      { name: 'IPAddress', index: 'IPAddress', sortable: true },
+                      { name: 'BrowserName', index: 'BrowserName', sortable: true },
+                      { name: 'BrowserVersion', index: 'BrowserVersion', sortable: true, hidden: false },
+                      { name: 'BrowserType', index: 'BrowserType', sortable: true },
+                      { name: 'Platform', index: 'Platform', sortable: true },
+
+                     ],
+            pager: '#LoginListPager',
+            rowNum: '50',
+            rowList: [5, 10, 20, 50, 100, 150, 200 ],
+            sortname: 'Id',
+            sortorder: 'Desc',
+            width: 1250,
+            autowidth: true,
+            height: 250,
+            viewrecords: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Login List'
+        });
+        $("#LoginList").navGrid('#LoginListPager', { add: false, edit: false, del: false, search: false, refresh: false });
+        jQuery("#LoginList").jqGrid('navButtonAdd', '#LoginListPager', {
+            caption: "Export To Excel",
+            onClickButton: function () {
+                var ExportType = "Excel";
+                window.open("LoginListJQGrid" + '?UserId=' + UserId + '&usertyp=' + usertyp + '&FrmDate=' + FrmDate + '&srchtyp=' + srchtyp + '&rows=9999' + '&ExportType=' + ExportType);
+            }
+        });
+        $("#Search").click(function () {
+
+            $("#LoginList").clearGridData();
+             UserId = $("#txtUserId").val();
+             FrmDate = $("#txtFrmDate").val();
+             usertyp = $("#ddlUserType").val();
+             srchtyp = $("#ddlSearchType").val();
+            $("#LoginList").setGridParam(
+                {
+                    datatype: "json",
+                    url: '@Url.Content("~/Account/LoginListJQGrid/")',
+                    postData: { UserId: UserId, FrmDate: FrmDate, usertyp: usertyp, srchtyp:srchtyp },
+                    page: 1
+                }).trigger("reloadGrid");
+        });
+
+        $("#reset").click(function () {
+            $("#txtUserId").val("");
+            $("#txtFrmDate").val("");
+            $("#ddlUserType").val("");
+            $("#ddlSearchType").val("");
+        });
+
+        $.getJSON('@Url.Content("~/Account/FillUserType")',
+                 function (fillusertype) {
+                     var ddlusrtyp = $("#ddlUserType");
+                     ddlusrtyp.empty();
+                     ddlusrtyp.append($('<option/>',
+                    {
+                        value: "",
+                        text: "Select One"
+
+                    }));
+
+                     $.each(fillusertype, function (index, itemdata) {
+                         ddlusrtyp.append($('<option/>',
+                             {
+                                 value: itemdata.Value,
+                                 text: itemdata.Text
+                             }));
+
+                     });
+                 });
+
+    });
+</script>
+<br />
+<table class="WithBorderOnly" width="100%">
+    <tr>
+        <th width="10%">
+            User ID
+        </th>
+        <th width="10%">
+            User Type
+        </th>
+        <th width="10%">
+            From Date
+        </th>
+        <th width="10%">
+            Search Type
+        </th>
+    </tr>
+    <tr id="srchKeyPress">
+        <td width="10%">
+            <input type="text" id="txtUserId" class="CSSTextBox" />
+        </td>
+        <td width="10%">
+            @Html.DropDownListFor(model => model.UserType, new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { id = "ddlUserType"})
+        </td>
+        <td width="10%">
+            <input type="text" id="txtFrmDate" class="datepicker" />
+        </td>
+        <td width="10%">
+            @Html.DropDownList("ddlSearchType", new SelectList(new[]
+                                          {
+                                             new {Value="",Text="Select"},
+                                              new{Value="Today",Text="Today"},
+                                              new{Value="Yesterday",Text="Yesterday"},
+                                              new{Value="This Week",Text="This Week"},
+                                              new{Value="Last Week",Text="Last Week"},
+                                              new{Value="This Month",Text="This Month"} ,
+                                              new{Value="Last Month",Text="Last Month"} ,
+                                          },
+                             "Value", "Text", ""))
+        </td>
+        <td width="10%">
+            <input type="button" value="Search" id="Search" />
+       @* </td>
+        <td width="10%">*@
+            <input type="button" value="Reset" id="reset" />
+        </td>
+        
+    </tr>
+    <tr>
+        <td colspan="6">
+            <table id='LoginList'>
+            </table>
+            <div id='LoginListPager'>
+            </div>
+        </td>
+    </tr>
+</table>

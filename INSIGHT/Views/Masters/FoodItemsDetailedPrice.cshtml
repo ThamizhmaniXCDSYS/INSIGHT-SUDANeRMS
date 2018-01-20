@@ -1,0 +1,80 @@
+﻿@{
+    ViewBag.Title = "FoodItemsDetailedPrice";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+ <style type="text/css">
+    .ui-jqgrid .ui-pg-input
+    {
+        width: 30px;
+    }
+    .ui-jqgrid .ui-pg-selbox
+    {
+        width: 50px;
+        height: 23px;
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#UNItemDetailedPriceGrid').jqGrid({
+            url: '@Url.Content("~/Masters/UNDetailedItemMasterPriceJqgrid")',
+            datatype: 'Json',
+            type: 'GET',
+            width: 1200,
+            height: 300,
+            colNames: ['Id', 'UNCode', 'Commodity', 'SectorCode', 'Halal', 'NonHalal', 'TransCost', 'InsuranceCost', 'Surfacedeliveries_Halal', 'Surfacedeliveries_NonHalal', 'AirCostfromRegional', 'AirCostfromOriginal', 'AirCostfromKhartoum', 'Warehouse'],
+            colModel: [
+            { name: 'Id', index: 'Id', hidden: true, key: true },
+            { name: 'UNCode', index: 'UNCode', editable: true ,width : 60},
+            { name: 'Commodity', index: 'Commodity', editable: true },
+             { name: 'SectorCode', index: 'SectorCode', editable: true, width: 60 },
+            { name: 'UnitPrice_Halal', index: 'UnitPrice_Halal', width: 80, search: false, editable: true },
+            { name: 'UnitPrice_NonHalal', index: 'UnitPrice_NonHalal', search: false, width: 80, editable: true },
+              { name: 'TransportationCost', index: 'TransportationCost', width: 80, search: false, editable: true },
+              { name: 'InsuranceCost', index: 'InsuranceCost', width: 80, search: false, editable: true },
+              { name: 'Surfacedeliveries_Halal', index: 'Surfacedeliveries_Halal', width: 80, search: false, editable: true },
+              { name: 'Surfacedeliveries_NonHalal', index: 'Surfacedeliveries_NonHalal', width: 80, search: false, editable: true },
+              { name: 'AirCostfromRegional', index: 'AirCostfromRegional', width: 80, search: false, editable: true },
+              { name: 'AirCostfromOriginal', index: 'AirCostfromOriginal', width: 80, search: false, editable: true },
+              { name: 'AirCostfromKhartoum', index: 'AirCostfromKhartoum', width: 80, search: false, editable: true },
+              { name: 'Warehouse', index: 'Warehouse', width: 80, search: false, editable: true }
+
+            ],
+            rowNum: 20000,
+            rowList: [], // disable page size dropdown
+            pgbuttons: false, // disable page control like next, back button
+            pgtext: null, // disable pager text like 'Page 0 of 10'
+            sortname: 'Id',
+            sortorder: 'Asc',
+            pager: '#UNItemDetailedPriceGridPager',
+            multiselect: true,
+            viewrecords: true,
+            shrinktofit: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;UNSector Map List'
+        });
+        $('#UNItemDetailedPriceGrid').jqGrid('filterToolbar', { searchOnEnter: true });
+        jQuery("#UNItemDetailedPriceGrid").jqGrid('navGrid', '#UNItemDetailedPriceGridPager', { add: true, edit: true, del: true, search: false, refresh: true },
+        //Edit options
+            { width: 'auto', url: '@Url.Content("~/Masters/AddUNDetailedItemMasterPrice/")', left: '10%', top: '10%', height: '50%', width: 400 },
+        //Add options
+            { width: 'auto', url: '@Url.Content("~/Masters/AddUNDetailedItemMasterPrice/")', left: '10%', top: '10%', height: '50%', width: 400 },
+        //Delete options
+            { width: 'auto', url: '@Url.Content("~/Masters/DeleteUNDetailedItemMasterPrice/")', left: '10%', top: '10%', height: '50%', width: 400, beforeShowForm: function (params) { var gsr = $("#UNSectorMapMaster").getGridParam('selrow'); var sdata = $("#UNSectorMapMaster").getRowData(gsr); return { Id: sdata.Id } } }
+                );
+        $("#UNItemDetailedPriceGrid").jqGrid('navButtonAdd', '#UNItemDetailedPriceGridPager', {
+            caption: "Export To Excel",
+            onClickButton: function () {
+                var ExptType = 'Excel';
+
+                window.open('UNDetailedItemMasterPriceJqgrid?ExptType=' + ExptType + '&rows=9999' + '&sidx=' + '&sord=desc' + '&page=1');
+            }
+        });
+    });
+</script>
+<table width="100%"><tr>
+<td>
+<table id="UNItemDetailedPriceGrid">
+</table>
+<div id="UNItemDetailedPriceGridPager">
+</div>
+</td>
+</tr></table>

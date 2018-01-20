@@ -1,0 +1,46 @@
+﻿@{
+    ViewBag.Title = "DocUpload";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<script type="text/javascript">
+function uploaddoc() {
+        if (document.getElementById("file2").value == "") {
+            ErrMsg("Please Browse a Document");
+        }
+        else {
+            //splitstr = splitstr + $('#file2').val().split('\\');
+
+            $.ajaxFileUpload({
+                url: '@Url.Content("~/Base/DocmentUpload")',
+                secureuri: false,
+                fileElementId: 'file2',
+                dataType: 'json',
+                success: function (data, success) {
+                    var div = document.getElementById('Attachfiles2');
+
+                    if ((div.innerHTML == 'Attached Files &nbsp;&nbsp;&nbsp;  ')) {
+                        div.innerHTML = div.innerHTML + data.result;
+                    }
+                    else {
+                        div.innerHTML = div.innerHTML + ', ' + data.result;
+                    }
+                }
+            });
+            $('#clear2').html($('#clear2').html());
+        }
+    }
+
+</script>
+<h2>
+    DocUpload</h2>
+<input type="file" class="btn btn-mini" title="Browse file to add" name="file2" id="file2"
+    value="" multiple="multiple" style="height: 22px" />
+
+
+<button type="button" class="btn btn-mini btn-primary" id="upload" value="Upload"
+    onclick="uploaddoc()">
+    <i class="icon-upload" style="vertical-align: middle"></i>Upload
+</button>
+<button type="button" class="btn btn-mini btn-primary" id="clear" value="clear" onclick="resethtml2()">
+    <i class="icon-remove-sign" style="vertical-align: middle"></i>Clear
+</button>

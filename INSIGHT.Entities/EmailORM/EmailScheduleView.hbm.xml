@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping assembly="INSIGHT.Entities.EmailEntities.EmailScheduleView" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.EmailEntities.EmailScheduleView, INSIGHT.Entities" table="EmailSchedule_vw" lazy="false" >
+  <id name="Id"  column="Id"  type="Int64" >
+    <generator class="identity" />
+</id>
+  <property name="MailTemplate"  column="MailTemplate"  type="string" />
+    <property name="MailPeriod"  column="MailPeriod"  type="string" />
+    <property name="ScheduleDate"  column="ScheduleDate"  type="datetime" />
+    <property name="Username"  column="Username"  type="string" />
+    <property name="Usermailid"  column="Usermailid"  type="string" />
+    <property name="UserRefid"  column="UserRefid"  type="Int64" />
+  <property name="Createdby"  column="Createdby"  type="string" />
+  <property name="ModifiedBy"  column="ModifiedBy"  type="string" />
+  <property name="IsActive"  column="IsActive"  type="bool" />
+</class>
+</hibernate-mapping>

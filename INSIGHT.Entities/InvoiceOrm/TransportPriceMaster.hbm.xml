@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.InvoiceEntities.TransportPriceMaster"  namespace="INSIGHT.Entities"  xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.InvoiceEntities.TransportPriceMaster, INSIGHT.Entities" table="TransportPriceMaster" lazy="false" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="identity" />
+    </id>
+    <property name="Sector" column="Sector" type="string" />
+    <property name="SectorName" column="SectorName" type="string" />
+    <property name="StartDistance" column="StartDistance" type="Int64" />
+    <property name="EndDistance" column="EndDistance" type="Int64" />
+    <property name="SurfacePrice" column="SurfacePrice" type="decimal" />
+    <property name="AirPrice" column="AirPrice" type="decimal" />
+    <property name="CreatedBy" column="CreatedBy" type="string" />
+    <property name="CreatedDate" column="CreatedDate" type="datetime" />
+    <property name="ModifiedBy" column="ModifiedBy" type="string" />
+    <property name="ModifiedDate" column="ModifiedDate" type="datetime" />
+    </class>
+</hibernate-mapping>

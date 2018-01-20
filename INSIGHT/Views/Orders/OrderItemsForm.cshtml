@@ -1,0 +1,191 @@
+﻿@model INSIGHT.Entities.Orders
+@{
+    ViewBag.Title = "OrderItemsForm";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<style type="text/css">
+    .ui-jqgrid tr.jqgrow td{font-size:10px;}
+.ui-jqgrid .ui-pg-input
+{
+    width:30px;
+}
+.ui-jqgrid .ui-pg-selbox
+{
+    width:50px;
+   height:23px;
+}
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        debugger;
+
+        jQuery("#OrderItemsJQGrid").jqGrid({
+            mtype: 'GET',
+            url: '@Url.Content("~/Orders/OrderItemsListJQGrid")?OrderId='+'@Model.OrderId',
+            //postData: { userid: usersrch, appcd: appcdsrch, rlcd: rlcdsrch, depcd: depcdsrch, brncd: brncdsrch, Id: Id },
+            datatype: 'json',
+            height: '400',
+            width:'1200',
+            // width: $("#POList").closest("fieldset").innerWidth() - 10,
+            shrinkToFit: true,
+            colNames: ['LineId', 'OrderId', 'UNCode', 'Commodity', 'OrdQty', 'DelQty', 'AcpQty', 'InvQty', 'RemQty', 'Sector Price', 'OrdValue','InvValue'],
+            colModel: [
+                      { name: 'LineId', index: 'LineId', key: true,hidden:true },
+                      { name: 'OrderId', index: 'OrderId', hidden: true },
+                      { name: 'UNCode', index: 'UNCode', sortable: true,width:60 },
+                      { name: 'Commodity', index: 'Commodity', sortable: true},
+                      { name: 'OrderQty', index: 'OrderQty', width: 60 },
+                      { name: 'AcceptedOrdQty', index: 'AcceptedOrdQty', width: 60 },
+                      { name: 'DeliveredOrdQty', index: 'DeliveredOrdQty', width: 60 },
+                      { name: 'RemainingOrdQty', index: 'RemainingOrdQty', width: 60 },
+                      {name:'InvoiceQty',index:'InvoiceQty',width:60},
+                      { name: 'SectorPrice', index: 'SectorPrice', search: false, width: 60 },
+                      { name: 'Total', index: 'Total', search: false, width: 60 },
+                        { name: 'InvoiceValue', index: 'InvoiceValue', search: false, width: 60 },
+                     //{ name: 'OfflineAttachment', index: 'OfflineAttachment', formatter: FormatterlinerDocLink,search:false }
+   
+
+
+                      ],
+            pager: '#OrderItemsJQGridPager',
+            rowNum: '1000',
+            rowList: [100, 200, 300, 400],
+            //rowList: [], // disable page size dropdown
+           // pgbuttons: false, // disable page control like next, back button
+           // pgtext: null, // disable pager text like 'Page 0 of 10'
+            sortname: 'OrderId',
+            sortorder: "Desc",
+            viewrecords: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Order Items List'
+          //  multiselect: true
+        });
+        jQuery("#POList").jqGrid('navGrid', '#POListPager', { edit: false, add: false, del: false });
+        $('#OrderItemsJQGrid').jqGrid('filterToolbar', { searchOnEnter: true, enableClear: false, afterSearch: function () { $('#OrderItemsJQGrid').clearGridData(); } });
+    });
+//    function FormatterlinerDocLink(cellvalue, options, rowObject) {
+//        //debugger;
+
+//        return '<a href="#" class="btnAddOfflineDoc" frmId=' + rowObject[0] + ' Id=' + rowObject[0] + '>Note</a>';
+//    }
+
+</script>
+@using (Html.BeginForm())
+{
+    
+    <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="6" class="PanelHeading">
+                <i class="icon-chevron-right"></i>&nbsp;Order Items Detail
+            </td>
+        </tr>
+        <tr>
+            <td width="15%">
+                <label class="lblheader">
+                   
+                  Name</label><br />
+                  @Html.DisplayFor(m => m.Name)
+                    @Html.HiddenFor(m => m.Name)
+
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Location</label> <br />
+                       @Html.DisplayFor(m => m.Location)
+                    @Html.HiddenFor(m => m.Location)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Control Id</label> <br />
+                        @Html.DisplayFor(m => m.ControlId)
+                    @Html.HiddenFor(m => m.ControlId)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Start Date</label> <br />
+                      @String.Format("{0:dd/MM/yyyy }", Model.StartDate, new { @id = "lbsStartDate" })
+                       @* @Html.DisplayFor(m => m.StartDate)*@
+                    @Html.HiddenFor(m => m.StartDate)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    End Date</label> <br />
+                    @String.Format("{0:dd/MM/yyyy }", Model.EndDate, new { @id = "lbsEndDate" })
+@*                        @Html.DisplayFor(m => m.EndDate)*@
+                    @Html.HiddenFor(m => m.EndDate)
+            </td>
+        </tr>
+        <tr>
+            <td width="15%">
+            <label class="lblheader">
+            Troops
+            </label> <br />
+                @Html.DisplayFor(m => m.Troops)
+                    @Html.HiddenFor(m => m.Troops)
+            
+            </td>
+            <td width="15%">
+             <label class="lblheader">
+            Total Amount
+            </label> <br />
+                @Html.DisplayFor(m => m.TotalAmount)
+                    @Html.HiddenFor(m => m.TotalAmount)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Items Ordered </label> <br />
+                        @Html.DisplayFor(m => m.LineItemsOrdered)
+                    @Html.HiddenFor(m => m.LineItemsOrdered)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Without eggs</label> <br />
+                        @Html.DisplayFor(m => m.KgOrderedWOEggs)
+                    @Html.HiddenFor(m => m.KgOrderedWOEggs)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    EggsWeight</label> <br />
+                        @Html.DisplayFor(m => m.EggsWeight)
+                    @Html.HiddenFor(m => m.EggsWeight)
+            </td>
+        </tr>
+        <tr>
+            <td width="15%">
+                <label class="lblheader">
+                    TotalWeight</label> <br />
+                        @Html.DisplayFor(m => m.TotalWeight)
+                    @Html.HiddenFor(m => m.TotalWeight)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    CreatedBy</label> <br />
+                        @Html.DisplayFor(m => m.CreatedBy)
+                    @Html.HiddenFor(m => m.CreatedBy)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Created Date</label> <br />
+                    @String.Format("{0:dd/MM/yyyy }", Model.CreatedDate, new { @id = "lblCreatedDate" })
+                       @* @Html.DisplayFor(m => m.CreatedDate)*@
+                    @Html.HiddenFor(m => m.CreatedDate)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Location CMR</label> <br />
+                        @Html.DisplayFor(m => m.LocationCMR)
+                    @Html.HiddenFor(m => m.LocationCMR)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Control CMR</label> <br />
+                        @Html.DisplayFor(m => m.ControlCMR)
+                    @Html.HiddenFor(m => m.ControlCMR)
+            </td>
+        </tr>
+
+    </table>
+
+    
+}
+<table id="OrderItemsJQGrid"></table>
+<div id ="OrderItemsJQGridPager"></div>

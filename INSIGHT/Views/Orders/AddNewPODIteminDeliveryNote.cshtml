@@ -1,0 +1,207 @@
+﻿@{
+    ViewBag.Title = "AddNewPODIteminDeliveryNote";
+}
+
+<script type="text/javascript">
+    function AutoFillSubsItemName() {
+        $('#txtSubCommodity').autocomplete({
+            source: function (request, response) {
+                $.getJSON('@Url.Content("~/Orders/GetSubstituteItemName")?term=' + request.term, function (data) {
+                    response(data);
+                    //$(this).trigger('select'); return false;
+                });
+            },
+            minLength: 1,
+            delay: 100
+        });
+    }
+
+    function AutoFillItemCode(evt) {
+        var itemname = $('#txtSubCommodity').val();
+            $.ajax({
+                url: '@Url.Content("~/Orders/AutoCompleteSubsItemCode")?subitemname=' + itemname,
+                type: 'POST',
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length == 1) {
+                        if ($('#txtSubCommodity').val() != "") {
+                            $('#txtSubUNCode').val(data);
+                        }
+                    }
+                },
+                loadError: function (xhr, status, error) {
+                    msgError = $.parseJSON(xhr.responseText).Message;
+                    ErrMsg(msgError, function () { });
+                }
+            });
+    }
+
+    //Auto fill item code
+    function AutoFillItemName() {
+        $('#txtCommodity').autocomplete({
+            source: function (request, response) {
+                $.getJSON('@Url.Content("~/Orders/GetItemName")?Commodity=' + request.term+'&OrderId=@ViewBag.OrderId', function (data) {
+                    response(data);
+                });
+            },
+            minLength: 1,
+            delay: 10
+        });
+    }
+
+    function AutoFillItemCode1(evt) {
+        var itemname = $('#txtCommodity').val();
+        //return itemname
+        $.ajax({
+            url: '@Url.Content("~/Orders/AutoCompleteItemcodeandOrderQty")?itemname=' + itemname + '&OrderId=@ViewBag.OrderId',
+            type: 'POST',
+            dataType: 'json',
+            // traditional: true,
+            success: function (data) {
+                if (data.length == 1) {
+                    if ($('#txtCommodity').val() != "") {
+                        $('#txtUNCode').val(data[0].UNCode);
+                        $('#txtOrderQty').val(data[0].OrderQty);
+                        $('#txtRemainingQty').val(data[0].RemainingOrdQty);
+                        $('#LineId').val(data[0].LineId);
+                    }
+                }
+            },
+            loadError: function (xhr, status, error) {
+                msgError = $.parseJSON(xhr.responseText).Message;
+                ErrMsg(msgError, function () { });
+            }
+        });
+
+
+
+    }
+    
+    function CalculateRemQty() {
+        debugger;
+        if ($('#txtDelQty').val() > 0) {
+            var remqty = $('#txtRemainingQty').val() - $('#txtDelQty').val();
+
+            $('#txtRemainingQty').val(remqty.toFixed(3));
+    }
+
+    }
+
+    function AddNewPODItem() {
+        debugger;
+
+        var UNCode = $('#txtUNCode').val();
+      
+        var Commodity = $('#txtCommodity').val();
+        var OrderQty = $('#txtOrderQty').val();
+        var DelQty = $('#txtDelQty').val();
+        var RemainingQty = $('#txtRemainingQty').val();
+        var SubUNCode = $('#txtSubUNCode').val();
+        var SubCommodity = $('#txtSubCommodity').val();
+        var LineId = $('#LineId').val();
+
+        if (UNCode =="") {
+            ErrMsg("UNCode can not be empty");
+            return false;
+
+        }
+        if (Commodity =="") {
+
+            ErrMsg("Commodity can not be empty");
+            return false;
+        }
+        if (DelQty == "") {
+            ErrMsg("DeliveredQty can not be empty");
+            return false;
+
+        }
+        if (OrderQty == "") {
+
+            ErrMsg("OrderQty can not be empty");
+            return false;
+        }
+        if (RemainingQty == "") {
+
+            ErrMsg("RemainingQty can not be empty");
+            return false;
+        }
+        if (SubUNCode == "") {
+            SubUNCode = 0;
+
+        }
+        if (LineId == "" || LineId == 0)
+        {
+            return false;
+        }
+        $.ajax({
+            url: '@Url.Content("~/Orders/AddPODItemsInDeliveryNotePage")?UNCode=' + UNCode + '&Commodity=' + Commodity + '&OrderQty=' + OrderQty + '&DelQty=' + DelQty + '&RemainingQty=' + RemainingQty + '&SubUNCode=' + SubUNCode + '&SubCommodity=' + SubCommodity + '&PODId=@ViewBag.PODId &DeliveryNoteId=@ViewBag.DeliveryNoteId &DeliveryNoteName=@ViewBag.DeliveryNoteName &OrderId=@ViewBag.OrderId &LineId=' + LineId,
+            type: 'POST',
+             dataType: 'json',
+             // traditional: true,
+             success: function (data) {
+                 $("#AddNewPODItems").dialog("close");
+                 $("#PODItemsJQGrid").trigger("reloadGrid");
+             },
+             loadError: function (xhr, status, error) {
+                 msgError = $.parseJSON(xhr.responseText).Message;
+                 ErrMsg(msgError, function () { });
+             }
+         });
+    }
+
+ </script>
+@using (Html.BeginForm())
+{
+    @Html.Hidden("LineId")
+<table width="100%">
+    <tr>
+        <td><label class="lblheader">
+                UNCode</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+            <input type="text" id="txtUNCode"   /></td>
+    </tr>
+    <tr>
+        <td>
+        <label class="lblheader">
+                Commodity</label></td>
+        <td>
+            <input type="text" id="txtCommodity"    onkeypress='AutoFillItemName();' onblur='AutoFillItemCode1(this);'  /></td>
+    </tr>
+    <tr>
+        <td> <label class="lblheader">
+                OrderQty</label></td>
+        <td>
+            <input type="text" id="txtOrderQty"  readonly /></td>
+    </tr>
+    <tr>
+        <td><label class="lblheader">
+                Del Qty</label></td>
+        <td>
+            <input type="text" id="txtDelQty" onkeypress = 'return AllowNumericValue(this);'  onblur='CalculateRemQty();'/></td>
+    </tr>
+    <tr>
+        <td><label class="lblheader">
+                RemainingQty</label></td>
+        <td>
+            <input type="text" id="txtRemainingQty"  readonly /></td>
+    </tr>
+    <tr>
+        <td><label class="lblheader">
+                SubUNCode</label></td>
+        <td>
+            <input type="text" id="txtSubUNCode" /></td>
+    </tr>
+    <tr>
+        <td><label class="lblheader">
+                SubCommodity</label></td>
+        <td>
+            <input type="text" id="txtSubCommodity"  onkeypress='AutoFillSubsItemName(" + rowObject[0] + ");' onblur='AutoFillItemCode(this);'/></td>
+         
+    </tr>
+    <tr>
+       
+        <td colspan="2"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<input type="button" value="ADD"  id="btnAddNewPODItem" onclick="AddNewPODItem(); return false;"</td>
+        
+    </tr>
+</table>
+}

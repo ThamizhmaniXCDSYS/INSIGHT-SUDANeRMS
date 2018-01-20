@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping assembly="INSIGHT.Entities.GCCRevised" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.GCCRevised, INSIGHT.Entities" table="GCCRevised" lazy="true" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="native" />
+    </id>
+
+    <property name="UNCode" column="UNCode" type="Int64"/>
+    <property name="Commodity" column="Commodity" type="string"/>
+    <property name="OrderedQty" column="OrderedQty" type="decimal"/>
+    <property name="DeliveredQty" column="DeliveredQty" type="decimal"/>
+    <property name="NoOfPacks" column="NoOfPacks" type="decimal"/>
+    <property name="NoOfPieces" column="NoOfPieces" type="decimal"/>
+    <property name="SubstituteItemCode" column="SubstituteItemCode" type="Int64"/>
+    <property name="SubstituteItemName" column="SubstituteItemName" type="string"/>
+    <property name="UOM" column="UOM" type="string"/>
+    <property name="IssueType" column="IssueType" type="string"/>
+    <property name="Remarks" column="Remarks" type="string"/>
+    <property name="Authorized" column="Authorized" type="string"/>
+    <property name="ReceivedQty" column="ReceivedQty" type="decimal"/>
+    <property name="ReceivedDate" column="ReceivedDate" type="datetime"/>
+
+    <property name="ControlId" column="ControlId" type="string"/>
+    <property name="DeliveryNoteName" column="DeliveryNoteName" type="string"/>
+    <property name="DeliveryNoteType" column="DeliveryNoteType" type="string"/>
+    <property name="DeliveryMode" column="DeliveryMode" type="string"/>
+    <property name="ApprovedDeliveryDate" column="ApprovedDeliveryDate" type="datetime"/>
+    <property name="ShipmentDate" column="ShipmentDate" type="datetime"/>
+    <property name="ActualWarehouseShippedOutDate" column="ActualWarehouseShippedOutDate" type="datetime"/>
+    <property name="ImpPeriod" column="ImpPeriod" type="string"/>
+    <!--<property name="UNWeek" column="UNWeek" type="decimal"/>-->
+    <property name="Week" column="Week" type="Int64" />
+    <property name="ConsumptionWeek" column="ConsumptionWeek" type="decimal"/>
+    <property name="DeliveryWeek" column="DeliveryWeek" type="decimal"/>
+    <property name="RequestNo" column="RequestNo" type="decimal"/>
+    <property name="Warehouse" column="Warehouse" type="string"/>
+    <property name="Strength" column="Strength" type="decimal"/>
+    <property name="DOS" column="DOS" type="decimal"/>
+    <property name="ManDays" column="ManDays" type="decimal"/>
+    <property name="CreatedBy" column="CreatedBy" type="string" />
+    <property name="CreatedDate" column="CreatedDate" type="datetime"/>
+
+    <property name="RemainingQty" column="RemainingQty" type="decimal"/>
+    <property name="OrderId" column="OrderId" type="decimal" />
+    <property name="PODId" column="PODId" type="decimal" />
+    <property name="LineId" column="LineId" type="decimal" />
+    <property name="Period" column="Period" type="string"/>
+    <property name="PeriodYear" column="PeriodYear" type="string"/>
+    <property name="Sector" column="Sector" type="string"/>
+    <property name="Name" column="Name" type="string"/>
+    <property name="Location" column="Location" type="string"/>
+    <property name="IsValid" column="IsValid" type="string"/>
+    <property name="StorerKey" column="StorerKey" type="string"/>
+    <property name="RequestId" column="RequestId" type="Int64"/>
+    <property name="DeliveryNoteId" column="DeliveryNoteId" type="Int64"/>
+  </class>
+</hibernate-mapping>

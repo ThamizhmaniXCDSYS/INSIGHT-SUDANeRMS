@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.InvoiceQtyDelSector_PODItems" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.InvoiceQtyDelSector_PODItems, INSIGHT.Entities" table="InvoiceQtyDelSector_PODItems" lazy="false" >
+    <id name="Id" column="Id">
+      <!--<generator class="identity" />-->
+    </id>
+    <property name="OrderId" column="OrderId" type="Int64" />
+    <property name="UNCode" column="UNCode" type="Int64" />
+    <property name="LineId" column="LineId" type="Int64" />
+    <property name="PODItemsId" column="PODItemsId" type="Int64" />
+    <property name="InvoiceQty" column="InvoiceQty" type="decimal" />
+    <property name="DeliverySector" column="DeliverySector" type="string" />
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,215 @@
+﻿@model INSIGHT.Entities.User
+@{
+    ViewBag.Title = "User Modification";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+
+<h3>
+    User Modification</h3>
+
+<br />
+<h3>
+    Passwords are required to be a minimum of 6 characters in length.
+<br />
+<br />
+
+    New passwords are required to be a minimum of 6 characters in length.
+</h3>
+<br />
+<link href="@Url.Content("~/App_Themes/Default/ui.jqgrid.css")" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src='@Url.Content("~/Scripts/JQueryUI/jquery-ui-1.8.22.custom.min.js")'></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqGridJs/i18n/grid.locale-en.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqGridJs/jquery.jqGrid.min.js")"></script>
+<script src="@Url.Content("~/Scripts/ApplicationScript.js")" type="text/javascript"></script>
+<script type="text/javascript" language="javascript">
+    var error = "@ViewBag.Error";
+    var SuccessMsg = "@ViewBag.SuccessMsg";
+    if (error != "") {
+        ErrMsg(error, function () { window.location.href = '@Url.Action("UserModification", "Account")' });
+    }
+    if (SuccessMsg != "") {
+        SucessMsg(SuccessMsg, function () { window.location.href = '@Url.Action("UserModification", "Account")' });
+    }
+
+    $(function () {
+
+        $("#UserSearch").click(function () {
+            LoadPopupDynamicaly('@Url.Content("~/Account/UserList")', $('#DivUserSearch'),
+            function () {
+                LoadSetGridParam($('#UserList'), '@Url.Content("~/Account/UserListJqGrid")')
+            });
+        });
+
+        var clbPupGrdSel = null;
+        function LoadPopupDynamicaly(dynURL, ModalId, loadCalBack, onSelcalbck, width) {
+
+            if (width == undefined) { width = 850; }
+            if (ModalId.html().length == 0) {
+                $.ajax({
+                    url: dynURL,
+                    type: 'GET',
+                    async: false,
+                    dataType: 'html', // <-- to expect an html response
+                    success: function (data) {
+                        ModalId.dialog({
+                            height: 500,
+                            width: width,
+                            modal: true,
+                            title: 'User Details',
+                            buttons: {}
+                        });
+                        ModalId.html(data);
+                    }
+                });
+            }
+            clbPupGrdSel = onSelcalbck;
+            ModalId.dialog('open');
+            CallBackFunction(loadCalBack);
+        }
+
+        function LoadSetGridParam(GridId, brUrl) {
+            GridId.setGridParam({
+                url: brUrl,
+                datatype: 'json',
+                mtype: 'GET'
+            }).trigger("reloadGrid");
+        }
+
+        $("#UserSearch").button({ icons: { primary: "ui-icon-search" },
+            text: false
+        });
+
+        $.getJSON('@Url.Content("~/Account/FillUserType")',
+                 function (fillusertype) {
+                     var ddlusrtyp = $("#ddlUserType");
+                     ddlusrtyp.empty();
+                     ddlusrtyp.append($('<option/>',
+                    {
+                        value: "",
+                        text: "Select One"
+
+                    }));
+
+                     $.each(fillusertype, function (index, itemdata) {
+                        
+                             ddlusrtyp.append($('<option/>',
+                             {
+                                 value: itemdata.Value,
+                                 text: itemdata.Text
+                             }));
+
+                     });
+                 });
+
+        $('#btnSubmit').click(function () {
+
+            var userid = $("#UserId").val();
+            var usertyp = $("#ddlUserType").val();
+            var userName = "";
+            var sEmail = $('#EmailId').val();
+            
+
+            if ($.trim(userid).length == 0) {
+                ErrMsg('UserId is Mandatory.');
+                return false;
+            }
+            if ($.trim(usertyp).length == 0) {
+                ErrMsg('User Type is Mandatory.');
+                return false;
+            }
+            //            if ($.trim(sEmail).length == 0) {
+            //                ErrMsg('EmailId is Mandatory.');
+            //                return false;
+            //            }
+            //            validate(sEmail);
+            //            if ((validate(sEmail)) == false) {
+            //                ErrMsg('Invalid Email Address.');
+            //                return false;
+            //            }
+
+        });
+
+
+        $("#btnReset").click(function () {
+            window.location.href = '@Url.Action("UserModification", "Account")';
+        });
+
+    });
+</script>
+@using (Html.BeginForm("UserModification"))
+{
+    <div>
+        <table width="100%" class="InnerTable">
+            <tr>
+                <th width="10%">
+                    <label>
+                        User Id</label>
+                </th>
+                <td>
+                    @Html.TextBoxFor(m => m.UserId, new { @Class = "CSSTextBox",@placeholder = "Enter UserId"  })
+                    <span style="color: Red">*</span> <a id="UserSearch">..</a>
+                    @Html.ValidationMessageFor(m => m.UserId)
+                    @Html.HiddenFor(m=>m.Id)
+                </td>
+            </tr>
+            <tr>
+                <th width="10%">
+                    <label>
+                        User Name</label>
+                </th>
+                <td>
+                    @Html.TextBoxFor(m => m.UserName, new { @Class = "CSSTextBox", @placeholder = "Enter User Name" })
+                    <span style="color: Red">*</span>
+                    @Html.ValidationMessageFor(m => m.UserName)
+                </td>
+            </tr>
+            <tr>
+                <th width="10%">
+                    <label>
+                        User Type</label>
+                </th>
+                <td>
+                    @Html.DropDownListFor(model => model.UserType, new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { id = "ddlUserType" })
+                    <span style="color: Red">*</span>
+                    @Html.ValidationMessageFor(m => m.UserId)
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    <label>
+                        Email Id</label>
+                </th>
+                <td>
+                    @Html.TextBoxFor(m => m.EmailId, new { @Class = "CSSTextBox", @placeholder = "Enter EmailId" })
+                    <span style="color: Red">*</span>
+                    @Html.ValidationMessageFor(m => m.EmailId)
+                </td>
+            </tr>
+           
+            <tr>
+                <th>
+                    <label>
+                        Is Active</label>
+                </th>
+                <td>
+                    @Html.DropDownListFor(m=>m.IsActive, new SelectList(new[]
+                                          {
+                                            new{Value="",Text="Select One",},
+                                            new{Value="True",Text="True"},
+                                            new{Value="False",Text="False"},
+                                          },
+                             "Value", "Text", ""))
+                </td>
+            </tr>
+            <tr>
+                <td>
+                </td>
+                <td>
+                    <input type="submit" id="btnSubmit" value="Submit" />
+                    <input type="button" id="btnReset" value="Reset"  />
+                </td>
+            </tr>
+        </table>
+    </div>
+}
+<div id="DivUserSearch"></div>

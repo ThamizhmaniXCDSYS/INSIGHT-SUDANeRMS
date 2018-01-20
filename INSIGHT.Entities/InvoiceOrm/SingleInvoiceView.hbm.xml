@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+    <hibernate-mapping assembly="INSIGHT.Entities.InvoiceEntities.SingleInvoiceView"  namespace="INSIGHT.Entities"  xmlns="urn:nhibernate-mapping-2.2">
+      <class name="INSIGHT.Entities.InvoiceEntities.SingleInvoiceView, INSIGHT.Entities" table="SingleInvoice_vw" lazy="false" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="native"/>
+    </id>
+    <property name="OrderId" column="OrderId" type="Int64"/>
+    <property name="UNCode" column="UNCode" type="Int64"/>
+    <property name="LineId" column="LineId" type="Int64"/>
+    <property name="Commodity" column="Commodity" type="string"/>
+    <property name="OrderQty" column="OrderQty" type="decimal"/>
+    <property name="DeliveredOrdQty" column="DeliveredOrdQty" type="decimal"/>
+    <property name="InvoiceQty" column="InvoiceQty" type="decimal" />
+    <property name="AcceptedOrdQty" column="AcceptedOrdQty" type="decimal"/>
+    <property name="SectorPrice" column="SectorPrice" type="decimal"/>
+    <property name="NetAmt" column="NetAmt" type="decimal"/>
+    <property name="OrderValue" column="OrderValue" type="decimal"/>
+    <property name="ActualPackPrice" column="ActualPackPrice" type="decimal"/>
+    <property name="DeliveryNote" column="DeliveryNote" type="string"/>
+    <property name="UOM" column="UOM" type="string"/>
+    <property name="CalcPackPrice" column="CalcPackPrice" type="decimal"/>
+    <property name="APLWeight" column="APLWeight" type="decimal"/>
+        <property name="ActualAPLWeight" column="ActualAPLWeight" type="decimal"/>
+    <property name="DiscrepancyCode" column="DiscrepancyCode" type="string"/>
+        <property name="NPACode" column="NPACode" type="string"/>
+  </class>
+      <sql-query name="GetSingleInvoiceList" callable="true">
+        <query-param name="OrderId" type="Int64"/>
+        <return class="INSIGHT.Entities.InvoiceEntities.SingleInvoiceView, INSIGHT.Entities">
+          <return-property name="Id" column="Id" />
+          <return-property name="OrderId" column="OrderId" />
+          <return-property name="UNCode" column="UNCode" />
+          <return-property name="LineId" column="LineId" />
+          <return-property name="Commodity" column="Commodity" />
+          <return-property name="OrderQty" column="OrderQty" />
+          <return-property name="DeliveredOrdQty" column="DeliveredOrdQty" />
+          <return-property name="InvoiceQty" column="InvoiceQty" />
+          <return-property name="AcceptedOrdQty" column="AcceptedOrdQty" />
+          <return-property name="SectorPrice" column="SectorPrice" />
+          <return-property name="NetAmt" column="NetAmt" />
+          <return-property name="OrderValue" column="OrderValue" />
+          <return-property name="ActualPackPrice" column="ActualPackPrice" />
+          <return-property name="DeliveryNote" column="DeliveryNote" />
+          <return-property name="UOM" column="UOM" />
+          <return-property name="CalcPackPrice" column="CalcPackPrice" />
+          <return-property name="ActualAPLWeight" column="ActualAPLWeight" />
+          <return-property name="APLWeight" column="APLWeight" />
+          <return-property name="DiscrepancyCode" column="DiscrepancyCode" />
+          <return-property name="NPACode" column="NPACode" />
+        </return>
+        <![CDATA[ 
+     EXEC [SingleInvoieList_sp] @OrderId=:OrderId
+    ]]>
+      </sql-query>
+</hibernate-mapping>
+

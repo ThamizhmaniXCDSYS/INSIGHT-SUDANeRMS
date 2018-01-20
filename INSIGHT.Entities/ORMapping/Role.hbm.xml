@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.User" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.Role, INSIGHT.Entities" table="Role" lazy="false" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="identity" />
+    </id>
+    <property name="RoleCode">
+      <column name="RoleCode" sql-type="nvarchar" not-null="true" />
+    </property>
+    <property name="RoleName">
+      <column name="RoleName" sql-type="nvarchar" not-null="false" />
+    </property>
+    <property name="CreatedBy">
+      <column name="CreatedBy" sql-type="nvarchar" not-null="false" />
+    </property>
+    <property name="CreatedDate">
+      <column name="CreatedDate" sql-type="nvarchar" not-null="false" />
+    </property>
+    <property name="ModifiedBy">
+      <column name="ModifiedBy" sql-type="nvarchar" not-null="false" />
+    </property>
+    <property name="ModifiedDate">
+      <column name="ModifiedDate" sql-type="nvarchar" not-null="false" />
+    </property>
+    <property name="Description">
+      <column name="Description" sql-type="nvarchar" not-null="false" />
+    </property>
+  </class>
+</hibernate-mapping>

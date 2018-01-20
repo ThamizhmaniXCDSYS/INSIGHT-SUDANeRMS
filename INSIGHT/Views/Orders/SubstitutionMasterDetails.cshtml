@@ -1,0 +1,124 @@
+﻿@model INSIGHT.Entities.UploadRequest
+@{
+    ViewBag.Title = "SubstitutionMasterDetails";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<style>
+
+     .ui-jqgrid tr.jqgrow td{font-size:10px;}
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        jQuery("#SubstitutionMaster").jqGrid({
+            mtype: 'GET',
+            url: '@Url.Content("~/Orders/SubstitutionMasterJqGrid")?RequestId='+'@Model.RequestId',
+            datatype: 'json',
+            height: '250',
+            width: '1200',
+            // width: $("#OrdersList").closest("fieldset").innerWidth() - 10,
+            shrinkToFit: true,
+            colNames: ['SubstitutionMstId', 'ControlId', 'UNCode', 'ItemName', 'OrdQty', 'S.UNCode', 'S.ItemName', 'AccQty', 'Sub/Rep', 'Sector', 'Name', 'Location', 'Period', 'PeriodYear', 'Contingent Type', 'Category', 'OrderId', '', '', '', ''],
+            colModel: [
+                        { name: 'SubstitutionMstId', index: 'SubstitutionMstId', key: true, hidden: true, editable: true },
+                        { name: 'ControlId', index: 'ControlId', width: 400 ,search:true},
+                        { name: 'UNCode', index: 'UNCode', width: 60,search:false },
+                        { name: 'ItemName', index: 'ItemName', width: 430,search:false },
+                        { name: 'OrderedQty', index: 'OrderedQty', width: 80 ,search:false},
+                        { name: 'SubstituteItemCode', index: 'SubstituteItemCode', width: 60,search:false },
+                        { name: 'SubstituteItemName', index: 'SubstituteItemName', width: 430, search: false },
+                        { name: 'AcceptedQty', index: 'AcceptedQty', width: 80,search:false },
+                        { name: 'SubsOrReplace', index: 'SubsOrReplace', width: 50, hidden: false,search:false },
+                        { name: 'Sector', index: 'Sector', search: false, width: 90, hidden: false },
+                        { name: 'Name', index: 'Name', search: false, width: 50, hidden: true },
+                        { name: 'Location', index: 'Location', search: false, width: 50, hidden: true },
+                        { name: 'Period', index: 'Period', search: false, width: 60, hidden: true },
+                        { name: 'PeriodYear', index: 'PeriodYear', search: false, width: 60, hidden: true },
+                        { name: 'ContingentType', index: 'ContingentType', search: false, width: 60, hidden: true },
+                        { name: 'Category', index: 'Category', search: false, width: 60, hidden: true },
+                        { name: 'OrderId', index: 'OrderId', search: false, width: 60, hidden: true },
+                        { name: 'CreatedBy', index: 'CreatedBy', hidden: true },
+                        { name: 'CreatedDate', index: 'CreatedDate', hidden: true },
+                        { name: 'ModifiedBy', index: 'ModifiedBy', hidden: true },
+                        { name: 'ModifiedDate', index: 'ModifiedDate', hidden: true }
+            ],
+            pager: '#SubstitutionMasterPager',
+            rowNum: '20000',
+           // rowList: [500, 1000, 1500, 2000],
+             rowList: [], // disable page size dropdown
+            // pgbuttons: false, // disable page control like next, back button
+            //pgtext: null, // disable pager text like 'Page 0 of 10'
+            sortname: 'SubstitutionMstId',
+            sortorder: "Asc",
+            viewrecords: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Substitution Master'
+
+            // multiselect: true
+
+        });
+        $('#SubstitutionMaster').jqGrid('filterToolbar', { searchOnEnter: true, enableClear: false, afterSearch: function () { $('#SubstitutionMaster').clearGridData(); } });
+
+
+    });
+    function BackToList() {
+
+
+        window.location.href = '@Url.Content("~/Orders/SubstitutionMasterUpload")';
+
+
+                }
+
+</script>
+@using (Html.BeginForm())
+ {
+       <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="6" class="PanelHeading">
+                <i class="icon-chevron-right"></i>&nbsp; Substitution Master Details
+            </td>
+        </tr>
+        <tr>
+            <td width="16%">
+                <label class="lblheader">
+                   
+                  RequestName</label><br />
+                  @Html.DisplayFor(m => m.RequestName)
+                    @Html.HiddenFor(m => m.RequestName)
+
+            </td>
+            <td width="16%">
+                <label class="lblheader">
+                    Period</label> <br />
+                       @Html.DisplayFor(m => m.Period)
+                    @Html.HiddenFor(m => m.Period)
+            </td>
+            <td width="16%">
+                <label class="lblheader">
+                    Period Year</label> <br />
+                        @Html.DisplayFor(m => m.PeriodYear)
+                    @Html.HiddenFor(m => m.PeriodYear)
+            </td>
+            <td width="16%">
+                <label class="lblheader">
+                    Created By</label> <br />
+                        @Html.DisplayFor(m => m.CreatedBy)
+                    @Html.HiddenFor(m => m.CreatedBy)
+            </td>
+            <td width="16%">
+                <label class="lblheader">
+                    Created Date</label> <br />
+                    @String.Format("{0:dd/MM/yyyy }", Model.CreatedDate)
+@*                        @Html.DisplayFor(m => m.EndDate)*@
+                    @Html.HiddenFor(m => m.CreatedDate)
+            </td>
+            <td width="16%">
+                
+                   <input type="button" id="btnBack" value="Back To List" onclick="BackToList(); return false;" />
+            </td>
+        </tr>
+    </table>
+
+ }
+  <table id="SubstitutionMaster">
+    </table>
+    <div id="SubstitutionMasterPager">
+    </div>

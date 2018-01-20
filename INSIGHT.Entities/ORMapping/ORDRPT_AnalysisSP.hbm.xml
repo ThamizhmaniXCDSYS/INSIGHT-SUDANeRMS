@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.ORDRPT_AnalysisSP" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.ORDRPT_AnalysisSP, INSIGHT.Entities" table="ORDRPT_AnalysisSP" lazy="false" >
+    <id name="Id" column="Id">
+      <generator class="identity" />
+    </id>
+    <property name="UNCode" column="UNCode" type="Int64" />
+    <property name="Commodity" column="Commodity" type="string" />
+    <property name="Temperature" column="Temperature" type="string" />
+    <property name="OrderQty" column="OrderQty" type="decimal" />
+    <property name="InitialOrdQty" column="InitialOrdQty" type="decimal" />
+    <property name="Difference" column="Difference" type="decimal" />
+    <property name="DiffPercentage" column="DiffPercentage" type="decimal" />
+    
+    <property name="StartDate" column="StartDate" type="datetime" />
+    <property name="InitialStartDate" column="InitialStartDate" type="datetime" />
+    <property name="EndDate" column="EndDate" type="datetime" />
+    <property name="InitialEndDate" column="InitialEndDate" type="datetime" />
+    <property name="Troops" column="Troops" type="Int64" />
+    <property name="InitialTroops" column="InitialTroops" type="Int64" />
+    
+    
+     
+
+  </class>
+
+  <sql-query name="AnalysisList" callable="true">
+    <query-param name="Period" type="string"/>
+    <query-param name="PeriodYear" type="string"/>
+    
+    <return class="INSIGHT.Entities.ORDRPT_AnalysisSP, INSIGHT.Entities">
+      <return-property name="Id" column="Id" />
+      <return-property name="UNCode" column="UNCode" />
+      <return-property name="Commodity" column="Commodity" />
+    <return-property name="Temperature" column="Temperature"/>
+    <return-property name="OrderQty" column="OrderQty"  />
+    <return-property name="InitialOrdQty" column="InitialOrdQty" />
+    <return-property name="Difference" column="Difference"/>
+    <return-property name="DiffPercentage" column="DiffPercentage" />
+
+      <return-property name="StartDate" column="StartDate"  />
+      <return-property name="InitialStartDate" column="InitialStartDate"  />
+      <return-property name="EndDate" column="EndDate"  />
+      <return-property name="InitialEndDate" column="InitialEndDate"  />
+      <return-property name="Troops" column="Troops"/>
+      <return-property name="InitialTroops" column="InitialTroops"/>
+
+    </return>
+    <![CDATA[ 
+     EXEC [ORDRPT_AnalysisSP] @SPPeriod=:Period , @SPPeriodYear=:PeriodYear 
+    ]]>
+  </sql-query>
+</hibernate-mapping>

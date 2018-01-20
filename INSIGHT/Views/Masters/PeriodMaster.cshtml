@@ -1,0 +1,139 @@
+﻿@{
+    ViewBag.Title = "PeriodMaster";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#PeriodMaster').jqGrid({
+            url: '@Url.Content("~/Masters/PeriodMasterJqGrid")',
+            datatype: 'Json',
+            type: 'GET',
+            autowidth: true,
+            height: 300,
+            colNames: ['Id', 'Period', 'Week', 'Year', 'StartDate', 'EndDate', 'StartDay', 'EndDay'],
+            colModel: [
+            { name: 'Id', index: 'Id', hidden: true, key: true },
+            { name: 'Period', index: 'Period', search: false, editable: true },
+            { name: 'Week', index: 'Week', editable: true },
+            { name: 'Year', index: 'Year', editable: true },
+            { name: 'StartDate', index: 'FromDate', editable: true, editable: true, editrules: { required: false }, editoptions: {
+                dataInit: function (data) {
+                    $(data).datepicker({ dateFormat: "dd/mm/yy",
+                        changeMonth: true,
+                        timeFormat: 'hh:mm:ss',
+                        autowidth: true,
+                        changeYear: true,
+                        onSelect: function (value, ui) {
+                            $.ajax({
+                                url: '@Url.Content("/Masters/CalculatingDate")?SrtDate=' + value,
+                                type: 'POST',
+                                dataType: 'json',
+                                traditional: true,
+                                success: function (data) {
+                                    if (data != "") {
+                                        $("#EndDate").val(data).attr("readonly", true);
+                                    }
+                                }
+                            });
+                        }
+                    }).attr('readonly', 'readonly');
+                }
+            }},
+             { name: 'EndDate', index: 'EndDate', editable: true, editable: true, editrules: { required: false }, editoptions: {
+                 dataInit: function (el) {
+                     $(el).datepicker({ dateFormat: "dd/mm/yy",
+                         changeMonth: true,
+                         changeYear: true,
+                         timeFormat: 'hh:mm:ss',
+                         autowidth: true
+                     }).attr('readonly', 'readonly');
+                 }
+             }
+             },
+              { name: 'StartDay', index: 'StartDay', search: false, edittype: 'select', editable: true, editoptions: { value: ":Select One;Sun:Sunday;Mon:Monday;Tue:Tuesday;Wed:Wednesday;Thu:Thursday;Fri:Friday;Sat:Saturday",
+                  dataEvents: [{ type: 'change', fn: function (value) {
+                      debugger;
+                      dt = value.currentTarget;
+                      var selday;
+                      for (i = 0; i < 8; i++) {
+                          if (dt[i].selected == true) {
+                              // alert(dt[i].text);
+                              selday = i++;
+                              //alert(i++); // dt[i].text;
+                          }
+                      }
+                      switch (selday) {
+                          case 1: $("#EndDay").val('Sat')
+                              break;
+                          case 2: $("#EndDay").val('Sun')
+                              break;
+                          case 3: $("#EndDay").val('Mon')
+                              break;
+                          case 4: $("#EndDay").val('Tue')
+                              break;
+                          case 5: $("#EndDay").val('Wed')
+                              break;
+                          case 6: $("#EndDay").val('Thu')
+                              break;
+                          case 7: $("#EndDay").val('Fri')
+                              break;
+                          default: $("#EndDay").val('')
+                      }
+                  }
+                  }]
+              }
+              },
+             { name: 'EndDay', index: 'EndDay', search: false, edittype: 'select', editable: true, editoptions: { value: ":Select One;Sat:Saturday;Sun:Sunday;Mon:Monday;Tue:Tuesday;Wed:Wednesday;Thu:Thursday;Fri:Friday"} },
+            ],
+      rowNum: 20000,
+      rowList: [], // disable page size dropdown
+      pgbuttons: false, // disable page control like next, back button
+      pgtext: null, // disable pager text like 'Page 0 of 10'
+            sortname: 'Id',
+            sortorder: 'Asc',
+            pager: '#PeriodMasterPager',
+            multiselect: true,
+            viewrecords: true,
+            shrinktofit: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Period List'
+
+        });
+        $('#PeriodMaster').jqGrid('filterToolbar', { searchOnEnter: true });
+        jQuery("#PeriodMaster").jqGrid('navGrid', '#PeriodMasterPager', { add: true, edit: false, del: true, search: false, refresh: true },
+          { width: 'auto', url: '@Url.Content("~/Masters/EditPeriodMaster/")', left: '10%', top: '10%', height: '50%', width: 400, modal: false},
+        //Add options
+            {width: 'auto', url: '@Url.Content("~/Masters/AddPeriodMaster/")', left: '10%', top: '10%', height: '50%', width: 400, modal: false },
+        //Delete options
+            //{width: 'auto', url: '/Masters/DeletePeriodMaster/', left: '10%', top: '10%', height: '50%', width: 400, beforeShowForm: function (params) { var gsr = $('#PeriodMaster').getGridParam('selrow'); var sdata = $('#PeriodMaster').getRowData(gsr); return { Id: sdata.Id} } });
+                               {width: 'auto', url: '@Url.Content("~/Masters/DeletePeriodMaster/")', left: '10%', top: '10%', height: '50%', width: 400,
+                               beforeShowForm: function (params) { selectedrows = $("#PeriodMaster").jqGrid("getGridParam", "selarrrow"); return { Id: selectedrows} }
+               });
+        //        function getSequenceNumbers() {
+        //            html += '<option value="Sun">Sunday</option>';
+        //            html += '<option value="Mon">Monday </option>';
+        //            html += '<option value="Tue">Tuesday</option>';
+        //            html += '<option value="Wed">Wednesday </option>';
+        //            html += '<option value="Thu">Thursday</option>';
+        //            html += '<option value="Fri">Friday </option>';
+        //            html += '<option value="Sat">Saturday</option>';
+        //        }
+        $("#PeriodMaster").jqGrid('navButtonAdd', '#PeriodMasterPager', {
+            caption: "Export To Excel",
+            onClickButton: function () {
+                var ExptType = 'Excel';
+
+                window.open('PeriodMasterJqGrid?ExptType=' + ExptType + '&rows=9999' + '&sidx=' + '&sord=desc' + '&page=1');
+            }
+        });
+    });
+</script>
+<table width="100%">
+<tr>
+<td>
+<table id="PeriodMaster">
+</table>
+<div id="PeriodMasterPager">
+</div>
+</td>
+</tr>
+</table>

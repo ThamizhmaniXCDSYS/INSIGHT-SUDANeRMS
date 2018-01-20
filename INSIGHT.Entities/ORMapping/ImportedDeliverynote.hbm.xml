@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.ImportedDeliveryNote" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.ImportedDeliveryNote, INSIGHT.Entities" table="ImportedDeliveryNote" lazy="false" >
+    <id name="ImpDeliveryNoteId" column="ImpDeliveryNoteId">
+      <generator class="identity" />
+    </id>
+      <!--<property name="ImpDeliveryNoteId" column="ImpDeliveryNoteId" type="Int64" />-->
+    <property name="ImpDeliveryNoteName" column="ImpDeliveryNoteName" type="string" />
+    <property name="ImpRequestNo" column="ImpRequestNo" type="Int64" />
+    <property name="ImpWarehouse" column="ImpWarehouse" type="string" />
+    <property name="ImpStrength" column="ImpStrength" type="decimal" />
+    <property name="ImpDOS" column="ImpDOS" type="decimal" />
+    <property name="ImpManDays" column="ImpManDays" type="decimal" />
+    <property name="ImpConsumptionWeek" column="ImpConsumptionWeek" type="decimal" />
+    <property name="ImpDeliveryWeek" column="ImpDeliveryWeek" type="decimal" />
+    <property name="ImpDeliveryMode" column="ImpDeliveryMode" type="string" />
+
+    <property name="ImpSealNo" column="ImpSealNo" type="string" />
+    <property name="ImpShipmentDate" column="ImpShipmentDate" type="datetime" />
+    <property name="ImpControlId" column="ImpControlId" type="string" />
+    <property name="ImpUNFoodOrder" column="ImpUNFoodOrder" type="string" />
+
+    <property name="ImpUNWeek" column="ImpUNWeek" type="decimal" />
+    <property name="ImpPeriod" column="ImpPeriod" type="string" />
+    <property name="OrderId" column="OrderId" type="Int64" />
+   
+    
+    <property name="Sector" column="Sector" type="string" />
+  <property name="Name" column="Name" type="string" />
+  <property name="Location" column="Location" type="string" />
+  <property name="Period" column="Period" type="string" />
+     <property name="CreatedBy" column="CreatedBy" type="string" />
+    <!--<property name="ModifiedBy" column="ModifiedBy" type="string" />-->
+    <property name="CreatedDate" column="CreatedDate" type="datetime" />
+    <!--<property name="ModifiedDate" column="ModifiedDate" type="datetime" />-->
+    <property name="PeriodYear" column="PeriodYear" type="string" />
+    <property name="ImpDeliveryNoteType" column="ImpDeliveryNoteType" type="string"/>
+    <property name="DocumentData"  type="Serializable" >
+      <column name="DocumentData" sql-type="varbinary(MAX)" length="2147483647"></column>
+    </property>
+
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,74 @@
+﻿@{
+    ViewBag.Title = "TransportPriceMaster";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#TransportPriceMaster').jqGrid({
+            url: '@Url.Content("~/Masters/TransportPriceMasterJqgrid")',
+            datatype: 'Json',
+            type: 'GET',
+            autowidth: true,
+            height: 300,
+            colNames: ['Id', 'Sector', 'Sector Name', 'Start Distance', 'End Distance', 'Surface Price', 'Air Price','Created Date'],
+            colModel: [
+            { name: 'Id', index: 'Id', hidden: true, key: true },
+            { name: 'Sector', index: 'Sector'},
+            { name: 'SectorName', index: 'SectorName' },
+            { name: 'StartDistance', index: 'StartDistance'},
+            { name: 'EndDistance', index: 'EndDistance' },
+            { name: 'SurfacePrice', index: 'SurfacePrice' },
+            { name: 'AirPrice', index: 'AirPrice' },
+            { name: 'CreatedDate', index: 'CreatedDate' }
+            ],
+            rowNum: 20000,
+            rowList: [], // disable page size dropdown
+            pgbuttons: false, // disable page control like next, back button
+            pgtext: null, // disable pager text like 'Page 0 of 10'
+            sortname: 'Id',
+            sortorder: 'Asc',
+            pager: '#TransportPriceMasterPager',
+            multiselect: true,
+            viewrecords: true,
+            shrinktofit: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Transport Price Master'
+        });
+        $('#TransportPriceMaster').jqGrid('filterToolbar', { searchOnEnter: true });
+        jQuery("#TransportPriceMaster").jqGrid('navGrid', '#TransportPriceMasterPager', { add: false, edit: false, del: false, search: false, refresh: true }
+        ////Edit options
+        //    {width: 'auto', url: '/Masters/EditTransportPriceMasterMaster/', left: '10%', top: '10%', height: '50%', width: 400 },
+        ////Add options
+        //    {width: 'auto', url: '/Masters/AddTransportPriceMasterMaster/', left: '10%', top: '10%', height: '50%', width: 400 },
+        ////Delete options
+        //    {width: 'auto', url: '/Masters/DeleteTransportPriceMasterMaster/', left: '10%', top: '10%', height: '50%', width: 400, beforeShowForm: function (params) {
+        //        //var gsr = $("#ContingentMaster").getGridParam('selrow');
+        //        //var sdata = $("#ContingentMaster").getRowData(gsr);
+        //        selectedrows = $("#TransportPriceMaster").jqGrid('getGridParam', 'selarrrow');
+        //        alert(selectedrows);
+        //        return { Id: selectedrows }
+
+         //   } 
+        //}
+                );
+        $("#TransportPriceMaster").jqGrid('navButtonAdd', '#TransportPriceMasterPager', {
+            caption: "Export To Excel",
+            onClickButton: function () {
+                var ExptType = 'Excel';
+
+                window.open('TransportPriceMasterJqgrid?ExptType=' + ExptType + '&rows=9999' + '&sidx=' + '&sord=desc' + '&page=1');
+            }
+        });
+
+
+    });
+</script>
+
+<table width="100%"><tr>
+<td>
+<table id="TransportPriceMaster">
+</table>
+<div id="TransportPriceMasterPager">
+</div>
+</td>
+</tr></table>

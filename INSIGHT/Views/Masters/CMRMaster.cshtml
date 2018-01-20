@@ -1,0 +1,57 @@
+﻿@{
+    ViewBag.Title = "CMRMaster";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#CMRMaster').jqGrid({
+            url: '@Url.Content("~/Masters/CMRMasterJqgrid")',
+            datatype: 'Json',
+            type: 'GET',
+            autowidth: true,
+            height: 300,
+            colNames: ['Id', 'SectorCode', 'Price'],
+            colModel: [
+            { name: 'Id', index: 'Id', hidden: true, key: true },
+            { name: 'SectorCode', index: 'SectorCode', editable: true },
+            { name: 'Price', index: 'Price', editable: true },
+            ],
+            rowNum: 20000,
+            sortname: 'Id',
+            sortorder: 'Asc',
+            pager: '#CMRMasterPager',
+            multiselect: true,
+            viewrecords: true,
+            shrinktofit: true,
+            rowList: [], // disable page size dropdown
+            pgbuttons: false, // disable page control like next, back button
+            pgtext: null, // disable pager text like 'Page 0 of 10'
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;CMR List'
+
+        });
+        $('#CMRMaster').jqGrid('filterToolbar', { searchOnEnter: true });
+        jQuery("#CMRMaster").jqGrid('navGrid', '#CMRMasterPager', { add: true, edit: false, del: true, search: false, refresh: true },
+        //Edit options
+            { width: 'auto', url: '@Url.Content("~/Masters/EditCMRMasterDetails/")', left: '10%', top: '10%', height: '50%', width: 400 },
+        //Add options
+            { width: 'auto', url: '@Url.Content("~/Masters/AddCMRMasterDetails/")', left: '10%', top: '10%', height: '50%', width: 400 },
+        //Delete options
+            //{width: 'auto', url: '/Masters/DeleteCMRMasterDetails/', left: '10%', top: '10%', height: '50%', width: 400, beforeShowForm: function (params) { var gsr = $("#CMRMaster").getGridParam('selrow'); var sdata = $("#CMRMaster").getRowData(gsr); return { Id: sdata.Id} } });
+                                      {
+                                          width: 'auto', url: '@Url.Content("~/Masters/DeleteCMRMasterDetails/")', left: '10%', top: '10%', height: '50%', width: 400,
+                                          beforeShowForm: function (params) { selectedrows = $("#CMRMaster").jqGrid("getGridParam", "selarrrow"); return { Id: selectedrows } }
+                                      });
+    });
+</script>
+<table width="100%">
+    <tr>
+        <td>
+            <table id="CMRMaster">
+            </table>
+            <div id="CMRMasterPager">
+            </div>
+        </td>
+    </tr>
+</table>
+

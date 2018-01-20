@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<hibernate-mapping assembly="INSIGHT.Entities.DocumentUpload" namespace="INSIGHT.Entities.DocumentUpload" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.DocumentUpload, INSIGHT.Entities" table="DocumentUpload" lazy="false" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="identity"></generator>
+    </id>
+
+    <property name="Document"  type="Serializable" >
+      <column name="Document" not-null="true" sql-type="varbinary(MAX)" length="2147483647"></column>
+    </property>
+    <property name="DocumentName" column="DocumentName" type="string"></property>
+    <property name="DocumentType" column="DocumentType" type="string"></property>
+  </class>
+</hibernate-mapping>
+

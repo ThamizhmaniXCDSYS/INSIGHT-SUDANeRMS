@@ -1,0 +1,42 @@
+﻿@{
+    ViewBag.Title = "PurchaseOrder";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+
+<table class="WithBorderOnly" width="100%">
+    <tr class="PanelHeading">
+        <td colspan="8" class="PanelHeading">
+            <i class="icon-chevron-right"></i>&nbsp;Search Panel&nbsp;
+        </td>
+    </tr>
+    <tr>
+        <td width="10%">
+            <label class="lblheader">
+                PO Number</label><br />
+            @Html.TextBox("txtPONumber", null, new { @class = "form-control", @onkeypress = "return AllowNumericValue(this);" })
+        </td>
+        <td width="10%">
+            <label class="lblheader">
+                Status</label><br />
+            @Html.DropDownList("txtPOStatus", new List<SelectListItem>
+                     {
+                        new SelectListItem{ Text="OPEN", Value = "OPEN" }, 
+                        new SelectListItem{ Text="CLOSE", Value = "CLOSE" }
+                     }, "Select One", new { @Class = "CSSDropDownList" })
+        </td>
+        <td width="10%">
+            <label class="lblheader">
+                Supplier No</label><br />
+            @Html.TextBox("txtSupplierNo", null, new { @class = "form-control" })
+        </td>
+        <td colspan="4" width="50%">
+            <input type="button" id="btnSearch" value="Search" onclick="Search(); return false;" />
+            <input type="reset" id="btnReset" value="Reset" onclick="ResetSearch(); return false;" />
+        </td>
+    </tr>
+</table>
+<table id="POMasterList">
+</table>
+<div id="POMasterListPager">
+</div>
+<script src='@Url.Content("~/Scripts/InventoryManagementScripts/PurchaseOrderScript.js")'></script>

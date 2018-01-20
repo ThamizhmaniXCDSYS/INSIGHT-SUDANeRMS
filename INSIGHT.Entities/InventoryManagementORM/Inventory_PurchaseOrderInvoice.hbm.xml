@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.InventoryManagementEntities.Inventory_PurchaseOrderInvoice" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.InventoryManagementEntities.Inventory_PurchaseOrderInvoice, INSIGHT.Entities" table="Inventory_PurchaseOrderInvoice" lazy="false" >
+    <id name="POInvoiceId" column="POInvoiceId" type="Int64">
+      <generator class="identity" />
+    </id>
+    <!--<property name="PurchOrderId" column="PurchOrderId" type="Int64" />-->
+    <property name="InvoiceNumber" column="InvoiceNumber" type="string" />
+    <property name="InvoiceDate" column="InvoiceDate" type="datetime" />
+    <property name="InvoiceAmount" column="InvoiceAmount" type="decimal" />
+    <property name="ContainerNumber" column="ContainerNumber" type="string" />
+    <property name="BillOfLading" column="BillOfLading" type="string" />
+    <property name="GLDate" column="GLDate" type="datetime" />
+    <property name="VoucherNumber" column="VoucherNumber" type="Int64" />
+
+    <property name="CreatedDate" column="CreatedDate" type="datetime" />
+    <property name="CreatedBy" column="CreatedBy" type="string" />
+    <property name="ModifiedDate" column="ModifiedDate" type="datetime" />
+    <property name="ModifiedBy" column="ModifiedBy" type="string" />
+    
+    <property name="RemainingAmount" column="RemainingAmount" type="decimal" />
+    <property name="IsComplete" column="IsComplete" type="bool" />
+    <property name="ExchangeRate" column="ExchangeRate" type="decimal" />
+    <property name="InvoiceAmountUSD" column="InvoiceAmountUSD" type="decimal" />
+    <property name="InvCurrency" column="InvCurrency" type="string" />
+    <!--<many-to-one name="Inventory_PurchaseOrderInvoiceMapping" column="POInvoiceId" class="INSIGHT.Entities.InventoryManagementEntities.Inventory_PurchaseOrderInvoiceMapping, INSIGHT.Entities" fetch="join"> </many-to-one>-->
+    <bag batch-size="20" name="Inventory_PurchaseOrderInvoiceMappingList" lazy="false" cascade="none">
+      <key column="POInvoiceId"/>
+      <one-to-many class="INSIGHT.Entities.InventoryManagementEntities.Inventory_PurchaseOrderInvoiceMapping, INSIGHT.Entities"/>
+    </bag>
+  </class>
+</hibernate-mapping>

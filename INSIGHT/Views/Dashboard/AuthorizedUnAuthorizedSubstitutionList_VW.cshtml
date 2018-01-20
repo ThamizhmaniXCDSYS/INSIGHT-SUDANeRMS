@@ -1,0 +1,46 @@
+﻿@{
+    ViewBag.Title = "AuthorizedUnAuthorizedSubstitutionList_VW";
+    Layout = "~/Views/Shared/Master.cshtml";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        debugger;
+        jQuery('#AuthorizedUnAuthorizedSubstitutionList_VW').jqGrid({
+            url: '@Url.Content("~/SampleOrders/SubstitutionListjQGrid")',
+            datatype: 'json',
+            type: 'GET',
+            height: 300,
+            width:1195,
+            colNames: ['Id', 'ControlId', 'OrderId', 'Sector', 'ContingentType', 'Name', 'Period', 'PeriodYear', 'Location', 'Week', 'UNCode', 'ItemName', 'SubstituteItemCode', 'SubstituteItemName', 'Status'],
+            colModel: [
+                { name: 'Id', index: 'Id' },
+                { name: 'ControlId', intex: 'ControlId' },
+                { name: 'OrderId', index: 'OrderId', },
+                { name: 'Sector', index: 'Sector' },
+                { name: 'ContingentType', index: 'ContingentType' },
+                { name: 'Name', index: 'Name' },
+                { name: 'Period', index: 'Period' },
+                { name: 'PeriodYear', index: 'PeriodYear' },
+                { name: 'Location', index: 'Location' },
+                { name: 'Week', index: 'Week' },
+                { name: 'UNCode', index: 'UNCode' },
+                { name: 'ItemName', index: 'ItemName' },
+                { name: 'SubstituteItemCode', index: 'SubstituteItemCode' },
+                { name: 'SubstituteItemName', index: 'SubstituteItemName' },
+                { name: 'Status', index: 'Status' },
+
+            ],
+            pager: '#AuthorizedUnAuthorizedSubstitutionList_VWPager',
+            multiselect: true,
+            viewRecords: true,
+            rowNum: 10,
+            rowList: [5, 10, 15, 20],
+            sortname: 'Id',
+            caption: 'SubstitutionList'
+        });
+
+    });
+</script>
+<table id="AuthorizedUnAuthorizedSubstitutionList_VW"></table>
+<div id="AuthorizedUnAuthorizedSubstitutionList_VWPager"></div>

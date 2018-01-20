@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.RoleUsers" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.RoleUsers, INSIGHT.Entities" table="RoleUsers" lazy="false" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="identity" />
+    </id>
+    <property name="UserId" column="UserId" type="AnsiString" not-null="true" />
+    <property name="UserName" column="UserName" type="AnsiString" not-null="false" />
+    <property name="Role" column="Role" type="AnsiString" not-null="false" />
+    <property name="EmailId" column="EmailId" type="AnsiString" not-null="false" />
+    <property name="IsActive" column="IsActive" type="boolean" not-null="false" />
+    <property name="UserType" column="UserType" type="AnsiString" not-null="false" />
+  </class>
+</hibernate-mapping>

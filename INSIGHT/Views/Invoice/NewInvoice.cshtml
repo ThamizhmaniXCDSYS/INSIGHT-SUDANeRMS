@@ -1,0 +1,398 @@
+﻿@model INSIGHT.Entities.Orders
+@{
+    ViewBag.Title = "NewInvoice";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        FillSector();
+        FillContingent();
+        FillPeriod();
+        $("#Sector").change(function () {
+            FillContingent($(this).val());
+        });
+        
+        GetDeliveriesPerOrdQtyList();
+        GetDeliveryExceedList();
+        GetDeliveryWithoutOrderList();
+    });
+    function FillSector() {
+        $.getJSON('@Url.Content("~/Masters/FillSector/")',
+            function (modelData) {
+                var select = $("#Sector");
+                select.empty();
+                select.append($('<option/>'
+                               , {
+                                   value: "",
+                                   text: "Select Sector"
+                               }));
+                $.each(modelData, function (index, itemData) {
+
+                    select.append($('<option/>',
+                                  {
+                                      value: itemData.Value,
+                                      text: itemData.Text
+                                  }));
+                });
+            });
+    }
+    function FillContingent(SectorCode) {
+        $.getJSON('@Url.Content("~/Masters/FillContingent/")', { SectorCode: SectorCode },
+            function (modelData) {
+                var select = $("#Contingent");
+                select.empty();
+                select.append($('<option/>'
+                               , {
+                                   value: "",
+                                   text: "Select Contingent"
+                               }));
+                $.each(modelData, function (index, itemData) {
+
+                    select.append($('<option/>',
+                                  {
+                                      value: itemData.Value,
+                                      text: itemData.Text
+                                  }));
+                });
+            });
+    }
+    function FillPeriod() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriod/")',
+            function (modelData) {
+                var select = $("#Period");
+                select.empty();
+                select.append($('<option/>'
+                               , {
+                                   value: "",
+                                   text: "Select Period"
+                               }));
+                $.each(modelData, function (index, itemData) {
+
+                    select.append($('<option/>',
+                                  {
+                                      value: itemData.Value,
+                                      text: itemData.Text
+                                  }));
+                });
+            });
+    }
+    function GetDeliveriesPerOrdQtyList() {
+        var Order = 0;
+        if (!isEmptyorNull('@Model.OrderId'))
+        { Order = '@Model.OrderId'; }
+        var ordersId = $('#InvoiceOrdersList').jqGrid('getDataIDs');
+        $('#DeliveriesPerOrdQtyList').jqGrid('GridUnload');
+        jQuery("#DeliveriesPerOrdQtyList").jqGrid({
+            mtype: 'GET',
+            url: '@Url.Content("~/Invoice/DeliveriesPerOrdQtyListJQGrid")?OrdersId=' + Order,
+            //postData: { userid: usersrch, appcd: appcdsrch, rlcd: rlcdsrch, depcd: depcdsrch, brncd: brncdsrch, Id: Id },
+            datatype: 'json',
+            height: '150',
+            width: '1200',
+            shrinkToFit: true,
+            colNames: ['Id', 'PODId', 'PODItemsId', 'OrderId', 'Period', 'Sector', 'Week', 'LineId', 'UNCode', 'Commodity', 'SectorPrice', 'OrdQty', 'AcptQty', 'DelQty', 'DelDate', 'CreatedBy', 'Total', 'RemQty', 'Diff', 'Diff %'],
+            colModel: [
+                    { name: 'Id', index: 'Id', hidden: true },
+                    { name: 'PODId', index: 'PODId', hidden: true },
+                    { name: 'PODItemsId', index: 'PODItemsId', hidden: true },
+                    { name: 'OrderId', index: 'OrderId', hidden: true },
+                    { name: 'Period', index: 'Period', hidden: true },
+                    { name: 'Sector', index: 'Sector', hidden: true },
+                    { name: 'Week', index: 'Week', hidden: true },
+                    { name: 'LineId', index: 'LineId', hidden: true },
+                    { name: 'UNCode', index: 'UNCode' },
+                    { name: 'Commodity', index: 'Commodity',width:400 },
+                    { name: 'SectorPrice', index: 'SectorPrice' },
+                    { name: 'OrderedQty', index: 'OrderedQty' },
+                    { name: 'AcceptedQty', index: 'AcceptedQty' },
+                    { name: 'DeliveredQty', index: 'DeliveredQty' },
+                    { name: 'DeliveredDate', index: 'DeliveredDate' },
+                    { name: 'CreatedBy', index: 'CreatedBy', hidden: true },
+                    { name: 'Total', index: 'Total' },
+                    { name: 'RemainingOrdQty', index: 'RemainingOrdQty' },
+                    { name: 'Difference', index: 'Difference' },
+                    { name: 'DifferencePercent', index: 'DifferencePercent' }
+                    ],
+            pager: '#DeliveriesPerOrdQtyListPager',
+            rowNum: '1000',
+            sortname: 'PODId',
+            sortorder: "ASC",
+            viewrecords: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Deliveries Per Order Quantity List',
+            multiselect: true,
+            footerrow: true,
+            rowList: [], // disable page size dropdown
+            pgbuttons: false, // disable page control like next, back button
+            pgtext: null, // disable pager text like 'Page 0 of 10'
+            viewrecords: true,
+            loadComplete: function () {
+                var $self = $(this),
+                  Total = parseFloat($self.jqGrid("getCol", "Total", false, "sum")).toFixed(2);
+                //                discount = parseFloat($self.jqGrid("getCol", "Discount", false, "sum")).toFixed(2);
+                //                amtrcv = parseFloat($self.jqGrid("getCol", "AmountReceived", false, "sum")).toFixed(2);
+                //                balpay = parseFloat($self.jqGrid("getCol", "BalancePayable", false, "sum")).toFixed(2);
+                $self.jqGrid("footerData", "set", { CreatedBy: "Total", Total: Total });
+            }
+        });
+        jQuery("#DeliveriesPerOrdQtyList").jqGrid('navGrid', '#DeliveriesPerOrdQtyListPager', { edit: false, add: false, del: false });
+        $('#DeliveriesPerOrdQtyList').jqGrid('filterToolbar', { searchOnEnter: true, enableClear: false, afterSearch: function () { $('#DeliveryExceedList').clearGridData(); } });
+    }
+
+    function GetDeliveryExceedList() {
+        var Order = 0;
+        if (!isEmptyorNull('@Model.OrderId'))
+        { Order = '@Model.OrderId'; }
+        var ordersId = $('#InvoiceOrdersList').jqGrid('getDataIDs');
+        $('#DeliveryExceedList').jqGrid('GridUnload');
+        jQuery("#DeliveryExceedList").jqGrid({
+            mtype: 'GET',
+            url: '@Url.Content("~/Invoice/DeliveryExceedListJQGrid")?OrdersId=' + Order,
+            //postData: { userid: usersrch, appcd: appcdsrch, rlcd: rlcdsrch, depcd: depcdsrch, brncd: brncdsrch, Id: Id },
+            datatype: 'json',
+            height: '150',
+            width: '1200',
+            shrinkToFit: true,
+            colNames: ['Id', 'PODId','OrderId', 'Period', 'Sector', 'Week', 'LineId', 'UNCode', 'Commodity', 'SectorPrice', 'OrdQty', 'AcptQty', 'DelQty', 'DelDate', 'CreatedBy', 'Total', 'RemQty', 'Diff', 'Diff %'],
+            colModel: [
+                    { name: 'Id', index: 'Id', hidden: true },
+                    { name: 'PODId', index: 'PODId', hidden: true },
+//                    { name: 'PODItemsId', index: 'PODItemsId', hidden: true },
+                    { name: 'OrderId', index: 'OrderId', hidden: true },
+                    { name: 'Period', index: 'Period', hidden: true },
+                    { name: 'Sector', index: 'Sector', hidden: true },
+                    { name: 'Week', index: 'Week', hidden: true },
+                    { name: 'LineId', index: 'LineId', hidden: true },
+                    { name: 'UNCode', index: 'UNCode' },
+                    { name: 'Commodity', index: 'Commodity', width: 400 },
+                    { name: 'SectorPrice', index: 'SectorPrice' },
+                    { name: 'OrderedQty', index: 'OrderedQty' },
+                    { name: 'AcceptedQty', index: 'AcceptedQty' },
+                    { name: 'DeliveredQty', index: 'DeliveredQty' },
+                    { name: 'DeliveredDate', index: 'DeliveredDate' },
+                    { name: 'CreatedBy', index: 'CreatedBy', hidden: true },
+                    { name: 'Total', index: 'Total' },
+                    { name: 'RemainingOrdQty', index: 'RemainingOrdQty' },
+                    { name: 'Difference', index: 'Difference' },
+                    { name: 'DifferencePercent', index: 'DifferencePercent' }
+                    ],
+            pager: '#DeliveryExceedListPager',
+            rowNum: '1000',
+            sortname: 'PODId',
+            sortorder: "ASC",
+            viewrecords: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Delivery Exceed List',
+            multiselect: true,
+            footerrow: true,
+            rowList: [], // disable page size dropdown
+pgbuttons: false, // disable page control like next, back button
+pgtext: null, // disable pager text like 'Page 0 of 10'
+viewrecords: true,
+            loadComplete: function () {
+                var $self = $(this),
+                  Total = parseFloat($self.jqGrid("getCol", "Total", false, "sum")).toFixed(2);
+                //                discount = parseFloat($self.jqGrid("getCol", "Discount", false, "sum")).toFixed(2);
+                //                amtrcv = parseFloat($self.jqGrid("getCol", "AmountReceived", false, "sum")).toFixed(2);
+                //                balpay = parseFloat($self.jqGrid("getCol", "BalancePayable", false, "sum")).toFixed(2);
+                $self.jqGrid("footerData", "set", { CreatedBy: "Total", Total: Total });
+            }
+        });
+        jQuery("#DeliveryExceedList").jqGrid('navGrid', '#DeliveryExceedListPager', { edit: false, add: false, del: false });
+        $('#DeliveryExceedList').jqGrid('filterToolbar', { searchOnEnter: true, enableClear: false, afterSearch: function () { $('#DeliveryExceedList').clearGridData(); } });
+    }
+    function GetDeliveryWithoutOrderList() {
+        var Order = 0;
+        if (!isEmptyorNull('@Model.OrderId'))
+        { Order = '@Model.OrderId'; }
+        var ordersId = $('#InvoiceOrdersList').jqGrid('getDataIDs');
+        $('#DeliveryWithoutOrderList').jqGrid('GridUnload');
+        jQuery("#DeliveryWithoutOrderList").jqGrid({
+            mtype: 'GET',
+            url: '@Url.Content("~/Invoice/DeliveryWithoutOrderListJQGrid")?OrdersId=' + Order,
+            //postData: { userid: usersrch, appcd: appcdsrch, rlcd: rlcdsrch, depcd: depcdsrch, brncd: brncdsrch, Id: Id },
+            datatype: 'json',
+            height: '150',
+            width: '1200',
+            shrinkToFit: true,
+            colNames: ['Id', 'PODId','OrderId', 'Period', 'Sector', 'Week', 'LineId', 'UNCode', 'Commodity', 'SectorPrice', 'OrdQty', 'AcptQty', 'DelQty', 'DelDate', 'CreatedBy', 'Total', 'RemQty', 'Diff', 'Diff %'],
+            colModel: [
+                    { name: 'Id', index: 'Id', hidden: true },
+                    { name: 'PODId', index: 'PODId', hidden: true },
+//                    { name: 'PODItemsId', index: 'PODItemsId', hidden: true },
+                    { name: 'OrderId', index: 'OrderId', hidden: true },
+                    { name: 'Period', index: 'Period', hidden: true },
+                    { name: 'Sector', index: 'Sector', hidden: true },
+                    { name: 'Week', index: 'Week', hidden: true },
+                    { name: 'LineId', index: 'LineId', hidden: true },
+                    { name: 'UNCode', index: 'UNCode' },
+                    { name: 'Commodity', index: 'Commodity', width: 400 },
+                    { name: 'SectorPrice', index: 'SectorPrice' },
+                    { name: 'OrderedQty', index: 'OrderedQty' },
+                    { name: 'AcceptedQty', index: 'AcceptedQty' },
+                    { name: 'DeliveredQty', index: 'DeliveredQty' },
+                    { name: 'DeliveredDate', index: 'DeliveredDate' },
+                    { name: 'CreatedBy', index: 'CreatedBy', hidden: true },
+                    { name: 'Total', index: 'Total' },
+                    { name: 'RemainingOrdQty', index: 'RemainingOrdQty' },
+                    { name: 'Difference', index: 'Difference' },
+                    { name: 'DifferencePercent', index: 'DifferencePercent' }
+                    ],
+            pager: '#DeliveryWithoutOrderListPager',
+            rowNum: '1000',
+            sortname: 'PODId',
+            sortorder: "ASC",
+            viewrecords: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Delivery Without Order List',
+            multiselect: true,
+            footerrow: true,
+            rowList: [], // disable page size dropdown
+pgbuttons: false, // disable page control like next, back button
+pgtext: null, // disable pager text like 'Page 0 of 10'
+viewrecords: true,
+            loadComplete: function () {
+                var $self = $(this),
+                  Total = parseFloat($self.jqGrid("getCol", "Total", false, "sum")).toFixed(2);
+                //                discount = parseFloat($self.jqGrid("getCol", "Discount", false, "sum")).toFixed(2);
+                //                amtrcv = parseFloat($self.jqGrid("getCol", "AmountReceived", false, "sum")).toFixed(2);
+                //                balpay = parseFloat($self.jqGrid("getCol", "BalancePayable", false, "sum")).toFixed(2);
+                $self.jqGrid("footerData", "set", { CreatedBy: "Total", Total: Total });
+            }
+        });
+        jQuery("#DeliveryWithoutOrderList").jqGrid('navGrid', '#DeliveryWithoutOrderListPager', { edit: false, add: false, del: false });
+        $('#DeliveryWithoutOrderList').jqGrid('filterToolbar', { searchOnEnter: true, enableClear: false, afterSearch: function () { $('#DeliveryWithoutOrderList').clearGridData(); } });
+    }
+</script>
+@using (Html.BeginForm())
+{
+    <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="6" class="PanelHeading">
+               <i class="icon-chevron-right"></i>&nbsp;Order Items Detail
+            </td>
+        </tr>
+        <tr>
+        <td width="15%">
+                <label class="lblheader">
+                   
+                  Invoice Code</label><br />
+                  @ViewBag.InvoiceCode
+
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                   
+                  Name</label><br />
+                  @Html.DisplayFor(m => m.Name)
+                    @Html.HiddenFor(m => m.Name)
+
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Location</label> <br />
+                       @Html.DisplayFor(m => m.Location)
+                    @Html.HiddenFor(m => m.Location)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Control Id</label> <br />
+                        @Html.DisplayFor(m => m.ControlId)
+                    @Html.HiddenFor(m => m.ControlId)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Start Date</label> <br />
+                        @String.Format("{0:dd/MM/yyyy }", Model.StartDate, new { @id = "lbsStartDate" })
+                    @Html.HiddenFor(m => m.StartDate)
+            </td>
+            
+        </tr>
+        <tr>
+            <td width="15%">
+            <label class="lblheader">
+            Troops
+            </label> <br />
+                @Html.DisplayFor(m => m.Troops)
+                    @Html.HiddenFor(m => m.Troops)
+            
+            </td>
+            <td width="15%">
+             <label class="lblheader">
+            Total Amount
+            </label> <br />
+                @Html.DisplayFor(m => m.TotalAmount)
+                    @Html.HiddenFor(m => m.TotalAmount)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Line Items Ordered </label> <br />
+                        @Html.DisplayFor(m => m.LineItemsOrdered)
+                    @Html.HiddenFor(m => m.LineItemsOrdered)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Kg Ordered w/o eggs</label> <br />
+                        @Html.DisplayFor(m => m.KgOrderedWOEggs)
+                    @Html.HiddenFor(m => m.KgOrderedWOEggs)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    End Date</label> <br />
+                        @String.Format("{0:dd/MM/yyyy }", Model.EndDate, new { @id = "lbsEndDate" })
+                    @Html.HiddenFor(m => m.EndDate)
+            </td>
+            
+        </tr>
+        <tr>
+            <td width="15%">
+                <label class="lblheader">
+                    TotalWeight</label> <br />
+                        @Html.DisplayFor(m => m.TotalWeight)
+                    @Html.HiddenFor(m => m.TotalWeight)
+            </td>
+            @*<td width="15%">
+                <label class="lblheader">
+                    CreatedBy</label> <br />
+                        @Html.DisplayFor(m => m.CreatedBy)
+                    @Html.HiddenFor(m => m.CreatedBy)
+            </td>*@
+            <td width="15%">
+                <label class="lblheader">
+                    Created Date</label> <br />
+                        @String.Format("{0:dd/MM/yyyy }", Model.CreatedDate, new { @id = "lblCreatedDate" })
+                    @Html.HiddenFor(m => m.CreatedDate)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Location CMR</label> <br />
+                        @Html.DisplayFor(m => m.LocationCMR)
+                    @Html.HiddenFor(m => m.LocationCMR)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Control CMR</label> <br />
+                        @Html.DisplayFor(m => m.ControlCMR)
+                    @Html.HiddenFor(m => m.ControlCMR)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    EggsWeight</label> <br />
+                        @Html.DisplayFor(m => m.EggsWeight)
+                    @Html.HiddenFor(m => m.EggsWeight)
+            </td>
+        </tr>
+
+    </table>
+    <table id="DeliveriesPerOrdQtyList">
+    </table>
+    <div id="DeliveriesPerOrdQtyListPager">
+    </div>
+    <table id="DeliveryExceedList">
+    </table>
+    <div id="DeliveryExceedListPager">
+    </div>
+    <table id="DeliveryWithoutOrderList">
+    </table>
+    <div id="DeliveryWithoutOrderListPager">
+    </div>
+}
+<div id="OrderListPV">
+</div>

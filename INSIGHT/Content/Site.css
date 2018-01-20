@@ -1,0 +1,714 @@
+﻿/* DEFAULTS
+----------------------------------------------------------*/
+
+body
+{
+    background: white; /* font: smaller 7px Verdana,Arial,sans-serif;*/
+    font: normal 11px Verdana,Arial,sans-serif;
+    width: 99%;
+    background-color: #fff; /*margin: 3% 1% 3% 1%;*/
+    color: black; /*border: 1px solid #ccc;*/
+}
+
+html
+       {
+           overflow:auto;
+       }
+       
+#main
+{
+    text-align: center;
+   /* width: 90%;*/
+}
+
+.CenteredDiv
+{
+    margin-top: 1%;
+    margin-right: auto;
+    margin-bottom: auto;
+    margin-left: auto;
+    width: 88%;
+    border:1px solid #ccc;
+    overflow:auto;
+}
+
+.OuterLayer
+{
+    /*border: 1px solid #ccc;*/
+    margin: 1% 4% 1% 4%;
+    padding: 0% 3% 0% 3.3%;
+}
+
+.title
+{
+    /*margin:0px 40px 0px 40px ;*/
+}
+
+/*main Content*/
+
+.gradient
+{
+    background-image: linear-gradient(left top, rgb(12,4,54) 3%, rgb(255,255,255) 100%);
+    background-image: -o-linear-gradient(left top, rgb(12,4,54) 3%, rgb(255,255,255) 100%);
+    background-image: -moz-linear-gradient(left top, rgb(12,4,54) 3%, rgb(255,255,255) 100%);
+    background-image: -webkit-linear-gradient(left top, rgb(12,4,54) 3%, rgb(255,255,255) 100%);
+    background-image: -ms-linear-gradient(left top, rgb(12,4,54) 3%, rgb(255,255,255) 100%);
+    background-image: -webkit-gradient( 	linear, 	left top, 	right bottom, 	color-stop(0.03, rgb(12,4,54)), 	color-stop(1, rgb(255,255,255)) ); /*margin:0px 40px 0px 40px ;*/
+}
+
+.menubar
+{
+    font: normal 11px Verdana,Arial,sans-serif;
+    width: 100%;
+    background: #B6B6B6;
+}
+
+#smoothmenu2
+{
+    /*margin:0px 40px 0px 40px ;*/
+}
+
+
+#main
+{
+    /*margin:0px 40px 0px 40px ;*/
+}
+
+
+/*Table*/
+.lblheader
+{
+    font: bold 11px Arial;
+    border: none;
+    text-align: left;
+    padding-top: 5px;
+   /* padding-bottom: 5px;*/
+}
+
+.tablesorter
+{
+    text-align: left;
+    border: solid 1px;
+    border-color: Black;
+    border-collapse: collapse;
+    font: normal 11px Verdana,Arial,sans-serif;
+}
+
+.tablesorter th
+{
+    text-align: left;
+    border: solid 1px;
+    border-color: Black;
+    border-collapse: collapse;
+    font: normal 11px Verdana,Arial,sans-serif;
+}
+.tablesorter td
+{
+    text-align: left;
+    border: solid 1px;
+    border-color: Black;
+    border-collapse: collapse;
+    font: normal 11px Verdana,Arial,sans-serif;
+}
+
+.WithBorder
+{
+    text-align: left;
+    border: solid 1px;
+    border-color: Black;
+    border-collapse: collapse;
+    font: normal 11px Verdana,Arial,sans-serif;
+    padding-top: 5px;
+}
+.WithBorder th
+{
+    text-align: left;
+    border: solid 1px;
+    border-color: Black;
+    border-collapse: collapse;
+    font: normal 11px Verdana,Arial,sans-serif;
+}
+.WithBorder td
+{
+    text-align: left;
+    border: solid 1px;
+    border-color: Black;
+    border-collapse: collapse;
+    font: normal 11px Verdana,Arial,sans-serif;
+}
+.WithoutBorder
+{
+    border: none ;
+    border-color: Black;
+    border-collapse: collapse;
+    font: normal 11px Verdana,Arial,sans-serif;
+    padding-top: 5px;
+}
+
+.WithoutBorder th
+{
+    border: none;
+    border-color: Black;
+    border-collapse: collapse;
+    font: normal 11px Verdana,Arial,sans-serif;
+}
+.WithoutBorder td
+{
+    border: none;
+    border-color: Black;
+    border-collapse: collapse;
+    font: normal 11px Verdana,Arial,sans-serif;
+}
+
+
+.WithBorderOnly
+{
+    border: 1px;
+    border: 1px solid #ccc;
+    font: normal 11px Verdana,Arial,sans-serif; /*padding-top: 5px;*/
+    margin: 5px 0px 5px 0px;
+}
+
+.WithBorderOnly th
+{
+    font: bold 11px Arial;
+    border: none;
+    text-align: left;
+    padding-top: 5px;
+   /* padding-bottom: 5px;*/
+}
+
+.WithBorderOnly td
+{
+    font: normal 11px Arial;
+    border: none;
+    text-align: left;
+    padding-bottom: 5px;
+}
+
+
+.InnerTable
+{
+    font: normal 11px Verdana,Arial,sans-serif;
+    border: none;
+    text-align: left; /* padding-top:5px;*/
+}
+
+.InnerTable th
+{
+    font: bold 11px Arial;
+    border: none;
+    text-align: left; /*padding-top: 5px;*/
+}
+
+.InnerTable td
+{
+    font: normal 11px Arial;
+    border: none;
+    text-align: left; /*padding-top:5px;*/
+}
+
+.PanelHeading
+{
+    font: bold 11px Verdana,Arial,sans-serif;
+    color: White;
+    background-color:#C0C0C0 ;
+    height: 15px;
+    padding:5px 0px 5px 0px;
+}
+
+
+
+fieldset
+{
+    margin: 5px 0px 5px 0px; /* margin: 0.5em 0px;*/ /*padding: 0.1em;*/
+    border: 1px solid #ccc;
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+fieldset p
+{
+    margin: 2px 12px 10px 10px;
+}
+
+fieldset.login label, fieldset.register label, fieldset.changePassword label
+{
+    display: inline;
+}
+
+fieldset label.inline
+{
+    display: inline;
+}
+
+legend
+{
+    font-size: 1em;
+    font-weight: none;
+    padding: 2px 4px 8px 8px;
+}
+
+
+/* HEADINGS   
+----------------------------------------------------------*/
+/*
+h1, h2, h3, h4, h5, h6
+{
+    font-size: 1em;
+    color: #666666;
+    text-transform: none;
+    font-weight: 100;
+    margin-bottom: 0px;
+}*/
+
+h1
+{
+    font: bold 11px Arial;
+    font-weight: bold;
+    font-size: 1.2em;
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+}
+
+h2
+{
+    font: bold 11px Arial;
+    font-size: 1em;
+   
+}
+
+h3
+{
+    /*font: bold 11px Verdana,Arial,sans-serif;*/
+       font-size: 0.9em;
+    font-weight: 300;
+    margin-top :4px;
+    margin-bottom :-5px;
+    
+}
+
+h4
+{
+     font-weight: bold;
+    font-size: 0.8em;
+}
+
+h5, h6
+{
+     font-weight: bold;
+    font-size: 0.7em;
+}
+
+header, footer, nav, section
+{
+    display: block;
+}
+
+
+
+.CSSButton
+{
+    font: normal 11px Verdana,Arial,sans-serif;
+    background-color: #B6B6B6;
+    border-radius: 5px;
+    color: white;
+}
+
+.CSSTextBox
+{
+    border: #006699 1px solid;
+    color: #666666;
+    font: normal 11px Verdana,Arial,sans-serif;
+    width: 154px;
+}
+.CSSBigTextBox
+{
+    border: #006699 1px solid;
+    color: #666666;
+    font: normal 11px Verdana,Arial,sans-serif;
+    width: 170px;
+}
+
+.CSSLengthyTextBox
+{
+    border: #006699 1px solid;
+    color: #666666;
+    font: normal 11px Verdana,Arial,sans-serif;
+    width: 392px;
+}
+
+.CSSMailSubTextBox
+{
+    border: #006699 1px solid;
+    color: #666666;
+    font: normal 11px Verdana,Arial,sans-serif;
+    width: 525px;
+}
+
+.CSSTextArea
+{
+    border: #006699 1px solid;
+    color: #666666;
+    font: normal 11px Verdana,Arial,sans-serif;
+}
+
+
+.CSSDropDownList
+{
+    background-color: white;
+    border: #006699 1px solid;
+    color: #666666;
+    font: normal 11px Verdana,Arial,sans-serif; /*height: 20px;*/
+    width: 154px;
+}
+
+.CSSDropDownList1
+{
+    background-color: white;
+    border: #006699 1px solid;
+    color: #666666;
+    font: normal 11px Verdana,Arial,sans-serif; /*height: 20px;*/
+    width:auto;
+}
+
+.datepicker
+{
+    border: #006699 1px solid;
+    /*border-style: groove;
+    border-color: ButtonHighlight;*/
+    color: #666666;
+    font: normal 11px Verdana,Arial,sans-serif; /* height: 22px;*/
+    width: 155px;
+}
+
+.datepickerMDY
+{
+    border: #006699 1px solid;
+    /*border-style: groove;
+    border-color: ButtonHighlight;*/
+    color: #666666;
+    font: normal 11px Verdana,Arial,sans-serif; /* height: 22px;*/
+    width: 155px;
+}
+.date-picker
+{
+    border: #006699 1px solid;
+    /*border-style: groove;
+    border-color: ButtonHighlight;*/
+    color: #666666;
+    font: normal 11px Verdana,Arial,sans-serif; /* height: 22px;*/
+    width: 150px;  
+}
+.datetimepickerMDY
+{
+    border: #006699 1px solid;
+    /*border-style: groove;
+    border-color: ButtonHighlight;*/
+    color: #666666;
+    font: normal 11px Verdana,Arial,sans-serif; /* height: 22px;*/
+    width: 155px;
+}
+.datetimepicker
+{
+    border: #006699 1px solid;
+    /*border-style: groove;
+    border-color: ButtonHighlight;*/
+    color: #666666;
+    font: normal 11px Verdana,Arial,sans-serif; /* height: 22px;*/
+    width: 155px;
+}
+.staffdatepicker
+{
+    border: #006699 1px solid;
+    /*border-style: groove;
+    border-color: ButtonHighlight;*/
+    color: #666666;
+    font: normal 11px Verdana,Arial,sans-serif; /* height: 22px;*/
+    width: 155px;
+}
+
+DIV.ProgressBar
+{
+    width: 100px;
+    padding: 0;
+    border: 1px solid black;
+    margin-right: 1em;
+    height: .75em;
+    margin-left: 1em;
+    display: -moz-inline-stack;
+    display: inline-block;
+    zoom: 1;
+    display: inline;
+}
+DIV.ProgressBar DIV
+{
+    background-color: Green;
+    font-size: 1pt;
+    height: 100%;
+    float: left;
+}
+SPAN.asyncUploader OBJECT
+{
+    position: relative;
+    top: 5px;
+    left: 10px;
+}
+
+input:focus, select:focus
+{
+    outline: 1px solid #98AFFF;
+}
+
+textarea:focus
+{
+    outline: 1px solid #98AFFF;
+}
+
+input[type="submit"], input[type="button"], input[type="reset"]
+{
+    /* font-size: 1.2em; */ /*  padding: 5px;*/
+    font: normal 11px Verdana,Arial,sans-serif;
+    background-color: #B6B6B6;
+    border-radius: 5px;
+    color: white;
+}
+
+button[type="submit"], button[type="button"]
+{
+    /* font-size: 1.2em; */ /*  padding: 5px;*/
+    font: normal 11px Verdana,Arial,sans-serif;
+    background-color: #B6B6B6;
+    border-radius: 5px;
+    /*color: white;*/
+}
+
+
+
+
+input[type="password"]
+{
+    /*font-size: 1.2em; */
+    /*  padding: 5px;*/
+    
+    border: #006699 0.8px inline;    
+    color: Black;
+    font-size: 0.9em;    
+    color:Black;
+    font: normal 11px Verdana,Arial,sans-serif;
+    width: 154px;
+}
+/* Styles for validation helpers
+-----------------------------------------------------------*/
+.field-validation-error
+{
+    color: #ff0000;
+}
+
+.field-validation-valid
+{
+    display: none;
+}
+
+.input-validation-error
+{
+    border: 1px solid #ff0000;
+    background-color: #ffeeee;
+}
+
+.validation-summary-errors
+{
+    font-weight: bold;
+    color: #ff0000;
+}
+
+.validation-summary-valid
+{
+    display: none;
+}
+
+
+.ui-jqgrid .ui-jqgrid-htable th div {
+    white-space:normal !important;
+    height:auto;
+    vertical-align:text-top;
+    position:relative;
+    overflow:hidden;
+}
+
+
+ table
+  { 
+      empty-cells:show;
+  }
+  
+  .pointer { 
+cursor: pointer; 
+text-decoration: underline;
+}  
+
+.ui-jqgrid .ui-jqgrid-btable
+ { 
+     cursor : pointer;
+ }
+ .HandCursor
+ { 
+     cursor : pointer;
+ }
+.processing
+{
+	background-image:url(../../Images/sun.gif);
+	background-repeat:no-repeat;
+	background-position:center;
+	height:30px;
+	/*width:20px;*/
+	border-radius:25px;
+	/*border: solid 1px #B6B6B6;*/
+    /*text-indent:25px;
+	display:block;
+	overflow:hidden;*/
+}
+
+input[type="text"] 
+{
+    /*font-size: 1.2em; 
+    padding: 5px;
+    border: #006699 0.8px inline;    
+    color: Black;
+    font-size: 0.9em;
+    
+    color:Black;
+    font: normal 11px Verdana,Arial,sans-serif;
+    width: 150px;*/
+    
+   /* border: #006699 1px solid;*/
+   /* color: #666666;
+    font: normal 11px Verdana,Arial,sans-serif;
+    width: 154px;*/
+}
+
+input[type="select"]  
+{
+    /*font-size: 1.2em; 
+    padding: 5px;
+    border: #006699 0.8px inline;    
+    color: Black;
+    font-size: 0.9em;
+    
+    color:Black;
+    font: normal 11px Verdana,Arial,sans-serif;
+    width: 150px;*/
+    
+   /* border: #006699 1px solid;*/
+    color: #666666;
+    font: normal 11px Verdana,Arial,sans-serif;
+   /* width: 154px;*/
+}
+
+.FormElement
+{
+    border: #006699 1px solid;
+    color: #666666;
+    font: normal 11px Verdana,Arial,sans-serif;
+}
+
+.CaptionTD ui-widget-content 
+{
+    border: #006699 1px solid;
+    color: #666666;
+   font-size: 0.8em;
+}
+
+.lblheader1
+{
+    font: 11px Arial;
+    border: none;
+    text-align: left;
+    padding-top: 5px;
+   /* padding-bottom: 5px;*/
+}
+
+.editable
+{
+    background-color: white;
+    border: #006699 1px solid;
+    color: #666666;
+    font: normal 11px Verdana,Arial,sans-serif; /*height: 20px;*/
+    width:auto;
+}
+
+.FormElement
+{
+    background-color: white;
+    border: #006699 1px solid;
+    color: #666666;
+    font: normal 11px Verdana,Arial,sans-serif; /*height: 20px;*/
+    width: 154px;
+}
+/*------------------new admin page style--------------------------------*/
+.admin {
+    padding: 0 0 5px;
+}
+
+.admin ul {
+    margin-left: 0px;
+}
+
+.admin ul.admin_icons {
+    list-style: none outside none;
+    overflow:hidden;
+}
+
+.admin ul.admin_icons li {
+    float: left;
+    height: auto !important;
+    min-height: 130px;
+    padding: 0 18px;
+    position: relative;
+}
+.admin ul.admin_icons li a {
+    color: #666666;
+    display: block;
+    padding: 8px 0 2px;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    width: 100px;
+}
+.admin ul.admin_icons li a:hover {
+    color: #666666;
+}
+.admin ul.admin_icons li a:hover img {
+height:57px;
+width:57px;
+box-shadow:0 0 0 2px #B6B6B6;
+}
+.admin ul.admin_icons li a .img-outer {
+    border-radius: 20px;
+    height: 65px;
+    margin: 0 auto 5px;
+    padding: 1px;
+    width: 65px;
+}
+.admin ul.admin_icons li a img 
+{
+    vertical-align:middle;
+    border-radius: 20px;
+    height: 60px;
+    transition: all 0.1s ease 0s;
+    width: 60px;
+}
+.admin-icon-text {
+    font-size: 13px;
+    line-height: 16px;
+    margin: 0;
+    padding: 1px 3px;
+    position: relative;
+    /*white-space: pre-wrap;*/
+    word-wrap: break-word;
+}
+.headerLogon {
+    float: right;
+    margin-right: 1px;
+    margin-top: 5px;
+}

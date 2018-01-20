@@ -1,0 +1,377 @@
+﻿@model INSIGHT.Entities.InventoryManagementEntities.Inventory_PurchaseOrderInvoice
+@{
+    ViewBag.Title = "POInvoiceManagementForm";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+@using (Html.BeginForm())
+{
+    <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="6" class="PanelHeading">
+                <i class="icon-chevron-right"></i>&nbsp;Invoice Detail
+            </td>
+        </tr>
+        <tr>
+            <td width="15%">
+                <label class="lblheader">
+                    Invoice Number</label><br />
+                @Html.DisplayFor(m => m.InvoiceNumber)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Invoice date</label>
+                <br />
+                @String.Format("{0:dd/MM/yyyy }", Model.InvoiceDate, new { @id = "lbsInvoiceDate" })
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Container Number</label>
+                <br />
+                @Html.DisplayFor(m => m.ContainerNumber)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Bill of Lading</label>
+                <br />
+                @Html.DisplayFor(m => m.BillOfLading)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Created Date</label>
+                <br />
+                @String.Format("{0:dd/MM/yyyy }", Model.CreatedDate, new { @id = "lbsCreatedDate" })
+            </td>
+
+            <td width="15%">
+                <label class="lblheader">
+                    Invoice Amount(Inv.Currency)</label>
+                <br />
+                @Html.DisplayFor(m => m.InvoiceAmount)
+            </td>
+        </tr>
+        <tr>
+            <td width="15%">
+                <label class="lblheader">
+                    Invoice Amount(USD)</label>
+                <br />
+                @Html.TextBoxFor(m => m.InvoiceAmountUSD, new { id = "txtInvAmountUSD", @readonly = "readonly" })
+            </td>
+            <td width="10%">
+                <label class="lblheader">
+                    Amount Difference
+                </label>
+                <br />
+                @Html.TextBoxFor(m => m.RemainingAmount, new { id = "txtInvRemainingAmount", @readonly = "readonly" })
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Exchange Rate</label><br />
+                @*@Html.DisplayFor(m => m.ExchangeRate)*@
+                @Html.TextBoxFor(m => m.ExchangeRate, new { id = "txtExchangeRate", @readonly = "readonly" })
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    GLDate</label>
+                <br />
+                @*@String.Format("{0:dd/MM/yyyy }", Model.GLDate, new { @id = "lbsGLDate" })*@
+                <input type="text" id="txtGLDate" class="datepicker" readonly style="width: 80%" />
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Voucher Number</label>
+                <br />
+                @*@Html.DisplayFor(m => m.VoucherNumber)*@
+                @Html.TextBoxFor(m => m.VoucherNumber, new { id = "txtVoucherNumber" })
+            </td>
+            <td>
+                <input type="button" id="btnComplete" value="Complete" style="width: 50%" />
+            </td>
+        </tr>
+    </table>
+    @Html.HiddenFor(a => a.POInvoiceId, new { id = "hddnPOInvoiceId" })
+    @Html.HiddenFor(a => a.InvCurrency, new { id = "hddnInvCurrency" })
+    @Html.HiddenFor(a => a.InvoiceAmount, new { id = "hddnInvoiceAmount" })
+}
+<table id="POInvoiceItemList"></table>
+<div id="POInvoiceItemPager"></div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        GetPODetailsList();
+        $('#txtGLDate').datepicker()
+    .on("input change", function (e) {
+        $.ajax({
+            url: ROOT + '/InventoryManagement/GetExchangeRateByGLDateandCurrency?GLDate=' + $('#txtGLDate').val() + '&Currency=' + $('#hddnInvCurrency').val(),
+            type: 'GET',
+            dataType: "json",
+            success: function (data) {
+                if (data != 0) {
+                    $('#txtExchangeRate').val(data);
+                    $('#txtInvAmtUSD').val(parseInt($('#txtExchangeRate').val()) * parseInt($('#txtTotInvoiceAmount').val()));
+                }
+                else {
+                    ErrMsg("ExchangeRate not available!!");
+                }
+            }
+        });
+    });
+
+        $('#btnComplete').click(function () {
+            if ($('#txtInvRemainingAmount').val() > 0 || parseInt($('#txtInvRemainingAmount').val()) < 0) {
+                ErrMsg("Invoiced amount not matching with Invoice amount");
+                return false;
+            }
+            if ($('#txtGLDate').val() == '' || $('#txtGLDate').val() == undefined) {
+                ErrMsg("Enter GL Date");
+                return false;
+            }
+            if ($('#txtVoucherNumber').val() == '' || $('#txtVoucherNumber').val() == undefined || $('#txtVoucherNumber').val() == '0') {
+                ErrMsg("Enter Voucher No");
+                return false;
+            }
+            if ($('#txtExchangeRate').val() == '' || $('#txtExchangeRate').val() == undefined || parseInt($('#txtExchangeRate').val()) == 0) {
+                ErrMsg("Enter Exchange Rate");
+                return false;
+            }
+            else {
+                $.ajax({
+                    url: ROOT + '/InventoryManagement/CompletePurchaseOrderInvoice?GLDate=' + $('#txtGLDate').val(),
+                    type: 'POST',
+                    data: { POInvoiceId: $('#hddnPOInvoiceId').val(), VoucherNumber: $('#txtVoucherNumber').val(), ExchangeRate: $('#txtExchangeRate').val() },
+                    dataType: 'json',
+                    traditional: true,
+                    success: function (data) {
+                        $('#dvLoading').hide();
+                    },
+                    loadError: function (xhr, status, error) {
+                        msgError = $.parseJSON(xhr.responseText).Message;
+                        ErrMsg(msgError, function () { });
+                    }
+                });
+            }
+        });
+    });
+
+    function GetPODetailsList() {
+        debugger;
+        $('#POInvoiceItemList').jqGrid('GridUnload');
+        $('#POInvoiceItemList').jqGrid({
+            datatype: 'Json',
+            type: 'GET',
+            shrinkToFit: false,
+            url: ROOT + '/InventoryManagement/PurchaseOrderInvoiceItemDetailsListJQGrid?POInvoiceId=' + $('#hddnPOInvoiceId').val(),
+            height: 245,
+            width: 1220,
+            colNames: ['Id', 'PurchOrderId', 'POInvoiceItemId', 'INVConfig_Id', 'PO #', 'POLineId', 'UNCode', 'Commodity', 'Ordered Qty', 'PO UnitPrice', 'PO Value', 'Invoiced Qty', 'Remaining Qty', 'Invoice UnitPrice', 'Invoice UnitPrice', 'Invoice Qty', 'hiddenRemarks', 'Remarks'],
+            colModel: [
+                { name: 'Id', index: 'Id', hidden: true, editable: true, key: true },
+                { name: 'PurchOrderId', index: 'PurchOrderId', editable: true, editoptions: { disabled: true }, hidden: true },
+                { name: 'POInvoiceItemId', index: 'POInvoiceItemId', editable: true, editoptions: { disabled: true }, hidden: true },
+                { name: 'INVConfig_Id', index: 'INVConfig_Id', editable: true, editoptions: { disabled: true }, hidden: true },
+                { name: 'PO', index: 'PO', width: 50 },
+                { name: 'POLineId', index: 'POLineId', hidden: true, key: true, editable: true },
+                { name: 'UNCode', index: 'UNCode', width: 60, search: true },
+                { name: 'Commodity', index: 'Commodity', width: 350 },
+                { name: 'OrderedQty', index: 'OrderedQty', width: 90, sortable: false, editable: true, editoptions: { readOnly: true } },
+                { name: 'POUnitPrice', index: 'POUnitPrice', width: 80, editable: true, editoptions: { readOnly: true } },
+                { name: 'POValue', index: 'POValue', width: 70, editable: true, editoptions: { readOnly: true } },
+                { name: 'InvoicedQty', index: 'InvoicedQty', search: false, editable: true, editoptions: { disabled: true, class: 'NoBorder', style: " background-color:#FFFFFF; border-color:#FFFFFF;font-size:10px;" }, width: 90 },
+                { name: 'RemainingQty', index: 'RemainingQty', search: false, editable: true, editoptions: { disabled: true, class: 'NoBorder', style: " background-color:#FFFFFF; border-color:#FFFFFF;font-size:10px;" }, width: 90 },
+                { name: 'InvoiceUnitPrice', index: 'InvoiceUnitPrice', hidden: true },
+                { name: 'InvoiceUnitPrice', index: 'InvoiceUnitPrice', sortable: false, search: false, width: 90, formatter: createtxtboxInvoiceunitprice },
+                { name: 'InvoiceQty', index: 'InvoiceQty', sortable: false, width: 90, search: false, formatter: createtxtboxqty },
+                { name: 'Remarks', index: 'Remarks', hidden: true },
+                { name: 'Remarks', index: 'Remarks', sortable: false, search: false, width: 130, formatter: createtxtboxRemarks }
+            ],
+            multiselect: true,
+            viewrecords: true,
+            rowNum: 500,
+            rowList: [500, 1000, 2500, 5000],
+            sortorder: 'Asc',
+            sortname: 'POLineId',
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;PO Item List',
+            pager: 'POInvoiceItemPager',
+            loadComplete: function () {
+                var $this = $(this), rows = this.rows, l = rows.length, i, row;
+                $(this).hide();
+                for (i = 1; i < l; i++) {
+                    row = rows[i];
+                    if ($(row).hasClass("jqgrow")) {
+                        $this.jqGrid('editRow', row.id);
+                    }
+                }
+                $(this).show();
+                ID = $('#POInvoiceItemList').jqGrid('getDataIDs');
+            },
+        });
+        $('#POInvoiceItemList').jqGrid('filterToolbar', { searchOnEnter: true, enableClear: false, afterSearch: function () { $('#POInvoiceItemList').clearGridData(); } });
+        $("#POInvoiceItemList").navGrid('#POInvoiceItemPager', { add: false, edit: false, del: false, search: false, refresh: false })
+        .navButtonAdd('#POInvoiceItemPager', {
+            caption: "Disconnect",
+            onClickButton: function () {
+                var arrayObj = [];
+                var Ids = $("#POInvoiceItemList").jqGrid('getGridParam', 'selarrrow');
+                if (Ids.length > 0) {
+                    for (var i = 0; i < Ids.length; i++) {
+                        if ($('#' + Ids[i] + '_Remarks').val() == "" || $('#' + Ids[i] + '_Remarks').val() == undefined) {
+                            ErrMsg('Remarks should not be empty!!');
+                            return false;
+                        }
+                        else {
+                            arrayObj.push({ PurchOrderId: $('#' + Ids[i] + '_PurchOrderId').val(), POLineId: $('#' + Ids[i] + '_POLineId').val(), POInvoiceId: $('#hddnPOInvoiceId').val() });
+                        }
+                    }
+                }
+                if (Ids.length > 0) {
+                    $.ajax({
+                        url: ROOT + '/InventoryManagement/DisconnectInvoiceItem',
+                        type: 'POST',
+                        data: JSON.stringify({ DataObj: arrayObj }),
+                        dataType: 'json',
+                        traditional: true,
+                        contentType: 'application/json; charset=utf-8',
+                        success: function (data) {
+                            $('#dvLoading').hide();
+                            InfoMsg(data.Msg);
+                        },
+                        loadError: function (xhr, status, error) {
+                            msgError = $.parseJSON(xhr.responseText).Message;
+                            ErrMsg(msgError, function () { });
+                        }
+                    });
+                    //InfoMsg('Disconnected!!');
+                }
+                else {
+                    ErrMsg('Select Items to disconnect!!');
+                    return false;
+                }
+            }
+        });
+
+        $("#POInvoiceItemList").trigger("reloadGrid");
+        ///Invoice unitprice
+        function createtxtboxInvoiceunitprice(cellvalue, options, rowObject) {
+            return "<input id='" + rowObject[0] + "_InvoiceUnitPrice'  onkeypress=' AllowNumericValue(this);' onblur='CheckBox(" + rowObject[0] + ");VaidateInvoiceUnitPrice(" + rowObject[0] + "," + rowObject[5] + "," + rowObject[9] + ");' value='" + rowObject[13] + "'  style='width: 55px;font-size:10px' type='text'/>";
+        }
+        ///Invoice Qty
+        function createtxtboxqty(cellvalue, options, rowObject) {
+            return "<input id='InvoicedQty_" + rowObject[0] + "'  onkeypress=' AllowNumericValue(this);' onblur='CheckBox(" + rowObject[0] + ");CalculateRemainingQty(" + rowObject[0] + "," + rowObject[5] + "," + rowObject[8] + ");'   style='width: 55px;font-size:10px' type='text'/>";
+        }
+        ////Remarks
+        function createtxtboxRemarks(cellvalue, options, rowObject) {
+            return "<input id='" + rowObject[0] + "_Remarks'  onblur='CheckBox(" + rowObject[0] + ");updateRemarks(" + rowObject[0] + "," + rowObject[5] + ");' value='" + rowObject[16] + "'  style='width: 95px;font-size:10px' type='text'/>";
+        }
+    }
+    function VaidateInvoiceUnitPrice(Id, lineid, pounitPrice) {
+        if ($('#hddnPOInvoiceId').val() == "") {
+            ErrMsg('Fill Invoice and Container details!!');
+            return false;
+        }
+        if ($('#' + Id + '_InvoiceUnitPrice').val() == "") {
+            $('#' + Id + '_InvoiceUnitPrice').val(0);
+        }
+        if (parseFloat($('#' + Id + '_InvoiceUnitPrice').val()) > 0 && parseFloat($('#' + Id + '_InvoiceUnitPrice').val()) > parseFloat($('#' + Id + '_POUnitPrice').val())) {
+            ErrMsg('Invoice unitprice should not exceed PO unitprice');
+            $('#' + Id + '_InvoiceUnitPrice').val($('#' + Id + '_POUnitPrice').val());
+            return false;
+        }
+        if (parseFloat($('#' + Id + '_InvoiceUnitPrice').val()) > 0 && parseFloat($('#' + Id + '_InvoiceUnitPrice').val()) != 0.00 && $('#hddnPOInvoiceId').val() > 0) {
+            $.ajax({
+                //url: ROOT + '/InventoryManagement/UpdateInvoiceUnitPriceCell?PurchOrderId=' + $('#' + Id + '_PurchOrderId').val() + '&POInvoiceId=' + $('#hddnPOInvoiceId').val() + '&POLineId=' + lineid + '&InvoiceItemLineId=' + $('#' + Id + '_POInvoiceItemId').val() + '&InvoiceUnitPrice=' + $('#' + Id + '_InvoiceUnitPrice').val(),
+                type: 'POST',
+                dataType: 'json',
+                url: ROOT + '/InventoryManagement/UpdateInvoiceUnitPriceCell',
+                data: { POInvoiceId: $('#hddnPOInvoiceId').val(), PurchOrderId: $('#' + Id + '_PurchOrderId').val(), POInvoiceItemId: $('#' + Id + '_POInvoiceItemId').val(), INVConfig_Id: $('#' + Id + '_INVConfig_Id').val(), POLineId: lineid, InvoiceUnitPrice: $('#' + Id + '_InvoiceUnitPrice').val() },
+                traditional: true,
+                success: function (data) {
+                    $('#dvLoading').hide();
+                    GetPODetailsList();
+                    updateInvoiceAmount($('#hddnPOInvoiceId').val())
+                },
+                loadError: function (xhr, status, error) {
+                    msgError = $.parseJSON(xhr.responseText).Message;
+                    ErrMsg(msgError, function () { });
+                }
+            });
+        }
+
+    }
+    function CalculateRemainingQty(Id, lineid, OrdQty) {
+        if ($('#hddnPOInvoiceId').val() == "") {
+            ErrMsg('Fill Invoice and Container details!!');
+            return false;
+        }
+        if ($('#InvoicedQty_' + Id).val() == "") {
+            $('#InvoicedQty_' + Id).val(0);
+        }
+        if ($('#InvoicedQty_' + Id).val() > 0 && parseInt($('#InvoicedQty_' + Id).val()) > parseInt($('#' + Id + '_OrderedQty').val())) {
+            ErrMsg('Invoice Qty should not exceed Ordered Qty');
+            $('#InvoicedQty_' + Id).val(0);
+            return false;
+        }
+        if ($('#InvoicedQty_' + Id).val() > 0 && $('#' + Id + '_RemainingQty').val() != 0.00 && $('#hddnPOInvoiceId').val() > 0) {
+            var RemainingQty = $('#' + Id + '_RemainingQty').val() - $('#InvoicedQty_' + Id).val()
+            $('#' + Id + '_RemainingQty').val(RemainingQty.toFixed(3));
+            $.ajax({
+                //url: ROOT + '/InventoryManagement/UpdateInvoicedQtyCell?POLineId=' + lineid + '&InvoiceQty=' + $('#InvoicedQty_' + Id).val() + '&RemainingQty=' + $('#' + Id + '_RemainingQty').val() + '&POInvoiceId=' + $('#hiddenInvoiceId').val() + '&PurchOrderId=' + $('#' + Id + '_PurchOrderId').val() + '&InvoiceItemLineId=' + $('#hiddenInvoiceItemLineId').val(),
+                type: 'POST',
+                dataType: 'json',
+                url: ROOT + '/InventoryManagement/UpdateInvoicedQtyCell',
+                data: { POInvoiceId: $('#hddnPOInvoiceId').val(), PurchOrderId: $('#' + Id + '_PurchOrderId').val(), POInvoiceItemId: $('#' + Id + '_POInvoiceItemId').val(), INVConfig_Id: $('#' + Id + '_INVConfig_Id').val(), POLineId: lineid, InvoiceQty: $('#InvoicedQty_' + Id).val(), InvoiceUnitPrice: $('#' + Id + '_InvoiceUnitPrice').val() },
+                traditional: true,
+                success: function (data) {
+                    $('#dvLoading').hide();
+                    $('#' + Id + '_InvoicedQty').val(data.InvoicedQty);
+                    $('#' + Id + '_RemainingQty').val(data.RemainingQty);
+                    GetPODetailsList();
+                    updateInvoiceAmount($('#hddnPOInvoiceId').val())
+                },
+                loadError: function (xhr, status, error) {
+                    msgError = $.parseJSON(xhr.responseText).Message;
+                    ErrMsg(msgError, function () { });
+                }
+            });
+        }
+    }
+    function updateRemarks(Id, lineid) {
+        if ($('#hddnPOInvoiceId').val() == "") {
+            ErrMsg('Fill Invoice and Container details!!');
+            return false;
+        }
+        if ($('#' + Id + '_Remarks').val() != "" && $('#' + Id + '_Remarks').val() != undefined && $('#hddnPOInvoiceId').val() > 0) {
+            $.ajax({
+                //url: ROOT + '/InventoryManagement/UpdateInvoiceRemarksCell?PurchOrderId=' + $('#' + Id + '_PurchOrderId').val() + '&POInvoiceId=' + $('#hiddenInvoiceId').val() + '&POLineId=' + lineid + '&InvoiceItemLineId=' + $('#hiddenInvoiceItemLineId').val() + '&Remarks=' + $('#' + Id + '_Remarks').val(),
+                type: 'POST',
+                dataType: 'json',
+                url: ROOT + '/InventoryManagement/UpdateInvoiceRemarksCell',
+                data: { POInvoiceId: $('#hddnPOInvoiceId').val(), PurchOrderId: $('#' + Id + '_PurchOrderId').val(), POInvoiceItemId: $('#' + Id + '_POInvoiceItemId').val(), INVConfig_Id: $('#' + Id + '_INVConfig_Id').val(), POLineId: lineid, Remarks: $('#' + Id + '_Remarks').val() },
+                traditional: true,
+                success: function (data) {
+                    $('#dvLoading').hide();
+                    $('#' + Id + '_Remarks').val(data.Remarks)
+                    GetPODetailsList();
+                    updateInvoiceAmount($('#hddnPOInvoiceId').val())
+                },
+                loadError: function (xhr, status, error) {
+                    msgError = $.parseJSON(xhr.responseText).Message;
+                    ErrMsg(msgError, function () { });
+                }
+            });
+        }
+
+    }
+    function updateInvoiceAmount(POInvoiceId) {
+        $.ajax({
+            url: ROOT + '/InventoryManagement/updateInvoicedAmountinPurchaseOrderInvoicebyInvoiceId?POInvoiceId=' + POInvoiceId,
+            type: 'POST',
+            dataType: 'json',
+            traditional: true,
+            success: function (data) {
+                $('#txtInvAmountUSD').val(data);
+                $('#txtInvRemainingAmount').val(parseInt($('#hddnInvoiceAmount').val()) - data);
+            }
+        });
+    }
+    function CheckBox(Id) {
+        jQuery("#POInvoiceItemList").setSelection(Id, true);
+    }
+</script>

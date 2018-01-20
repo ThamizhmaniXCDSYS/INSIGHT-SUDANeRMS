@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.ORDRPT_ConsolidateWeekReport_vw" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.ORDRPT_ConsolidateWeekReport_vw, INSIGHT.Entities" table="ORDRPT_ConsolidateWeekReport_vw" lazy="false" >
+    <id name="Id" column="Id"  type="Int64">
+      <generator class="identity" />
+    </id>
+  <property name="Sector"  column="Sector"  type="string" />
+  <property name="Week"  column="Week"  type="Int64" />
+  <property name="Period"  column="Period"  type="string" />
+  <property name="PeriodYear"  column="PeriodYear"  type="string" />
+  <property name="Warehouse" column="Warehouse" type="string" />
+    <property name="TroopStrength"  column="TroopStrength"  type="Int64" />
+    
+    <property name="Contingents"  column="Contingents"  type="Int64" />
+  <property name="StartDate" column="StartDate" type="datetime" />
+    <property name="EndDate"  column="EndDate"  type="datetime" />
+    
+</class>
+</hibernate-mapping>

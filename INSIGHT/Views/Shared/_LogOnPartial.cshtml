@@ -1,0 +1,44 @@
+﻿@*@model INSIGHT.Entities.User  *@
+@if (Session["UserId"] != null)
+{
+    var user = Session["UserId"].ToString();
+    <text><strong>@user</strong> &nbsp&nbsp&nbsp&nbsp&nbsp
+    @String.Format("{0:dd-MMM-yyyy }", System.DateTime.Now)
+    &nbsp&nbsp&nbsp <a href='@Url.Content("~/Account/CustomChangePassword")'>Change Password</a>&nbsp
+    &nbsp <a href='@Url.Content("~/Account/LogOff")' style="color: red; background-color: white;">LogOff</a></text>
+}
+&nbsp&nbsp&nbsp
+<script>
+    var seconds = null;
+    var ticker = null;
+
+    function startTimer() {
+        seconds = -1;
+        ticker = setInterval("tick( )", 1000);
+        tick();
+    }
+
+    function tick() {
+        ++seconds;
+        var secs = seconds;
+        var hrs = Math.floor(secs / 3600);
+        secs %= 3600;
+        var mns = Math.floor(secs / 60);
+        secs %= 60;
+        var pretty = (hrs < 10 ? "0" : "") + hrs
+               + ":" + (mns < 10 ? "0" : "") + mns
+               + ":" + (secs < 10 ? "0" : "") + secs;
+        document.getElementById("ELAPSED").innerHTML = pretty;
+
+    }
+    //$('.pagelinks').click(function(){
+    if ("@Session" == null) {
+        window.location = '@Url.Action("LogOn", "Account")';
+    }
+    //});
+</script>
+@*<body onLoad="startTimer( )">
+
+<span id="ELAPSED"></span>
+
+</body>*@

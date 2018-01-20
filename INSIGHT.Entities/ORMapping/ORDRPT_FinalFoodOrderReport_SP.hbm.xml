@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.ORDRPT_FinalFoodOrderReport_SP" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.ORDRPT_FinalFoodOrderReport_SP, INSIGHT.Entities" table="ORDRPT_FinalFoodOrderReport_SP" lazy="false" >
+    <id name="Id" column="Id">
+      <generator class="identity" />
+    </id>
+    <property name="OrderId" column="OrderId" type="Int64" />
+    <property name="ControlId" column="ControlId" type="string" />
+    <property name="Sector" column="Sector" type="string" />
+    <property name="Location" column="Location" type="string" />
+    <property name="Name" column="Name" type="string" />
+    <property name="SectorLocContingent" column="SectorLocContingent" type="string" />
+    <property name="Week" column="Week" type="long" />
+    <property name="Period" column="Period" type="string" />
+    <property name="PeriodYear" column="PeriodYear" type="string" />
+    <property name="Troops" column="Troops" type="Int64" />
+    <property name="Warehouse" column="Warehouse" type="string" />
+    <property name="UNCode" column="UNCode" type="Int64" />
+    <property name="Commodity" column="Commodity" type="string" />
+    <property name="OrderQty" column="OrderQty" type="decimal" />
+    <property name="UNCode1" column="UNCode1" type="Int64" />
+    <property name="Commodity1" column="Commodity1" type="string" />
+    <property name="Temperature" column="Temperature" type="string" />
+
+    <property name="sector1" column="sector1" type="decimal"/>
+    <property name="sector2" column="sector2" type="decimal"/>
+    <property name="sector3" column="sector3" type="decimal"/>
+
+    <property name="TotalOrdQty" column="TotalOrdQty" type="decimal"/>
+    <property name="QtyWithEggs" column="QtyWithEggs" type="decimal"/>
+    <property name="TotalTroops" column="TotalTroops" type="Int64"/>
+
+    <property name="SSOrders" column="SSOrders" type="Int64"/>
+    <property name="SNOrders" column="SNOrders" type="Int64"/>
+    <property name="SWOrders" column="SWOrders" type="Int64"/>
+
+    <property name="SSTroops" column="SSTroops" type="Int64"/>
+    <property name="SNTroops" column="SNTroops" type="Int64"/>
+    <property name="SWTroops" column="SWTroops" type="Int64"/>
+
+  </class>
+  <sql-query name="GetFinalFoodOrderRequistionList" callable="true">
+    <query-param name="Period" type="string"/>
+    <query-param name="PeriodYear" type="string"/>
+    <query-param name="Week" type="Int64"/>
+    <return class="INSIGHT.Entities.ORDRPT_FinalFoodOrderReport_SP, INSIGHT.Entities">
+      <return-property name="Id" column="Id" />
+      <return-property name="OrderId" column="OrderId" />
+      <return-property name="ControlId" column="ControlId" />
+      <return-property name="Sector" column="Sector"  />
+      <return-property name="Location" column="Location"  />
+      <return-property name="Name" column="Name" />
+      <return-property name="SectorLocContingent" column="SectorLocContingent"  />
+      <return-property name="Week" column="Week"/>
+      <return-property name="Period" column="Period" />
+      <return-property name="PeriodYear" column="PeriodYear"  />
+      <return-property name="Troops"  column="Troops"   />
+      <return-property name="Warehouse" column="Warehouse" />
+      <return-property name="UNCode" column="UNCode" />
+      <return-property name="Commodity" column="Commodity"  />
+      <return-property name="OrderQty" column="OrderQty"  />
+      <return-property name="UNCode1" column="UNCode1" />
+      <return-property name="Commodity1" column="Commodity1"  />
+      <return-property name="Temperature" column="Temperature"  />
+
+      <return-property name="sector1" column="sector1" />
+      <return-property name="sector2" column="sector2" />
+      <return-property name="sector3" column="sector3" />
+      <return-property name="TotalOrdQty" column="TotalOrdQty" />
+      <return-property name="QtyWithEggs" column="QtyWithEggs"/>
+      <return-property name="TotalTroops" column="TotalTroops"/>
+      <return-property name="SSOrders" column="SSOrders"/>
+      <return-property name="SNOrders" column="SNOrders"/>
+      <return-property name="SWOrders" column="SWOrders"/>
+
+      <return-property name="SSTroops" column="SSTroops"/>
+      <return-property name="SNTroops" column="SNTroops"/>
+      <return-property name="SWTroops" column="SWTroops"/>
+    </return>
+    <![CDATA[ 
+     EXEC [ORDRPT_FinalFoodOrderReport_SP] @spPeriod=:Period , @spPeriodYear=:PeriodYear ,@spWeek=:Week
+    ]]>
+  </sql-query>
+</hibernate-mapping>

@@ -1,0 +1,474 @@
+﻿@{
+    ViewBag.Title = "troopsReport";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+
+<style>
+    .ui-jqgrid tr.jqgrow td {
+        font-size: 10px;
+    }
+     .CSSDropDownList {
+
+    width: 130px;
+}
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var Period, PeriodYear, Sector, Location, ContingentType;
+        $(function () {
+            $("#tabs").tabs();
+        });
+        $.ajax({
+            type: 'Get',
+            url: '@Url.Content("~/Dashboard/GetPeriodYearGraph_TroopsChart?Flag=PERIODYEAR")',
+            success: function (data) {
+
+                var chart = new FusionCharts('@Url.Content("~/Charts/FCF_Column3D.swf")', "Period Year Details", "400", "250");
+                chart.setDataXML(data);
+                chart.render("PeriodYearGraph");
+            },
+            async: false,
+            dataType: "text"
+        });
+        $('#TroopsReportJqgrid').jqGrid({
+
+            url: '@Url.Content("~/Dashboard/TroopsReportJQGrid")',
+            type: 'GET',
+            datatype: 'json',
+            width: 1150,
+            height: 225,
+            colNames: ['OrderId', 'ControlId', 'Sector', 'Location', 'ContType', 'Contingent', 'PeriodYear', 'Period', 'Week', 'Troops'],
+            colModel: [
+                        { name: 'OrderId', index: 'OrderId', key: true, hidden: true, editable: true },
+                        { name: 'ControlId', index: 'ControlId', width: 400 },
+                        { name: 'Sector', index: 'Sector', search: false },
+                        { name: 'Location', index: 'Location', search: false },
+                        { name: 'ContingentType', index: 'ContingentType', search: false },
+                        { name: 'Name', index: 'Name', search: false },
+                        { name: 'PeriodYear', index: 'PeriodYear' },
+                        { name: 'Period', index: 'Period', search: false },
+                        { name: 'Week', index: 'Week', search: false },
+                        { name: 'Troops', index: 'Troops', search: false, formatter: 'number' }
+            ],
+            pager: '#TroopsReportJqgridPager',
+            rowNum: '10000',
+            sortname: 'OrderId',
+            sortorder: "Asc",
+            viewrecords: true,
+            footerrow: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;troops List',
+            loadComplete: function () {
+                debugger;
+                var $self = $(this),
+                  Total = parseFloat($self.jqGrid("getCol", "Troops", false, "sum")).toFixed(2);
+                //                discount = parseFloat($self.jqGrid("getCol", "Discount", false, "sum")).toFixed(2);
+                //                amtrcv = parseFloat($self.jqGrid("getCol", "AmountReceived", false, "sum")).toFixed(2);
+                //                balpay = parseFloat($self.jqGrid("getCol", "BalancePayable", false, "sum")).toFixed(2);
+                $self.jqGrid("footerData", "set", { Period: "Total Troops", Troops: Total });
+            }
+
+
+        });
+        $("#TroopsReportJqgrid").navGrid('#TroopsReportJqgridPager', { add: false, edit: false, del: false, search: false, refresh: false });
+        $("#TroopsReportJqgrid").jqGrid('navButtonAdd', '#TroopsReportJqgridPager', {
+            caption: "Export To Excel",
+            onClickButton: function () {
+
+                var ExptType = 'Excel';
+                var searchItems = $('#Sector').val() + ',' + $('#Location').val() + ',' + $('#contingentType').val() + ',' + $('#Contingent').val() + ',' + $('#PeriodYear').val() + ',' + $('#Period').val() + ',' + $('#Week').val();
+                window.open("TroopsReportJQGrid" + '?searchItems=' + searchItems + '&ExptType=' + ExptType + '&rows=9999' + '&sidx=' + '&sord=desc' + '&page=1');
+            }
+        });
+
+
+
+    });
+    $(function () {
+        FillSector();
+        FillContingent();
+        //FillPeriod();
+        FillLocation();
+        FillWeek();
+        FillPeriodYear();
+
+        $("#Sector").change(function () {
+            FillContingent($(this).val());
+        });
+        $("#Contingent").change(function () {
+            FillLocation($("#Sector").val(), $(this).val());
+
+            var Contigent = $("#Contingent").val();
+            if (Contigent != "") {
+                var result = Contigent.indexOf("FPU") > -1;
+                if (result == true) {
+                    $("#contingentType").val("FPU");
+                }
+                else
+                    $("#contingentType").val("MIL")
+            }
+        });
+        $("#PeriodYear").change(function () {
+            FillPeriod();
+        });
+        $("#Period").change(function () {
+            FillWeek($("#Period").val(), $("#PeriodYear").val());
+        });
+        //        $("#Week").change(function () {
+        //            FillPeriod($(this).val());
+        //        });
+    });
+    function FillSector() {
+        $.getJSON('@Url.Content("~/Masters/FillSectorbyUser/")',
+    function (modelData) {
+        var select = $("#Sector");
+        select.empty();
+        select.append($('<option/>',
+    {
+        value: "",
+        text: "Select Sector"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    function FillContingent(SectorCode) {
+        $.getJSON('@Url.Content("~/Masters/FillContingentbyUser/")?SectorCode=' + SectorCode,
+    function (modelData) {
+        var select = $("#Contingent");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Contingent"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillLocation(SectorCode, ContingentCode) {
+        $.getJSON('@Url.Content("~/Masters/FillLocationbyUser/")?SectorCode=' + SectorCode + '&ContingentCode=' + ContingentCode,
+    function (modelData) {
+        var select = $("#Location");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Location"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillPeriod() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriod/")',
+    function (modelData) {
+        var select = $("#Period");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Period"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillWeek(Period, PeriodYear) {
+
+        $.getJSON('@Url.Content("~/Masters/FillWeek/")?Period=' + Period + "&PeriodYear=" + PeriodYear,
+    function (modelData) {
+        var select = $("#Week");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Week"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    function OrderItemsSearch() {
+
+
+        var searchItems = $('#Sector').val() + ',' + $('#Location').val() + ',' + $('#contingentType').val() + ',' + $('#Contingent').val() + ',' + $('#PeriodYear').val() + ',' + $('#Period').val() + ',' + $('#Week').val();
+        $("#TroopsReportJqgrid").setGridParam(
+            {
+                datatype: "json",
+                url: '@Url.Content("~/Dashboard/TroopsReportJQGrid")?searchItems=' + searchItems,
+                //                url: '/Reports/ConsolidateInvoicejqGrid',
+                //                postData: { Sector: Sector, ContingentType: contingentType, Name: Contingent, Period: Period },
+                page: 0
+            }).trigger("reloadGrid");
+    }
+    function ResetSearch() {
+        var searchItems = "";
+        $('#Sector').val(0);
+        $('#Contingent').val(0);
+        $('#contingentType').val("");
+        $('#Period').val(0);
+        $('#Week').val(0);
+        $("#OrderItems").setGridParam(
+            {
+                datatype: "json",
+                url: '@Url.Content("~/Reports/OrderReportjqGrid")?searchItems=' + searchItems,
+                //                url: '/Reports/ConsolidateInvoicejqGrid',
+                postData: { Sector: Sector, ContingentType: contingentType, Name: Contingent, Period: Period, Week: Week },
+                page: 0
+            }).trigger("reloadGrid");
+    }
+
+    function FillPeriodYear() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriodYear")',
+    function (modelData) {
+        var select = $("#PeriodYear");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Year"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    function MCClickEvent(Periodyear) {
+        debugger;
+        $('#SectorGraph').hide();
+        $('#LocationGraph').hide();
+        $('#ContingentGraph').hide();
+
+        PeriodGraph(Periodyear);
+
+
+
+
+    }
+    function PeriodGraph(Periodyear) {
+      
+      
+        debugger;
+        $.ajax({
+
+            type: 'Get',
+            url: '@Url.Content("~/Dashboard/GetPeriodGraph_Troops")?PeriodYear=' + Periodyear + '&Flag=PERIOD',
+            success: function (data) {
+
+                var chart = new FusionCharts('@Url.Content("~/Charts/FCF_Column3D.swf")', "Period Graph Details", "780", "250");
+                chart.setDataXML(data);
+                chart.render("PeriodGraph");
+            },
+            async: false,
+            dataType: "text"
+        });
+    }
+
+    function PeriodSelection(criteria) {
+        var criteria = criteria.split(',');
+        $('#SectorGraph').show();
+        $('#LocationGraph').hide();
+        $('#ContingentGraph').hide();
+        SectorGraph(criteria[0], criteria[1]);
+    }
+
+    function SectorGraph(Periodyear, Period) {
+        debugger;
+        $.ajax({
+
+            type: 'Get',
+            url: '@Url.Content("~/Dashboard/GetSectorGraph_Troops")?PeriodYear=' + Periodyear + '&Period=' + Period + '&Flag=SECTOR',
+            success: function (data) {
+
+                var chart = new FusionCharts('@Url.Content("~/Charts/FCF_MSColumn3D.swf")', "Period Graph Details", "400", "320");
+                chart.setDataXML(data);
+                chart.render("SectorGraph");
+            },
+            async: false,
+            dataType: "text"
+        });
+    }
+
+    function SectorConttypeSelection(Criteria) {
+        Criteria = Criteria.split(',');
+
+        $('#LocationGraph').show();
+        $('#ContingentGraph').hide();
+        $.ajax({
+
+            type: 'Get',
+            url: '@Url.Content("~/Dashboard/GetLocationWeekGraph_Troops")?PeriodYear=' + Criteria[0] + '&Period=' + Criteria[1] + '&Sector=' + Criteria[2] + '&ContingentType=' + Criteria[3] + '&Flag=LOCATION',
+            success: function (data) {
+
+                var chart = new FusionCharts('@Url.Content("~/Charts/FCF_StackedColumn3D.swf")', "Period Graph Details", "780", "320");
+                chart.setDataXML(data);
+                chart.render("LocationGraph");
+            },
+            async: false,
+            dataType: "text"
+        });
+    }
+
+    function LocationWeekSelection(Criteria) {
+        Criteria = Criteria.split(',');
+        $('#ContingentGraph').show();
+        $.ajax({
+
+            type: 'Get',
+            url: '@Url.Content("~/Dashboard/GetNameGraph_TroopsReport")?PeriodYear=' + Criteria[0] + '&Period=' + Criteria[1] + '&Sector=' + Criteria[2] + '&ContingentType=' + Criteria[3] + '&Location='+Criteria[4]+'&Criteria=' + Criteria[5] + '&Flag=NAME',
+            success: function (data) {
+
+                var chart = new FusionCharts('@Url.Content("~/Charts/FCF_Line.swf")', "Period Graph Details", "800", "320");
+                chart.setDataXML(data);
+                chart.render("ContingentGraph");
+            },
+            async: false,
+            dataType: "text"
+        });
+       
+    }
+</script>
+
+<div id="tabs">
+    <ul>
+        <li><a href="#ExcelReport">Troops Excel Report</a></li>
+        <li><a href="#Graph">Graph</a></li>
+
+    </ul>
+    <div id="ExcelReport">
+        <table class="WithBorderOnly" width="100%">
+            <tr class="PanelHeading">
+                <td colspan="8" class="PanelHeading">
+                    <i class="icon-chevron-right"></i>&nbsp;Search&nbsp;
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="lblheader">
+                        Sector</label><br />
+                    @Html.DropDownList("Sector", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+                </td>
+                <td>
+                    <label class="lblheader">
+                        Location</label><br />
+                    @Html.DropDownList("Location", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+                </td>
+                <td>
+                    <label class="lblheader">
+                        Contingent Type</label><br />
+                    @Html.DropDownList("contingentType", new SelectList(new[]
+                                          {
+                                              new{Value="",Text="Select One"},
+                                              new{Value="FPU",Text="FPU"},
+                                              new{Value="MIL",Text="MIL"}
+                                          },
+          "Value", "Text", ""), new { @Class = "CSSDropDownList" })
+                </td>
+                <td>
+                    <label class="lblheader">
+                        Contingent</label><br />
+                    @Html.DropDownList("Contingent", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+                </td>
+                <td>
+                    <label class="lblheader">
+                        Period Year</label><br />
+                    @Html.DropDownList("PeriodYear", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+                </td>
+                <td>
+                    <label class="lblheader">
+                        Period</label><br />
+                    @Html.DropDownList("Period", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+                </td>
+                <td>
+                    <label class="lblheader">
+                        Week</label><br />
+                    @Html.DropDownList("Week", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+                </td>
+
+                <td>
+                    <input type="button" id="btnSearch" value="Search" onclick="OrderItemsSearch(); return false;" />
+                    @*<input type="reset" id="btnReset"
+                    value="Reset" onclick="ResetSearch(); return false;" />*@
+                    @*<input type="button" id="search" value="Search" />
+                    <input type="button" id="reset" value="Reset" />*@
+                </td>
+            </tr>
+        </table>
+        <table id="TroopsReportJqgrid"></table>
+        <div id="TroopsReportJqgridPager"></div>
+    </div>
+    <div id="Graph">
+
+        <table width="100%">
+            <tr>
+                <td width="30%">
+
+                    <div id="PeriodYearGraph"></div>
+                </td>
+                <td width="70%">
+                    <div id="PeriodGraph"></div>
+                </td>
+            </tr>
+            <tr>
+                <td width="30%">
+                    <div id="SectorGraph"></div>
+                </td>
+                <td width="70%">
+                    <div id="LocationGraph"></div>
+                </td>
+            </tr>
+            <tr>
+
+                <td width="100%" colspan="2"><div align="center" id="ContingentGraph"></div></td>
+            </tr>
+        </table>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+

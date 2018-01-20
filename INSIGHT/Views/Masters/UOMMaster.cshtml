@@ -1,0 +1,71 @@
+﻿@{
+    ViewBag.Title = "UOMMaster";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#UOMMaster').jqGrid({
+            url: '@Url.Content("~/Masters/UOMMasterJqgrid")',
+            datatype: 'Json',
+            type: 'GET',
+            autowidth: true,
+            height: 300,
+            colNames: ['Id', 'UNCode', 'ItemName', 'Type', 'UOM'],
+            colModel: [
+            { name: 'Id', index: 'Id', hidden: true, key: true },
+            { name: 'UNCode', index: 'UNCode', editable: true },
+            { name: 'ItemName', index: 'ItemName', editable: true },
+            { name: 'Type', index: 'Type', editable: true },
+              { name: 'UOM', index: 'UOM', search: false, editable: true },
+            ],
+            rowNum: 20000,
+            rowList: [], // disable page size dropdown
+            pgbuttons: false, // disable page control like next, back button
+            pgtext: null, // disable pager text like 'Page 0 of 10'
+            sortname: 'Id',
+            sortorder: 'Asc',
+            pager: '#UOMMasterPager',
+            multiselect: true,
+            viewrecords: true,
+            shrinktofit: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;UOM Master List'
+        });
+        $('#UOMMaster').jqGrid('filterToolbar', { searchOnEnter: true });
+        jQuery("#UOMMaster").jqGrid('navGrid', '#UOMMasterPager', { add: true, edit: false, del: true, search: false, refresh: true },
+        //Edit options
+            {width: 'auto', url: '@Url.Content("~/Masters/EditUOMMasterMaster/")', left: '10%', top: '10%', height: '50%', width: 400 },
+        //Add options
+            {width: 'auto', url: '@Url.Content("~/Masters/AddUOMMasterMaster/")', left: '10%', top: '10%', height: '50%', width: 400 },
+        //Delete options
+            {width: 'auto', url: '@Url.Content("~/Masters/DeleteUOMMasterMaster/")', left: '10%', top: '10%', height: '50%', width: 400, beforeShowForm: function (params) {
+                //var gsr = $("#ContingentMaster").getGridParam('selrow');
+                //var sdata = $("#ContingentMaster").getRowData(gsr);
+                selectedrows = $("#UOMMaster").jqGrid('getGridParam', 'selarrrow');
+                alert(selectedrows);
+                return { Id: selectedrows }
+
+            } 
+        }
+                );
+        $("#UOMMaster").jqGrid('navButtonAdd', '#UOMMasterPager', {
+            caption: "Export To Excel",
+            onClickButton: function () {
+                var ExptType = 'Excel';
+
+                window.open('UOMMasterJqgrid?ExptType=' + ExptType + '&rows=9999' + '&sidx=' + '&sord=desc' + '&page=1');
+            }
+        });
+
+
+    });
+</script>
+
+<table width="100%"><tr>
+<td>
+<table id="UOMMaster">
+</table>
+<div id="UOMMasterPager">
+</div>
+</td>
+</tr></table>

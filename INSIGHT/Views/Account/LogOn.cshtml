@@ -1,0 +1,164 @@
+﻿@model INSIGHT.Entities.User
+@{
+    ViewBag.Title = "Log On";
+    Layout = "~/Views/Shared/AccountMaster.cshtml"; 
+}
+@*<p>
+    Please enter your user name and password. @Html.ActionLink("Register", "CustomRegister")
+    if you don't have an account.
+</p>*@
+
+<script type="text/javascript">
+    if ("@ViewBag.User" == "Deactivated") {
+        ErrMsg("User Id is Deactivated.");
+    }
+    if ("@ViewBag.User" == "Case Sensitive") {
+        ErrMsg("User Id is Case Sensitive.");
+    }
+    if ("@ViewBag.User" == -1) {
+        ErrMsg("User Id or Password is incorrect.Please provide the registered UserId.");
+    }
+    $(function () {
+        $("#CustomRegisterDialog").dialog({
+            autoOpen: false, width: 450, height: 200, modal: true, bgiframe: true
+
+        });
+
+        $("#btnRegister").click(function () {
+            alert("a");
+            $("#CustomRegisterDialog").html("")
+                 .dialog("option", "title", "Register")
+                    .load('/Account/CustomRegister', function () {
+                        $("#CustomRegisterDialog").dialog("open");
+
+                    });
+        });
+
+        $("#btnLogOn").click(function () {
+            var userId = $("#UserId").val();
+            var password = $("#Password").val();
+
+            if ($.trim(userId).length == 0) {
+                ErrMsg('UserId is Mandatory.');
+                return false;
+            }
+            if ($.trim(password).length == 0) {
+                ErrMsg('Password is Mandatory.');
+                return false;
+            }
+
+        });
+
+
+        if ($("#SuccessPassChange").val() == 1) {
+            InfoMsg("Password changed Successfully.\n Try to login with the new password", function () { $("#SuccessPassChange").val(""); });
+        }
+    });
+   
+</script>
+
+@using (Html.BeginForm())
+{
+    <table class="InnerTable" onloadeddata="noBack();" style="width: 100%;">
+        <tr>
+            <td colspan="2">
+                <fieldset>
+                    <table width="100%" class="InnerTable">
+                        <tr>
+                            <td>
+                                <img src='@Url.Content("~/Images/GCC1.jpg")' /><img src='@Url.Content("~/Images/GCC2.jpg")'>
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 70%; height: 100px;">
+                <fieldset style="height: 170px;">
+                    <table width="100%" class="InnerTable">
+                        <tr>
+                            <td colspan="2">
+                                <div style="background-color: #B6B6B6; height: 100%; width: 100%; font-style: italic;
+                                    text-align: left;">
+                                    Corporate Headquarters
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td valign="top">
+                                <br />
+                                Address&nbsp;: 33rd floor, Mazaya Business Avenue, Plot No. AA1, Jumeirah Lakes
+                                Towers
+                            </td>
+                            <td style="text-align: left">
+                                info@gccservices.com
+                            </td>
+                        </tr>
+                        <tr valign="top">
+                            <td>
+                                Mail&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: P.O. Box 634367 Dubai,
+                                United Arab Emirates
+                            </td>
+                            <td style="text-align: left">
+                                +971 (0) 4-4552600
+                            </td>
+                        </tr>
+                        <tr valign="top">
+                            <td>
+                                Fax&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: +971 (0) 4-4552699
+                            </td>
+                            <td style="text-align: left">
+                                insightsup247@gmail.com
+                            </td>
+                        </tr>
+                        <tr valign="top">
+                            <td>
+                                Web&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: www.gccservices.com
+                            </td>
+                            <td style="text-align: left">
+                                +919790651654
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>
+            </td>
+            
+           <td style="text-align: left; height: 100px; width: 30%">
+                @Html.Hidden("SuccessPassChange", "", new { id = "SuccessPassChange", @Value = TempData["SuccessPassChange"] })
+                @Html.HiddenFor(m => m.Id, "")
+                <fieldset style="height: 170px;">
+                    <b>Account Information</b>
+                    <div class="editor-label">
+                        <label>
+                            User Id</label>
+                    </div>
+                    <div class="editor-field">
+                        @Html.TextBoxFor(m => m.UserId, new { @Class = "CSSTextBox" })
+                        <span style="color: Red">*</span>
+                        @Html.ValidationMessageFor(m => m.UserId)
+                    </div>
+                    <br />
+                    <div class="editor-label">
+                        @Html.LabelFor(m => m.Password)
+                    </div>
+                    <div class="editor-field">
+                        @Html.PasswordFor(m => m.Password, new { @Class = "CSSTextBox" })
+                        <span style="color: Red">*</span>
+                        @Html.ValidationMessageFor(m => m.Password)
+                    </div>
+                    <br />
+                    <p>
+                        <input type="submit" id="btnLogOn" value="Log On" />
+                    </p>
+                    @Html.ValidationSummary(true, "Login was unsuccessful. Please correct the errors and try again.")
+                    <a href='@Url.Content("~/Account/CustomForgotPassword")'>Forgot Password?</a> &nbsp&nbsp&nbsp <span
+                        style="color: #0000FF; font: 11px Arial;">User Id / Password is Case Sensitive</span>
+                    &nbsp &nbsp
+                </fieldset>
+            </td>
+        </tr>
+    </table>
+}
+<div id="CustomRegisterDialog" title="" style="display: none;">
+</div>

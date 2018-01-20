@@ -1,0 +1,391 @@
+﻿@{
+    ViewBag.Title = "ExcelGeneration";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<style>
+    #dvLoading {
+        /*background: url("../../../Images/Sun.gif") no-repeat center center;*/
+        background: url("../Images/Sun.gif") no-repeat center center;
+        height: 100%;
+        width: 100%;
+        position: fixed;
+        z-index: 1000;
+        left: 0%;
+        top: 15%;
+        margin: -25px 0 0 -25px;
+    }
+</style>
+<script type="text/javascript">
+    function GetExcelDocumentList() {
+        $('#ExcelDocumentList').jqGrid('GridUnload');
+        jQuery("#ExcelDocumentList").jqGrid({
+            mtype: 'GET',
+            url: '@Url.Content("~/ExcelGeneration/ExcelDocumentListJQGrid")?ExcelState=Excel-Single',
+            datatype: 'json',
+            height: '335',
+            width: '1200',
+            shrinkToFit: true,
+            colNames: ['Id', 'ControlId', 'Sector', 'ContingentType', 'Name', 'Period', 'PeriodYear', 'Generated Date', 'Download'],
+            colModel: [
+                { name: 'Id', index: 'Id', key: true, hidden: true },
+                { name: 'ControlId', index: 'ControlId', width: 300 },
+                { name: 'Sector', index: 'Sector' },
+                { name: 'ContingentType', index: 'ContingentType' },
+                { name: 'Name', index: 'Name' },
+                { name: 'Period', index: 'Period' },
+                { name: 'PeriodYear', index: 'PeriodYear' },
+                { name: 'ModifiedDate', index: 'ModifiedDate', hidden: true },
+                { width: 200 }
+            ],
+
+            pager: '#ExcelDocumentListPager',
+            rowNum: '100',
+            rowList: [100, 200, 300, 400],
+            sortname: 'Id',
+            sortorder: "ASC",
+            viewrecords: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Excel Document Management',
+            multiselect: true,
+            viewrecords: true
+        });
+        $('#ExcelDocumentList').jqGrid('filterToolbar', { searchOnEnter: true, enableClear: false, afterSearch: function () { $('#ExcelDocumentList').clearGridData(); } });
+        jQuery("#ExcelDocumentList")
+              .navGrid('#ExcelDocumentListPager', { edit: false, add: false, del: false, search: false, refresh: false })
+
+    }
+
+    $(function () {
+        $('#dvLoading').hide()
+            .ajaxStart(function () {
+                $(this).hide(); // show on any Ajax event.
+            })
+        GetExcelDocumentList();
+        FillSector();
+        FillContingent();
+        FillPeriod();
+        FillLocation();
+        FillPeriodYear();
+        //        $("#btnPDF").disable = "true";
+
+        $("#Sector").change(function () {
+            FillContingent($(this).val());
+        });
+
+        $("#Contingent").change(function () {
+            FillLocation($("#Sector").val(), $(this).val());
+
+            var Contigent = $("#Contingent").val();
+            if (Contigent != "") {
+                var result = Contigent.indexOf("FPU") > -1;
+                if (result == true) {
+                    $("#contingentType").val("FPU");
+                }
+                else
+                    $("#contingentType").val("MIL")
+            }
+        });
+        $("#Period").change(function () {
+            var Period = $("#Period").val();
+            FillWeek($("#PeriodYear").val(), $(this).val());
+            if (Period != "") {
+                $('#btnPDF').attr('disabled', false);
+                $('#btnExcel').attr('disabled', false);
+            }
+            else {
+                $('#btnPDF').attr('disabled', true);
+                $('#btnExcel').attr('disabled', true);
+            }
+        });
+        $("#btnExcelGenerate").click(function () {
+
+            var Ids = $("#ExcelDocumentList").jqGrid('getGridParam', 'selarrrow');
+            $('#dvLoading').show();
+            if (Ids.length === 0) {
+
+                if ($('#Sector').val() == "") {
+                    ErrMsg("Please Select Sector");
+                    return false
+                }
+                if ($('#contingentType').val() == "") {
+                    ErrMsg("Please Select ContingentType");
+                    return false
+                }
+                if ($('#PeriodYear').val() == "") {
+                    ErrMsg("Please Select Period Year");
+                    return false
+                }
+                if ($('#Period').val() == "") {
+                    ErrMsg("Please Select Period");
+                    return false
+                }
+                if ($('#Week').val() == "") {
+                    ErrMsg("Please Select Period Week");
+                    return false
+                }
+                else {
+                    var searchItems = $('#Sector').val() + ',' + $('#Contingent').val() + ',' + $('#contingentType').val() + ',' + $('#Period').val() + ',' + $('#PeriodYear').val() + ',' + $('#Week').val();
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Content("~/ExcelGeneration/GenerateExcel")?ExcelState=Excel-Single' + '&searchItems=' + searchItems + '&Ids=' + Ids,
+                        success: function (data) {
+                            $('#dvLoading').hide();
+                            if (data != 0) {
+                                SucessMsg(data + " Documents Successfully Re-Generated");
+                            }
+                            else {
+                                ErrMsg("No Invoice Generated For Period " + $('#Period').val());
+                            }
+                            $("#ExcelDocumentList").setGridParam(
+                            {
+                                datatype: "json",
+                                url: '@Url.Content("~/ExcelGeneration/ExcelDocumentListJQGrid")?ExcelState=Excel-Single' + '&searchItems=' + searchItems,
+                                page: 0
+                            }).trigger("reloadGrid");
+                        },
+                        dataType: "json"
+                    });
+                }
+            }
+            else {
+                var searchItems = $('#Sector').val() + ',' + $('#Contingent').val() + ',' + $('#contingentType').val() + ',' + $('#Period').val() + ',' + $('#PeriodYear').val() + ',' + $('#Week').val();
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Content("~/ExcelGeneration/GenerateExcel")?ExcelState=Excel-Single' + '&searchItems=' + searchItems + '&Ids=' + Ids,
+                        success: function (data) {
+                            if (data != 0) {
+                                $('#dvLoading').hide();
+                                SucessMsg(data + " Documents Successfully Re-Generated");
+                                $("#ExcelDocumentList").setGridParam(
+                                {
+                                    datatype: "json",
+                                    url: '@Url.Content("~/ExcelGeneration/ExcelDocumentListJQGrid")?ExcelState=Excel-Single' + '&searchItems=' + searchItems,
+                                page: 0
+                            }).trigger("reloadGrid");
+                        }
+                    },
+                        dataType: "json"
+                    });
+            }
+
+        });
+    });
+
+    function FillSector() {
+        $.getJSON('@Url.Content("~/Masters/FillSectorbyUser/")',
+    function (modelData) {
+        var select = $("#Sector");
+        select.empty();
+        select.append($('<option/>',
+    {
+        value: "",
+        text: "Select Sector"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    function FillContingent(SectorCode) {
+        $.getJSON('@Url.Content("~/Masters/FillContingentbyUser/")?SectorCode=' + SectorCode,
+    function (modelData) {
+        var select = $("#Contingent");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Contingent"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillLocation(SectorCode, ContingentCode) {
+        $.getJSON('@Url.Content("~/Masters/FillLocationbyUser/")?SectorCode=' + SectorCode + '&ContingentCode=' + ContingentCode,
+    function (modelData) {
+        var select = $("#Location");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Location"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillPeriod() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriod/")',
+    function (modelData) {
+        var select = $("#Period");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Period"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function InvoiceSearch() {
+
+        var Sector = $('#Sector').val();
+        var Contingent = $('#Contingent').val();
+        var ClientName = $('#Location').val();
+        var Location = $('#Period').val();
+        var searchItems = $('#Sector').val() + ',' + $('#Contingent').val() + ',' + $('#contingentType').val() + ',' + $('#Period').val() + ',' + $('#PeriodYear').val() + ',' + $('#Week').val();
+
+        $("#ExcelDocumentList").setGridParam(
+            {
+                datatype: "json",
+                url: '@Url.Content("~/ExcelGeneration/ExcelDocumentListJQGrid")?ExcelState=Excel-Single' + '&searchItems=' + searchItems,
+                page: 0
+            }).trigger("reloadGrid");
+        }
+        function ResetInvoiceSearch() {
+
+            var searchItems = "";
+            $('#Sector').val(0);
+            $('#Contingent').val(0);
+            $('#contingentType').val("");
+            $('#Period').val(0);
+            $('#PeriodYear').val(0);
+            $('#Week').val(0);
+            $("#ExcelDocumentList").clearGridData();
+        }
+
+        function FillPeriodYear() {
+            $.getJSON('@Url.Content("~/Masters/FillPeriodYear")',
+    function (modelData) {
+        var select = $("#PeriodYear");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Year"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+        }
+
+        function ExcelDownload(Id) {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/ExcelGeneration/PeriodListCheck")?Period=' + Period + '&searchItems=' + searchItems,
+            success: function (data) {
+                if (data == true) {
+                    window.open('@Url.Content("~/PdfGeneration/InvoicePrint")?Period=' + Period + '&searchItems=' + searchItems, '_blank');
+                }
+                else {
+                    ErrMsg("The&nbsp;" + Period + "&nbsp;Period does Not contain Week&nbsp;" + data);
+                    $('#btnPDF').attr('disabled', true);
+                    return false;
+                }
+            },
+            dataType: "json"
+        });
+    }
+    function FillWeek(PeriodYear, Period) {
+        $.getJSON('@Url.Content("~/Masters/FillWeekbyPeriodandPeriodYear/")?PeriodYear=' + PeriodYear + '&Period=' + Period,
+         function (modelData) {
+             var select = $("#Week");
+             select.empty();
+             select.append($('<option/>', { value: "", text: "Select Period" }));
+             $.each(modelData, function (index, itemData) {
+                 select.append($('<option/>', { value: itemData.Value, text: itemData.Text }));
+             });
+         });
+    }
+</script>
+<div id="divDocuments">
+    <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="8" class="PanelHeading">
+                <i class="icon-chevron-right"></i>&nbsp;Excel Document Search&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="lblheader">
+                    Sector</label><br />
+                @Html.DropDownList("Sector", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Contingent Type</label><br />
+                @Html.DropDownList("contingentType", new SelectList(new[]
+                                          {
+                                              new{Value="",Text="Select One"},
+                                              new{Value="FPU",Text="FPU"},
+                                              new{Value="MIL",Text="MIL"}
+                                          },
+          "Value", "Text", ""), new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Contingent</label><br />
+                @Html.DropDownList("Contingent", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Period Year</label><br />
+                @Html.DropDownList("PeriodYear", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Period</label><br />
+                @Html.DropDownList("Period", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Week</label><br />
+                @Html.DropDownList("Week", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <input type="button" id="btnSearch" value="Search" onclick="InvoiceSearch(); return false;" /><input
+                    type="reset" id="btnReset" value="Reset" onclick="ResetInvoiceSearch(); return false;" />
+                <input type="button" id="btnExcelGenerate" value="Generate Excel" />
+            </td>
+        </tr>
+    </table>
+</div>
+<table id="ExcelDocumentList">
+</table>
+<div id="ExcelDocumentListPager">
+</div>
+
+<div id="dvLoading">
+</div>

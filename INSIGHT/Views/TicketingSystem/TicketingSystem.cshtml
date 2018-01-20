@@ -1,0 +1,562 @@
+﻿@model INSIGHT.Entities.TicketingSystem.TicketSystem
+@{
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+
+
+
+<script language="javascript" type="text/javascript">
+    $(function () {
+        if ($("#Status").val() == "LogETicket") {
+            $("#ddTicketStatus").val("Open");
+            $(".dpldplTS").attr('disabled', true);
+            $("#TicketStatus").val("OPEN");
+        }
+        $("#btnbkToAvailable").click(function () {
+            $.ajax({
+                url: '@Url.Content("~/TicketingSystem/MoveBackToAvailable")?ActivityId=' + $('#ActivityId').val(),
+                type: 'GET',
+                dataType: 'json',
+                traditional: true,
+                success: function (data) {
+                    if (data & data == true) {
+                        SucessMsg("Eticket-" + $('#Id').val() + " is moved back to available.", function () { window.location.href = '@Url.Action("TicketingSystemInbox", "TicketingSystem")' });
+                    } else {
+
+                    }
+                },
+                error: function (xhr, status, error) {
+                    ErrMsg($.parseJSON(xhr.responseText).Message);
+                }
+            });
+        });
+        if ($('#Status').val() == "Completed" || $('#Status').val() == "Sent") {
+            $('input,select,textarea,button').attr('disabled', true);
+            $('#btnUploadDoc').removeAttr("disabled");
+            $('#uploadedFile').removeAttr("disabled");
+            $('#btnbkInbox').removeAttr("disabled");
+        }
+        if ($.trim($("#AlrtDskMsg").val()) != "") { InfoMsg($("#AlrtDskMsg").val()); }
+
+        $('#btnSave').click(function () { $('#isrejction').val(false); if (eTicketValidtion('Save')) { return true; } return false; });
+        $('#btnComplete').click(function () {
+            $('#isrejction').val(false); if (eTicketValidtion('Complete')) { return true; } return false;
+        });
+        $('#btnReject').click(function () { $('#isrejction').val(true); if (eTicketValidtion('Reject')) { return true; } return false; });
+
+        $('#btnTicketStatus').show();
+        if ($('#activityName').val() == "LogETicket" || $('#activityName').val() == "CloseETicket") {
+            $('#btnTicketStatus').hide();
+        }
+
+        function eTicketValidtion(btnType) {
+            TType = $('#TicketType').val();
+            TModule = $('#Module').val();
+            //TSvrty = $('#Severity').val();
+            TPrty = $('#Priority').val();
+            TTStatus = $('#TicketStatus').val();
+            TAsgnd = $('#AssignedTo').val();
+            TSmry = $('#Summary').val();
+            TCmnt = $('#Comments').val();
+            TActName = $('#activityName').val();
+
+            if (TActName == "LogETicket" && (btnType == "Save" || btnType == "Complete")) {
+                if (TType != "Select" && TModule != "Select"
+                    //&& TSvrty != "Select" 
+                    && TPrty != "Select" && TTStatus != "Select" && !isEmptyorNull(TSmry)) {
+                    return true;
+                } else { ErrMsg("Please enter the mandatory fields.", function () { $("#TicketType").focus(); }); }
+            } else if ((TActName == "ResolveETicket" || TActName == "CloseETicket")
+             && btnType == "Reject") {
+                if (!isEmptyorNull(TCmnt)) { return true; } else {
+                    ErrMsg("Please enter the comments for rejection.", function () { $("#Comments").focus(); });
+                }
+            } else if ((TActName == "ResolveETicket" || TActName == "CloseETicket")
+             && btnType == "Complete") {
+                $('#TicketStatus').val('RESOLVED');
+                return true;
+            }
+            else if ((TActName == "ResolveETicketRejection" || TActName == "CloseETicketRejection")
+             && btnType == "Complete") {
+                if (!isEmptyorNull(TCmnt)) { return true; } else { ErrMsg("Please enter the comments for rejection.", function () { $("#Comments").focus(); }); }
+            } // else if (TActName == "CloseETicket" && btnType == "Complete") {
+            //                if (TTStatus=="") { return true; } else { ErrMsg("Please enter the comments for rejection."); }
+            //            }
+            return false;
+        }
+
+        bindSelectedVal(document.getElementById("ddTicketType"), $('#TicketType').val());
+        bindSelectedVal(document.getElementById("ddModule"), $('#Module').val());
+        //bindSelectedVal(document.getElementById("ddSeverity"), $('#Severity').val());
+        bindSelectedVal(document.getElementById("ddPriority"), $('#Priority').val());
+        bindSelectedVal(document.getElementById("ddTicketStatus"), $('#TicketStatus').val());
+        bindSelectedVal(document.getElementById("ddAssignedTo"), $('#AssignedTo').val());
+
+        function bindSelectedVal(DrpDwnObj, SelVal) {
+            //
+            for (var g = 0; g < DrpDwnObj.options.length; g++) {
+                if (DrpDwnObj.options[g].text == SelVal) {
+                    DrpDwnObj.selectedIndex = g;
+                }
+            }
+        }
+
+        $('#ddTicketType').change(function () {
+            $('#TicketType').val($('#ddTicketType option:selected').text());
+        });
+
+        $('#ddModule').change(function () {
+            $('#Module').val($('#ddModule option:selected').text());
+        });
+
+        //        $('#ddSeverity').change(function () {
+        //            $('#Severity').val($('#ddSeverity option:selected').text());
+        //        });
+
+        $('#ddPriority').change(function () {
+            $('#Priority').val($('#ddPriority option:selected').text());
+        });
+
+        $('#ddTicketStatus').change(function () {
+            $('#TicketStatus').val($('#ddTicketStatus option:selected').text());
+        });
+
+        $('#btnAssign').hide();
+        $('#ddAssignedTo').change(function () {
+            $('#AssignedTo').val($('#ddAssignedTo option:selected').text());
+            //
+            if ($('#AssignedTo').val() == "Select") {
+                $('#btnAssign').hide();
+            } else {
+                $('#btnAssign').show();
+            }
+        });
+
+        $('#btnAssign').click(function () {
+            $.ajax({
+                url: '@Url.Content("~/TicketingSystem/AssignActivityToUser")?Id=' + $('#Id').val() + '&ActivityId=' + $('#ActivityId').val() + '&UserId=' + $('#AssignedTo').val(),
+                type: 'GET',
+                dataType: 'json',
+                traditional: true,
+                success: function (data) {
+                    //
+                    if (data & data == true) {
+                        $('#btnbkInbox').click();
+                    } else {
+                        ErrMsg("Eticket-" + $('#Id').val() + " is not assigned. Please try again.");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    ErrMsg($.parseJSON(xhr.responseText).Message);
+                }
+            });
+        });
+
+        //        $('#btnAddNote').click(function () {
+        //            $('#add_NoteList').click();
+        //        });
+
+        if ($('#activityName').val() == "LogETicket") {
+            $('.dpldplAT').attr('disabled', 'disabled');
+            $('#Comments').attr('disabled', 'disabled');
+            $("#CommentList").hide();
+        } else {
+            $('.dpldpl').attr('disabled', 'disabled');
+        }
+
+        function SaveConfigList(isrejction) {
+            return true;
+        };
+
+        $("#btnbkInbox").click(function () {
+            window.location.href = '@Url.Action("TicketingSystemInbox", "TicketingSystem")';
+        });
+
+        $("#CommentList").jqGrid({
+            mtype: 'GET',
+            url: '@Url.Content("~/TicketingSystem/GetTicketCommentDtlsbyTicketId")',
+            postData: { TicketId: $('#Id').val() },
+            datatype: 'json',
+            height: '70',
+            width: '600',
+            shrinkToFit: true,
+            colNames: ['Id', 'TicketId', 'Commented By', 'Comment Date', 'Comment Details', 'ResolutionComments', 'Note'],
+            colModel: [
+                          { name: 'Id', index: 'Id', hidden: true, key: true },
+                          { name: 'TicketId', index: 'TicketId', hidden: true },
+                          { name: 'CommentedBy', index: 'CommentedBy', width: '80', hidden: false },
+                          { name: 'CommentedOn', index: 'CommentedOn', width: '60' },
+                          { name: 'RejectionComments', index: 'RejectionComments' },
+                          { name: 'ResolutionComments', index: 'ResolutionComments', hidden: true },
+                          { name: 'Note', index: 'Note', hidden: true }
+            ],
+            rowNum: '-1',
+            sortname: 'CommentedOn',
+            sortorder: 'desc',
+            viewrecords: true
+        });
+
+        jQuery.extend(jQuery.jgrid.edit, {
+            ajaxEditOptions: { contentType: "application/json" },
+            recreateForm: true,
+            serializeEditData: function (postData) {
+                //
+                if (postData.Note === undefined) { postData.Note = null; }
+                if (postData.TicketId === undefined || postData.TicketId == 0) { postData.TicketId = $('#Id').val(); }
+                return JSON.stringify(postData);
+            }
+        });
+
+        $("#NoteList").jqGrid({
+            mtype: 'GET',
+            url: '@Url.Content("~/TicketingSystem/GetTicketNoteDtlsbyTicketId")',
+            postData: { TicketId: $('#Id').val() },
+            datatype: 'json',
+            height: '70',
+            width: '700',
+            shrinkToFit: true,
+            colNames: ['Id', 'TicketId', 'Note Added By', 'Note Date', 'RejectionComments', 'ResolutionComments', 'Note Details', ''],
+            colModel: [
+                        { name: 'Id', index: 'Id', hidden: true, editable: false, key: true },
+                        { name: 'TicketId', index: 'TicketId', hidden: true, editable: true },
+                        { name: 'CommentedBy', index: 'CommentedBy', width: '80', editable: true, editrules: { edithidden: true, required: true }, editoptions: { readonly: true } },
+                        { name: 'CommentedOn', index: 'CommentedOn', width: '60' },
+                        { name: 'RejectionComments', index: 'RejectionComments', hidden: true },
+                        { name: 'ResolutionComments', index: 'ResolutionComments', hidden: true },
+                        { name: 'Note', index: 'Note', editable: true, edittype: 'textarea', editrules: { required: true }, editoptions: { size: 70, maxlength: 500, rows: "5", cols: "40" } },
+                        { name: 'DelNote', index: 'DelNote', align: 'center', width: 40, sortable: false, hidden: true, formatter: DelBtnFrmtr }],
+            pager: '#NotePage',
+            rowNum: '-1',
+            sortname: 'CommentedOn',
+            sortorder: 'desc',
+            viewrecords: true,
+            gridComplete: function () {
+                var rds = $("#NoteList").getRowData();
+                if (rds.length > 0) {
+                    $('.bdelNt').button({ icons: { primary: "ui-icon-trash" }, text: false })
+                           .click(function () { DeleteNotes($(this).attr('rowid'), 'Note'); });
+                }
+            },
+            editurl: '@Url.Content("~/TicketingSystem/SaveTicketComments")'
+        }).navGrid('#NotePage', { edit: false, add: true, del: false, refresh: false },
+                { // edit options
+                    width: '450', height: '230', jqModal: true, closeAfterEdit: true, editCaption: 'Edit Note',
+                    beforeShowForm: function (frm) {
+                        //$('#Note').focus();
+                    },
+                    afterShowForm: function (frm) {
+                        // $('#TicketId').val($('#Id').val());
+                        $('#CommentedBy').val($('#loggedInUserId').val());
+                        $('#Note').focus();
+                    }
+                },
+                { // add options
+                    width: '450', height: '230', jqModal: true, closeAfterAdd: true, addCaption: 'Add Note',
+                    beforeShowForm: function (frm) {
+                        //$('#Note').focus();
+                    },
+                    afterShowForm: function (frm) {
+                        $('#TicketId').val($('#Id').val());
+                        $('#CommentedBy').val($('#loggedInUserId').val());
+                        $('#Note').focus();
+                    }
+                });
+
+        function DelBtnFrmtr(cellvalue, options, rowdata) {
+            var NoteAddedBy;
+            if ($.isArray(rowdata)) { NoteAddedBy = rowdata[2]; } else { NoteAddedBy = rowdata.Task; }
+            if (NoteAddedBy && NoteAddedBy.toUpperCase() == $('#loggedInUserId').val().toUpperCase()) {
+                return "<button id='btnDelNote_" + options.rowId + "'class='bdelNt' rowid='" + options.rowId + "' title='Delete Note' type='button'> Del Note </button>";
+            } else { return ""; }
+        }
+
+        function DeleteNotes(NoteId, CmntsType) {//CmntsTyoe-Comments or Notes
+            //
+            $.ajax({
+                url: '@Url.Content("~/TicketingSystem/DeleteComments")?NoteId=' + NoteId,
+                type: 'GET',
+                dataType: 'json',
+                traditional: true,
+                success: function (data) {
+                    //
+                    if (CmntsType == "Comments") {
+                        LoadSetGridParam($('#CommentList'), '@Url.Content("~/TicketingSystem/GetTicketCommentDtlsbyTicketId")?TicketId=' + $('#Id').val());
+                        InfoMsg("Comments deleted successfully.");
+                    }
+                    else {
+                        LoadSetGridParam($('#NoteList'), '@Url.Content("~/TicketingSystem/GetTicketNoteDtlsbyTicketId")?TicketId=' + $('#Id').val());
+                        InfoMsg("Note deleted successfully.");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    ErrMsg($.parseJSON(xhr.responseText).Message);
+                }
+            });
+        }
+
+        $('#btnTicketStatus').click(function () {
+            $.ajax({
+                url: '@Url.Content("~/TicketingSystem/UpdateTicketStatus")?TicketId=' + $('#Id').val() + '&TicketStatus=' + $('#TicketStatus').val(),
+                type: 'GET',
+                dataType: 'json',
+                traditional: true,
+                success: function (data) {
+                    InfoMsg("Ticket Status changed successfully.");
+                },
+                error: function (xhr, status, error) {
+                    ErrMsg($.parseJSON(xhr.responseText).Message);
+                }
+            });
+        });
+
+        $('#search_NoteList').hide();
+
+        if ($('#Id').val() > 0) {
+            $('#add_NoteList').show();
+        } else {
+            $('#add_NoteList').hide();
+            $('#docPanel').hide();
+            $('#InstanceId').val(0);
+        }
+    });
+</script>
+@using (Html.BeginForm("SaveTicketSystem", "TicketingSystem", FormMethod.Post, new { id = "innerForm", enctype = "multipart/form-data" }))
+{
+    <h3>e-Ticketing System
+    </h3>
+    
+    <table width="100%" class="WithBorderOnly" id="TicketFormDtls">
+        <tr valign="top">
+            <td width="39%" style="font-weight: bold">
+                <table>
+                    <tr style="background-color: #B6B6B6; height: 25px; color: White;">
+                        <td colspan="2">e-Ticket Details
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="20%" style="font-weight: bold">
+                            <label>
+                                Ticket No
+                            </label>
+                        </td>
+                        <td width="20%">
+                            @Html.TextBox("TicketNo", null, new { @class = "CSSTextBox", style = "width: 90%;border: none;background: transparent", @Readonly = "Readonly" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="20%" style="font-weight: bold">
+                            <label>
+                                Reporter
+                            </label>
+                        </td>
+                        <td width="20%">
+                            @Html.TextBox("Reporter", null, new { @class = "CSSTextBox", style = "width: 90%;border: none;background: transparent", @Readonly = "Readonly" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="20%" style="font-weight: bold">
+                            <label>
+                                Created Date
+                            </label>
+                        </td>
+                        <td width="20%">
+                            @Html.TextBox("CreatedDate", null, new { @class = "CSSTextBox", style = "width: 90%;border: none;background: transparent", @Readonly = "Readonly" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="20%" style="font-weight: bold">
+                            <label>
+                                Activity Name
+                            </label>
+                        </td>
+                        <td width="20%">
+                            @Html.TextBox("ActivityFullName", null, new { @class = "CSSTextBox", style = "width: 90%;border: none;background: transparent", @Readonly = "Readonly" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="20%" style="font-weight: bold">
+                            <label>
+                                Activity Status
+                            </label>
+                        </td>
+                        <td width="20%">
+                            @Html.TextBox("Status", null, new { @class = "CSSTextBox", style = "width: 90%;border: none;background: transparent", @Readonly = "Readonly" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="20%" style="font-weight: bold">
+                            <label>
+                                Ticket Type<span style="color: Red">*</span>
+                            </label>
+                        </td>
+                        <td width="20%">
+                            @Html.DropDownList("ddTicketType", new SelectList(ViewBag.ddTicketType, "Value", "Text"), "Select", new { @Class = "CSSDropDownList dpldpl" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="20%" style="font-weight: bold">
+                            <label>
+                                Module<span style="color: Red">*</span>
+                            </label>
+                        </td>
+                        <td width="20%">
+                            @Html.DropDownList("ddModule", new SelectList(ViewBag.ddModule, "Value", "Text"), "Select", new { @Class = "CSSDropDownList dpldpl" })
+                        </td>
+                    </tr>
+                    <tr>
+                        @*
+                        <td width="20%" style="font-weight: bold">
+                            <label>
+                                Severity<span style="color: Red">*</span>
+                            </label>
+                        </td>
+                        <td width="20%">
+                            @Html.DropDownList("ddSeverity", new SelectList(ViewBag.ddSeverity, "Value", "Text"), "Select", new { @Class = "CSSDropDownList dpldpl" })
+                        </td>
+                    *@
+                    </tr>
+                    <tr>
+                        <td width="20%" style="font-weight: bold">
+                            <label>
+                                Priority<span style="color: Red">*</span>
+                            </label>
+                        </td>
+                        <td width="20%">
+                            @Html.DropDownList("ddPriority", new SelectList(ViewBag.ddPriority, "Value", "Text"), "Select", new { @Class = "CSSDropDownList dpldpl" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="20%" style="font-weight: bold">
+                            <label>
+                                Ticket Status
+                            </label>
+                        </td>
+                        <td width="20%">
+                            @Html.DropDownList("ddTicketStatus", new SelectList(ViewBag.ddTicketStatus, "Value", "Text"), "Select", new { @Class = "CSSDropDownList dpldplTS" })
+                            <input type="button" id="btnTicketStatus" value="Update Status" name="Update Status" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="20%" style="font-weight: bold">
+                            <label>
+                                Assigned To
+                            </label>
+                        </td>
+                        <td width="20%">
+                            @Html.DropDownList("ddAssignedTo", new SelectList(ViewBag.ddAssignedTo, "Text", "Text"), "Select", new { @Class = "CSSDropDownList dpldplAT" })
+                            <button type="button" id="btnAssign">
+                                Assign
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="20%" style="font-weight: bold">
+                            <label>
+                                Summary<span style="color: Red">*</span>
+                            </label>
+                        </td>
+                        <td width="20%">
+                            @Html.TextArea("Summary", new { @style = "border: #006699 1px solid; width: 325px; height:100px", @maxlength = "4000", @class = "CSSTextArea", @tabindex = "8" })
+                        </td>
+                    </tr>
+                    <tr>
+                        @if (Model.Id > 0 && ViewBag.activityName != "LogETicket")
+                        {
+                            <td width="15%" style="font-weight: bold">
+                                <label>
+                                    Comments
+                                </label>
+                            </td>
+                            <td width="85%">
+                                @Html.TextArea("Comments", new { @style = "border: #006699 1px solid; width: 325px; height:100px", @class = "CSSTextArea", @maxlength = "4000", @tabindex = "5" })
+                            </td>
+                        }
+                    </tr>
+                    <tr align="center">
+                        <td colspan="2" align="center" width="100%">
+                            @*/<div style="width: 100%">*@
+                            @if (Model.Id == 0 && ViewBag.activityName == "LogETicket")
+                            {
+                                <button type="submit" id="btnSave">
+                                    Save
+                                </button> }
+                            else
+                            {
+                                if (ViewBag.activityName == "ResolveETicket" || ViewBag.activityName == "CloseETicket")
+                                {
+                                <button type="submit" id="btnReject">
+                                    Reject
+                                </button> }
+                                <button type="submit" id="btnComplete">
+                                    Complete
+                                </button>
+                            }
+                            <input type="button" id="btnbkInbox" value="Back to Inbox" name="Back to Inbox" />
+                            <input type="button" id="btnbkToAvailable" value="Move Back to Available" name="btnbkToAvailable" />
+                            @*</div>*@
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            @*Right side panel*@
+            <td width="1%" style="font-weight: bold"></td>
+            <td width="50%" style="font-weight: bold">
+                <table>
+                    @*<tr style="background-color: #B6B6B6; height: 25px; color: White;">
+                        <td colspan="4">
+                            Note Details
+                        </td>
+                    </tr>*@
+                    <tr>
+                        <td valign="top">
+                            <table id="NoteList" cellpadding="0" cellspacing="0">
+                            </table>
+                            <div id="NotePage" />
+                        </td>
+                    </tr>
+                    @if (Model.Id > 0 && ViewBag.activityName != "LogETicket")
+                    {
+@*<tr style="background-color: #B6B6B6; height: 25px; color: White;">
+                            <td colspan="4">
+                                Comments Details
+                            </td>
+                        </tr>*@
+                        <tr>
+                            <td valign="top">
+                                <table id="CommentList" cellpadding="0" cellspacing="0">
+                                </table>
+                            </td>
+                        </tr>
+                    }
+                    <tr style="background-color: #B6B6B6; height: 25px; color: White;">
+                        <td colspan="4">Document Library
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">
+                            @Html.Partial("DocLibrary")
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td width="10%" style="font-weight: bold"></td>
+        </tr>
+        <tr>
+            @Html.Hidden("Id")
+            @Html.Hidden("InstanceId")
+            @Html.Hidden("loggedInUserId")
+            @Html.Hidden("loggedInUserType")
+            @Html.Hidden("loggedInUserName")
+            @Html.Hidden("isrejction")
+            @Html.Hidden("AlrtDskMsg", TempData["AlrtDskMsg"])
+            @Html.Hidden("activityName")
+            @Html.Hidden("ActivityId")
+            @Html.Hidden("TicketType")
+            @*@Html.Hidden("Severity")*@
+            @Html.Hidden("Module")
+            @Html.Hidden("Priority")
+            @Html.Hidden("TicketStatus")
+            @Html.Hidden("AssignedTo")
+        </tr>
+    </table>
+}

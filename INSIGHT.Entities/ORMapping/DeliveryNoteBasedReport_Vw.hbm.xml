@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.DeliveryNoteBasedReport_Vw" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.DeliveryNoteBasedReport_Vw, INSIGHT.Entities" table="DeliveryNoteBasedReport_Vw" lazy="false" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="identity" />
+    </id>
+    <property name="OrderId" column="OrderId" type="Int64"/>
+    <property name="ControlId" column="ControlId" type="string"/>
+    <property name="Sector" column="Sector" type="string"/>
+    <property name="ContingentType" column="ContingentType" type="string"/>
+    <property name="Name" column="Name" type="string"/>
+    <property name="Location" column="Location" type="string"/>
+    <property name="PeriodYear" column="PeriodYear" type="string"/>
+    <property name="Period" column="Period" type="string"/>
+    <property name="DeliveryNoteName" column="DeliveryNoteName" type="string"/>
+    <property name="ExpectedDeliveryDate" column="ExpectedDeliveryDate" type="datetime"/>
+    <property name="ReceivedDate" column="ReceivedDate" type="datetime"/>
+    <property name="DateDiffer" column="DateDiffer" type="Int64"/>
+    <property name="DNType" column="DNType" type="string"/>
+    <property name="TotalWeight" column="TotalWeight" type="decimal"/>
+    <property name="LineItemOrdered" column="LineItemOrdered" type="decimal"/>
+    <property name="SumOfAccRecQty" column="SumOfAccRecQty" type="decimal"/>
+    <property name="LineItemsDelivered" column="LineItemsDelivered" type="decimal"/>
+    <property name="PercentByLineItemsDelevered" column="PercentByLineItemsDelevered" type="decimal"/>
+    <property name="PercentByDeliveredQty" column="PercentByDeliveredQty" type="decimal"/>
+    <property name="SubstitutionCount" column="SubstitutionCount" type="Int64"/>
+    <property name="GrossAmount" column="GrossAmount" type="decimal"/>
+    <property name="APL_TimelyDelivery" column="APL_TimelyDelivery" type="decimal"/>
+    <property name="APL_OrderbyLineItems" column="APL_OrderbyLineItems" type="decimal"/>
+    <property name="APL_OrdersbyWeight" column="APL_OrdersbyWeight" type="decimal"/>
+    <property name="APL_NoofAuthorizedSubstitutions" column="APL_NoofAuthorizedSubstitutions" type="decimal"/>
+    <property name="TOTALAPL" column="TOTALAPL" type="decimal"/>
+
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,86 @@
+﻿@model INSIGHT.Entities.UploadRequest
+@{
+    ViewBag.Title = "POUpload";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<style>
+    #dvLoading {
+        /*background: url("../../../Images/Sun.gif") no-repeat center center;*/
+        background: url("../Images/Sun.gif") no-repeat center center;
+        height: 100%;
+        width: 100%;
+        position: fixed;
+        z-index: 1000;
+        left: 0%;
+        top: 15%;
+        margin: -25px 0 0 -25px;
+    }
+
+    .ui-jqgrid tr.jqgrow td {
+        font-size: 10px;
+    }
+</style>
+@using (Html.BeginForm())
+{
+    <table width="100%">
+        <tr valign="top">
+            <td width="30%">
+                <table width="100%" style="height: 133px; border: 1px; border: 1px solid #ccc; font: normal 11px Verdana,Arial,sans-serif; margin: 5px 0px 5px 0px;">
+                    <tr class="PanelHeading">
+                        <th colspan="2" align="left">&nbsp;<b><i class="icon-chevron-right"></i>&nbsp; Import PO</b>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>Request Name</td>
+                        <td>@Html.TextBoxFor(a => a.RequestName, new { @id = "txtRequestName" })
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" id="btnCreateRequest" value="CreateRequest" onclick="return Validation();" /></td>
+                    </tr>
+                </table>
+            </td>
+            <td width="70%">
+                <table id="test" width="100%" style="border: 1px; height: 133px; border: 1px solid #ccc; font: normal 11px Verdana,Arial,sans-serif; margin: 5px 0px 5px 0px;">
+                    <tr class="PanelHeading">
+                        <th colspan="6" align="left">&nbsp;<b><i class="icon-chevron-right"></i>&nbsp; Import PO</b>
+                        </th>
+                    </tr>
+                    <tr id="docPanel" valign="top">
+                        <td>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <div style="overflow: auto; border: 1px; border: 0px solid #ccc; overflow-x: hidden; height: 100px; width: 400px;">
+                                            <table>
+                                                <tr>
+                                                    <td>
+                                                        <input type="file" name="file_upload" id="file_upload"></td>
+                                                    <td></td>
+                                                </tr>
+                                            </table>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;                                       
+                                        </div>
+                                    </td>
+                                    <td valign="top">
+                                        <div id="uploaded"></div>
+                                        <a id="lnkupload" href="javascript:$('#file_upload').uploadify('upload','*')">Upload Files</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <table id="POBulkUploadRequestJQGrid"></table>
+    <div id="POBulkUploadRequestJQGridPager"></div>
+
+    @Html.HiddenFor(a => a.RequestId, new { id = "RequestId" })
+    @Html.HiddenFor(a => a.RequestNo, new { id = "RequestNo" })
+}
+<div id="dvLoading">
+</div>
+<script src='@Url.Content("~/Scripts/InventoryManagementScripts/POUploadScript.js")'></script>

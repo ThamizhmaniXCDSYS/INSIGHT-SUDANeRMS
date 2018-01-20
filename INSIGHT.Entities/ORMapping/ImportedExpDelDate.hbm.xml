@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.ImportedExpDelDate" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.ImportedExpDelDate, INSIGHT.Entities" table="ImportedExpDelDate" lazy="false" >
+    <id name="ImpExpDelDtId" column="ImpExpDelDtId">
+      <generator class="identity" />
+    </id>
+    <property name="ControlId" column="ControlId" type="string" not-null="true" />
+    <property name="Sector" column="Sector" type="string" not-null="true" />
+
+    <property name="Name" column="Name" type="string" not-null="true" />
+    <property name="Location" column="Location" type="string" not-null="true" />
+    <property name="Period" column="Period" type="string" not-null="true" />
+    <property name="PeriodYear" column="PeriodYear" type="string" not-null="true" />
+    <property name="ImpExpDeliveryDate" column="ImpExpDeliveryDate" type="datetime" not-null="true" />
+    <property name="CreatedBy" column="CreatedBy" type="string" not-null="true" />
+    <property name="CreatedDate" column="CreatedDate" type="datetime" not-null="true" />
+    <!--<property name="ModifiedBy" column="ModifiedBy" type="string" not-null="true" />
+    <property name="ModifiedDate" column="ModifiedDate" type="datetime" not-null="true" />-->
+    <property name="RequestId" column="RequestId" type="Int64" not-null="true" />
+  
+  </class>
+</hibernate-mapping>
+

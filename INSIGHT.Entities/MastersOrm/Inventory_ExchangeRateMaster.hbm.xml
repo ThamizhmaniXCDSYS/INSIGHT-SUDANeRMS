@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.Masters.Inventory_ExchangeRateMaster" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.Masters.Inventory_ExchangeRateMaster, INSIGHT.Entities" table="Inventory_ExchangeRateMaster" lazy="false" >
+    <id name="Rate_Id" column="Rate_Id" type="Int64">
+      <generator class="identity" />
+    </id>
+    <property name="ExchangeRate" column="ExchangeRate" type="decimal" />
+    
+    <property name="CreatedDate" column="CreatedDate" type="datetime"/>
+    <property name="CreatedBy" column="CreatedBy" type="string"/>
+    <property name="ModifiedDate" column="ModifiedDate" type="datetime"/>
+    <property name="ModifiedBy" column="ModifiedBy" type="string"/>
+    <many-to-one name="Inventory_CurrencyMaster" column="Currency_Id" class="INSIGHT.Entities.Masters.Inventory_CurrencyMaster, INSIGHT.Entities" fetch="join"> </many-to-one>
+    <property name="GLDate" column="GLDate" type="string"/>
+  </class>
+</hibernate-mapping>

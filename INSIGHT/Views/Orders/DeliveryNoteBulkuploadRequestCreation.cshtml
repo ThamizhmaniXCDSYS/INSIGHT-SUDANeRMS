@@ -1,0 +1,260 @@
+﻿@model INSIGHT.Entities.UploadRequest
+
+@{
+  
+    ViewBag.Title = "DeliveryNoteBulkuploadRequestCreation";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+
+
+}
+<style>
+    #dvLoading {
+        /*background: url("../../../Images/Sun.gif") no-repeat center center;*/
+        background: url("../Images/Sun.gif") no-repeat center center;
+        height: 100%;
+        width: 100%;
+        position: fixed;
+        z-index: 1000;
+        left: 0%;
+        top: 15%;
+        margin: -25px 0 0 -25px;
+    }
+
+    .ui-jqgrid tr.jqgrow td {
+        font-size: 10px;
+    }
+</style>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var RequestId = $('#RequestId').val();
+        var RequestNo = $('#RequestNo').val();
+
+        debugger;
+        $('#dvLoading').hide() // hide it initially.
+    .ajaxStart(function () {
+        debugger;
+        $(this).show(); // show on any Ajax event.
+    })
+
+     .ajaxStop(function () {
+         $(this).hide(); // hide it when it is done.
+     });
+        function formateadorLink(cellvalue, options, rowObject) {
+            return "<a href='@Url.Content("~/Orders/BulkOrderUploadDetails")?RequestId=" + rowObject[0] + "'>" + cellvalue + "</a>";
+        }
+
+
+
+        jQuery("#DeliveryNoteBulkUploadRequestJQGrid").jqGrid({
+            mtype: 'GET',
+            url: '@Url.Content("~/Orders/OrdersBulkUploadRequestJQGrid")?Category=DELIVERYNOTEUPLOAD',
+            datatype: 'json',
+            height: '205',
+            width: '1200',
+            shrinkToFit: true,
+            colNames: ['RequestId', 'RequestName', 'RequestNo', 'Category', 'Status', 'CreatedBy', 'CreatedDate', 'ModifiedBy', 'UploadStatus'],
+            colModel: [
+                      { name: 'RequestId', index: 'RequestId', key: true, hidden: true },
+                      { name: 'RequestName', index: 'RequestName' },
+                      { name: 'RequestNo', index: 'RequestNo', formatter: formateadorLink, sortable: true, width: 50 },
+                      { name: 'Category', index: 'Category', sortable: true, width: 70 },
+                      { name: 'Status', index: 'Status', width: 50, hidden: true },
+                      { name: 'CreatedBy', index: 'CreatedBy', width: 70 },
+                      { name: 'CreatedDate', index: 'CreatedDate', width: 50 },
+                      { name: 'ModifiedBy', index: 'ModifiedBy', width: 50, hidden: true },
+                      { name: 'UploadStatus', index: 'UploadStatus' }
+            ],
+            pager: '#DeliveryNoteBulkUploadRequestJQGridPager',
+            rowNum: '1000',
+            rowList: [100, 200, 300, 400],
+            //rowList: [], // disable page size dropdown
+            // pgbuttons: false, // disable page control like next, back button
+            // pgtext: null, // disable pager text like 'Page 0 of 10'
+            sortname: 'RequestId',
+            sortorder: "Desc",
+            viewrecords: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;DeliveryNote Upload Request List',
+            loadComplete: function () {
+                debugger;
+                var ids = jQuery("#DeliveryNoteBulkUploadRequestJQGrid").jqGrid('getDataIDs');
+                //  $("tr.jqgrow:odd").addClass('RowBackGroundColor');
+                for (var i = 0; i < ids.length; i++) {
+                    debugger;
+                    rowData = jQuery("#DeliveryNoteBulkUploadRequestJQGrid").jqGrid('getRowData', ids[i]);
+                    debugger;
+                    if (rowData.UploadStatus == "Completed Successfully") {
+
+                        $("#DeliveryNoteBulkUploadRequestJQGrid").setCell(ids[i], "UploadStatus", "", { "color": "#1A7F03", 'font-weight': 'bold' });
+
+                    }
+                    if (rowData.UploadStatus == "InProgress") {
+
+                        $("#DeliveryNoteBulkUploadRequestJQGrid").setCell(ids[i], "UploadStatus", "", { "color": "#3104B4", 'font-weight': 'bold' });
+                    }
+                    if (rowData.UploadStatus == "Partially Completed") {
+
+                        $("#DeliveryNoteBulkUploadRequestJQGrid").setCell(ids[i], "UploadStatus", "", { "color": "#FF8000", 'font-weight': 'bold' });
+                    }
+                    if (rowData.UploadStatus == "Completed with Errors") {
+
+                        $("#DeliveryNoteBulkUploadRequestJQGrid").setCell(ids[i], "UploadStatus", "", { "color": "#FF0000", 'font-weight': 'bold' });
+                    }
+                    if (rowData.UploadStatus == "Alread Exist") {
+
+                        $("#DeliveryNoteBulkUploadRequestJQGrid").setCell(ids[i], "UploadStatus", "", { "color": "#A0522D", 'font-weight': 'bold' });
+                    }
+
+
+                    //if (rowData.Status == "ADDED IN ORDERITEMS" && $('#' + ID[i] + '_OrderQty').val() == $('#' + ID[i] + '_RemainingQty').val()) {
+                    //    debugger;
+                    //    $("#OrderItemsJQGrid").setCell(ID[i], "Commodity", "", { "background-color": "#FFFFFF" });
+
+                    //}
+                }
+            }
+            //  multiselect: true
+        });
+        debugger;
+
+
+        if ($('#txtRequestName').val() == "") {
+            $('#lnkupload').hide();
+            $('#test').hide();
+        }
+
+        $('#file_upload').uploadify({
+            'auto': false,
+            'method': 'post',
+            'formData': { 'RequestId': RequestId },
+            'swf': "@Url.Content("~/Content/BootStrap/uploadify.swf")",
+            //this is where the file posts when it uploads.
+            'uploader': "@Url.Action("DeliveryNoteBulkUpload", "Orders")",
+
+            //To send the RequestNo for the post method
+
+            'onUploadSuccess': function (file, data, response) {
+                //data is whatever you return from the server
+                //we're sending the URL from the server so we append this as an image to the #uploaded div
+                //$("#uploaded").append("<img src='" + data + "' alt='Uploaded Image' />");
+                $('#dvLoading').show();
+                $("#uploaded").append("<img src='" + data + "' alt=''/>");
+                $('#txtRequestName').val('');
+                $('#lnkupload').hide();
+            },
+            'onQueueComplete': function (queueData) {
+                debugger;
+                alert(queueData.uploadsSuccessful + ' files were successfully uploaded.');
+                $('#lnkupload').hide();
+                $('#test').hide();
+                $('#dvLoading').hide();
+                $.ajax({
+                    url: '@Url.Content("~/Orders/callParallelDeliveryNote")?RequestId=' + RequestId,
+                    type: 'POST',
+                    dataType: 'json',
+                    traditional: true,
+                    success: function (data) {
+                        window.location.href = '@Url.Action("DeliveryNoteBulkuploadRequestCreation", "Orders")';
+                        
+                    },
+                    loadError: function (xhr, status, error) {
+                        msgError = $.parseJSON(xhr.responseText).Message;
+                        ErrMsg(msgError, function () { });
+                    },
+
+                });
+            }
+        });
+
+
+    });
+    function Validation() {
+        if ($('#txtRequestName').val() == "") {
+            ErrMsg("Request Name can not be empty");
+            return false;
+        }
+
+    }
+
+</script>
+@using (Html.BeginForm())
+{
+    
+    <table width="100%">
+        <tr valign="top">
+
+            <td width="30%">
+                <table width="100%" style="height: 133px; border: 1px; border: 1px solid #ccc; font: normal 11px Verdana,Arial,sans-serif; margin: 5px 0px 5px 0px;">
+                    <tr class="PanelHeading">
+                        <th colspan="2" align="left">&nbsp;<b><i class="icon-chevron-right"></i>&nbsp; Import DeliveryNotes</b>
+                        </th>
+                    </tr>
+                    @*         <tr>
+                        <td>Request No</td>
+                        <td>@Html.TextBoxFor(Model => Model.RequestNo, new { @id = "txtRequestNo" ,@readonly="readonly" })</td>
+                    </tr>*@
+                    <tr>
+                        <td>Request Name</td>
+                        <td>@Html.TextBoxFor(a => a.RequestName, new { @id = "txtRequestName" })
+
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" id="btnCreateRequest" value="CreateRequest" onclick="Validation(); " /></td>
+                    </tr>
+                </table>
+
+
+
+
+            </td>
+            <td width="70%">
+                <table id="test" width="100%" style="border: 1px; height: 133px; border: 1px solid #ccc; font: normal 11px Verdana,Arial,sans-serif; margin: 5px 0px 5px 0px;">
+                    <tr class="PanelHeading">
+                        <th colspan="6" align="left">&nbsp;<b><i class="icon-chevron-right"></i>&nbsp; Import DeliveryNotes</b>
+                        </th>
+                    </tr>
+                    <tr id="docPanel" valign="top">
+                        <td>
+                            <table>
+                                <tr>
+                                    @*<input type="button" id="lnkupload" onclick="javascript: $('#file_upload').uploadify('upload', '*')" value="Upload Files">*@
+                                    <td>
+                                        <div style="overflow: auto; border: 1px; border: 0px solid #ccc; overflow-x: hidden; height: 100px; width: 400px;">
+                                            <table>
+                                                <tr>
+                                                    <td>
+                                                        <input type="file" name="file_upload" id="file_upload"></td>
+                                                    <td></td>
+                                                </tr>
+                                            </table>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;                                       
+                                        @*   <input type="text" id="txtReqDesc">*@
+                                        </div>
+                                    </td>
+                                    <td valign="top">
+                                        <div id="uploaded"></div>
+                                        <a id="lnkupload" href="javascript:$('#file_upload').uploadify('upload','*')">Upload Files</a>
+
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+  
+ <table id="DeliveryNoteBulkUploadRequestJQGrid"></table>
+    <div id="DeliveryNoteBulkUploadRequestJQGridPager"></div>
+
+    @Html.HiddenFor(a => a.RequestId, new { id = "RequestId" })
+    @Html.HiddenFor(a => a.RequestNo, new { id = "RequestNo" })
+
+  
+}
+<div id="dvLoading">
+</div>

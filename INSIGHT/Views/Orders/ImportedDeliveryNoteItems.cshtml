@@ -1,0 +1,191 @@
+﻿@model INSIGHT.Entities.ImportedDeliveryNote
+@{
+    ViewBag.Title = "ImportedDeliveryNoteItems";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<style>
+  .ui-jqgrid tr.jqgrow td{font-size:10px;}
+    </style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        debugger;
+
+        jQuery("#ImportedDeliverynoteItemsJQGrid").jqGrid({
+            mtype: 'GET',
+            url: '@Url.Content("~/Orders/ImportedDeliveryNoteItemsJQGrid")?ImpDeliveryNoteId=@Model.ImpDeliveryNoteId',
+            //postData: { userid: usersrch, appcd: appcdsrch, rlcd: rlcdsrch, depcd: depcdsrch, brncd: brncdsrch, Id: Id },
+            datatype: 'json',
+            height: '400',
+            width:'1200',
+            // width: $("#POList").closest("fieldset").innerWidth() - 10,
+            shrinkToFit: true,
+            colNames: ['ImpDeliveryNoteItemsId', 'ImpDeliveryNoteId', 'ImpDeliveryNoteName', 'ImpControlId', 'UNCode', 'Commodity', 'OrdQty', 'DelQty', 'NoOfPacks', 'NoOfPieces', 'SubsUNCode', 'SubsCommodity', 'UOM', 'IssType', 'Remarks', 'OrderId'],
+            colModel: [
+                      { name: 'ImpDeliveryNoteItemsId', index: 'ImpDeliveryNoteItemsId', key: true, hidden: true },
+                      { name: 'ImpDeliveryNoteId', index: 'ImpDeliveryNoteId', hidden: true },
+                      { name: 'ImpDeliveryNoteName', index: 'ImpDeliveryNoteName', sortable: true, width: 50, hidden: true },
+                      { name: 'ImpControlId', index: 'ImpControlId', sortable: true, hidden: true,width:400 },
+                      { name: 'ImpUNCode', index: 'ImpUNCode', width: 50 },
+                      { name: 'ImpCommodity', index: 'ImpCommodity', width: 180},
+                      { name: 'ImpOrderQty', index: 'ImpOrderQty', width: 50 },
+                      { name: 'ImpDeliveryQty', index: 'ImpDeliveryQty', width: 50 },
+                      { name: 'ImpNoOfPacks', index: 'ImpNoOfPacks', width: 50 },
+                      { name: 'ImpNoOfPieces', index: 'ImpNoOfPieces', search: false, width: 50 },
+                      { name: 'ImpSubsItemCode', index: 'ImpSubsItemCode', search: false, width: 50 },
+                      { name: 'ImpSubsItemName', index: 'ImpSubsItemName', search: false, width: 180 },
+                      //{ name: 'OfflineAttachment', index: 'OfflineAttachment', formatter: FormatterlinerDocLink,search:false }
+                      { name: 'ImpUOM', index: 'ImpUOM', width: 50 },
+                      { name: 'ImpIssueType', index: 'ImpIssueType', search: false, width: 50 },
+                      { name: 'ImpRemarks', index: 'ImpRemarks', search: false, width: 50 },
+                      { name: 'OrderId', index: 'OrderId', search: false, width: 50, hidden: true },
+
+
+                      ],
+            pager: '#ImportedDeliverynoteItemsJQGridPager',
+            rowNum: '1000',
+            rowList: [100, 200, 300, 400],
+            //rowList: [], // disable page size dropdown
+           // pgbuttons: false, // disable page control like next, back button
+           // pgtext: null, // disable pager text like 'Page 0 of 10'
+            sortname: 'ImpUNCode',
+            sortorder: "Asc",
+            viewrecords: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;DeliveryNote Items List'
+          //  multiselect: true
+        });
+        jQuery("#POList").jqGrid('navGrid', '#POListPager', { edit: false, add: false, del: false });
+        $('#OrderItemsJQGrid').jqGrid('filterToolbar', { searchOnEnter: true, enableClear: false, afterSearch: function () { $('#OrderItemsJQGrid').clearGridData(); } });
+    });
+//    function FormatterlinerDocLink(cellvalue, options, rowObject) {
+//        //debugger;
+
+//        return '<a href="#" class="btnAddOfflineDoc" frmId=' + rowObject[0] + ' Id=' + rowObject[0] + '>Note</a>';
+//    }
+
+
+</script>
+@using (Html.BeginForm())
+{
+    
+    <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="6" class="PanelHeading">
+                <i class="icon-chevron-right"></i>&nbsp;Order Items Detail
+            </td>
+        </tr>
+        <tr>
+            <td width="15%">
+                <label class="lblheader">
+                   
+                  Delivery Number</label><br />
+                  @Html.DisplayFor(m => m.ImpDeliveryNoteName)
+                    @Html.HiddenFor(m => m.ImpDeliveryNoteName)
+
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    ControlId</label> <br />
+                       @Html.DisplayFor(m => m.ImpControlId)
+                    @Html.HiddenFor(m => m.ImpControlId)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+          
+                   Delivery Mode</label> <br />
+                        @Html.DisplayFor(m => m.ImpDeliveryMode)
+                    @Html.HiddenFor(m => m.ImpDeliveryMode)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Shipment Date</label> <br />
+                      @String.Format("{0:dd/MM/yyyy }", Model.ImpShipmentDate, new { @id = "lbsStartDate" })
+                       @* @Html.DisplayFor(m => m.StartDate)*@
+                    @Html.HiddenFor(m => m.ImpShipmentDate)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Request No</label> <br />
+                  @Html.DisplayFor(m => m.ImpRequestNo)
+                    @Html.HiddenFor(m => m.ImpRequestNo)
+                    
+            </td>
+        </tr>
+        <tr>
+            <td width="15%">
+            <label class="lblheader">
+            Warehouse
+            </label> <br />
+                @Html.DisplayFor(m => m.ImpWarehouse)
+                    @Html.HiddenFor(m => m.ImpWarehouse)
+            
+            </td>
+            <td width="15%">
+             <label class="lblheader">
+            Strength
+            </label> <br />
+                @Html.DisplayFor(m => m.ImpStrength)
+                    @Html.HiddenFor(m => m.ImpStrength)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    DOS </label> <br />
+                        @Html.DisplayFor(m => m.ImpDOS)
+                    @Html.HiddenFor(m => m.ImpDOS)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Man Days</label> <br />
+                        @Html.DisplayFor(m => m.ImpManDays)
+                    @Html.HiddenFor(m => m.ImpManDays)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Consumption Week</label> <br />
+                        @Html.DisplayFor(m => m.ImpConsumptionWeek)
+                    @Html.HiddenFor(m => m.ImpConsumptionWeek)
+            </td>
+        </tr>
+        <tr>
+            <td width="15%">
+                <label class="lblheader">
+                    Delivery Week</label> <br />
+                        @Html.DisplayFor(m => m.ImpDeliveryWeek)
+                    @Html.HiddenFor(m => m.ImpDeliveryWeek)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                          UNWeek</label> <br />
+                @Html.DisplayFor(m => m.ImpUNWeek)
+                    @Html.HiddenFor(m => m.ImpUNWeek)
+                   
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Created By
+                    </label> <br />
+                      @Html.DisplayFor(m => m.CreatedBy)
+                    @Html.HiddenFor(m => m.CreatedBy)
+
+              
+                   
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                 
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    
+            </td>
+        </tr>
+
+    </table>
+
+    
+}
+<table id="ImportedDeliverynoteItemsJQGrid"></table>
+<div id ="ImportedDeliverynoteItemsJQGridPager"></div>
+
+
+
+

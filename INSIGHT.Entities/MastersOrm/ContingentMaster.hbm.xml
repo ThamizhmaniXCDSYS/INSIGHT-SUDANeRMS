@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.ContingentMaster" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.ContingentMaster, INSIGHT.Entities" table="ContingentMaster" lazy="false" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="identity" />
+    </id>
+    <property name="ContingentControlNo" column="ContingentControlNo" type="string" />
+    <property name="TypeofUnit" column="TypeofUnit" type="string" />
+    <property name="Nationality" column="Nationality" type="string" />
+    <property name="DeliveryPoint" column="DeliveryPoint" type="string" />
+    <property name="LocationCode" column="LocationCode" type="string" />
+
+    <property name="TroopStrength" column="TroopStrength" type="Int32" />
+    <property name="DeliveryMode" column="DeliveryMode" type="string" />
+    <property name="Distance" column="Distance" type="Int64" />
+    <property name="SectorCode" column="SectorCode" type="string" />
+    <property name="SectorName" column="SectorName" type="string" />
+    <property name="DateCreated" column="DateCreated" type="datetime"/>
+    <property name="CreatedBy" column="CreatedBy" type="string"/>
+    <property name="DateModified" column="DateModified" type="datetime"/>
+    <property name="ModifiedBy" column="ModifiedBy" type="string"/>
+    <property name="DeliveryModeDescription" column="DeliveryModeDescription" type="string"/>
+    <property name="ContingentID" column="ContingentID" type="Int64" />
+  </class>
+</hibernate-mapping>

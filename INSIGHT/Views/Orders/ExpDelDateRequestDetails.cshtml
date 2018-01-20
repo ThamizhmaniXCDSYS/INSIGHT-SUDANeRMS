@@ -1,0 +1,104 @@
+﻿@model INSIGHT.Entities.UploadRequest
+@{
+    ViewBag.Title = "ExpDelDateRequestDetails";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+
+<style>
+
+     .ui-jqgrid tr.jqgrow td{font-size:10px;}
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        jQuery("#ExpectedDeliveryDateList").jqGrid({
+            mtype: 'GET',
+            url: '@Url.Content("~/Orders/ImportedExpectedDeliveryNoteListJqgrid")?RequestId='+'@Model.RequestId',
+            @*url: '/Orders/ImportedExpectedDeliveryNoteListJqgrid?RequestId='+'@Model.RequestId',*@
+            datatype: 'json',
+            height: '300',
+            width: '1200',
+            // width: $("#OrdersList").closest("fieldset").innerWidth() - 10,
+            shrinkToFit: true,
+            colNames: ['ImpExpDelDtId', 'ControlId', 'Sector', 'Name', 'Location', 'Period', 'PeriodYear', 'ImpExpDeliveryDate'],
+            colModel: [
+                        { name: 'ImpExpDelDtId', index: 'ImpExpDelDtId', key: true, hidden: true, editable: true },
+                        { name: 'ControlId', index: 'ControlId', width: 150 },
+                        { name: 'Sector', index: 'Sector', search: false, width: 50 },
+                        { name: 'Name', index: 'Name', search: false, width: 50 },
+                        { name: 'Location', index: 'Location', search: false, width: 50 },
+                        { name: 'Period', index: 'Period', search: false, width: 60 },
+                        { name: 'PeriodYear', index: 'PeriodYear', search: false, width: 60 },
+                        { name: 'ImpExpDeliveryDate', index: 'ImpExpDeliveryDate', search: false, width: 60 }
+
+            ],
+            pager: '#ExpectedDeliveryDateListPager',
+            rowNum: '20000',
+            // rowList: [500, 1000, 1500, 2000],
+            rowList: [], // disable page size dropdown
+            // pgbuttons: false, // disable page control like next, back button
+            //pgtext: null, // disable pager text like 'Page 0 of 10'
+            sortname: 'ImpExpDelDtId',
+            sortorder: "Asc",
+            viewrecords: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Expected Delivery Date List'
+
+        });
+
+    });
+    function BackToList() {window.location.href = '@Url.Action("UploadExpectedDeliveryDate", "Orders")';}
+
+</script>
+@using (Html.BeginForm())
+ {
+       <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="6" class="PanelHeading">
+                <i class="icon-chevron-right"></i>&nbsp; Expected DeliveryDate Details
+            </td>
+        </tr>
+        <tr>
+            <td width="16%">
+                <label class="lblheader">
+                   
+                  RequestName</label><br />
+                  @Html.DisplayFor(m => m.RequestName)
+                    @Html.HiddenFor(m => m.RequestName)
+
+            </td>
+            <td width="16%">
+                <label class="lblheader">
+                    Period</label> <br />
+                       @Html.DisplayFor(m => m.Period)
+                    @Html.HiddenFor(m => m.Period)
+            </td>
+            <td width="16%">
+                <label class="lblheader">
+                    Period Year</label> <br />
+                        @Html.DisplayFor(m => m.PeriodYear)
+                    @Html.HiddenFor(m => m.PeriodYear)
+            </td>
+            <td width="16%">
+                <label class="lblheader">
+                    Created By</label> <br />
+                        @Html.DisplayFor(m => m.CreatedBy)
+                    @Html.HiddenFor(m => m.CreatedBy)
+            </td>
+            <td width="16%">
+                <label class="lblheader">
+                    Created Date</label> <br />
+                    @String.Format("{0:dd/MM/yyyy }", Model.CreatedDate)
+@*                        @Html.DisplayFor(m => m.EndDate)*@
+                    @Html.HiddenFor(m => m.CreatedDate)
+            </td>
+            <td width="16%">
+                
+                   <input type="button" id="btnBack" value="Back To List" onclick="BackToList(); return false;" />
+            </td>
+        </tr>
+    </table>
+
+ }
+  <table id="ExpectedDeliveryDateList">
+    </table>
+    <div id="ExpectedDeliveryDateListPager">
+    </div>

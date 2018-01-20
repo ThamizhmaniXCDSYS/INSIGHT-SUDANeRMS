@@ -1,0 +1,36 @@
+﻿@{
+    ViewBag.Title = "Activities";
+    Layout = null;
+}
+<script type="text/javascript">
+    $(function () {
+        $("#ActivitiesHstryList").jqGrid({
+            datatype: 'local',
+            mtype: 'GET',
+            height: '300',
+            width: 'auto',
+            autowidth: true,
+            shrinkToFit: false,
+            colNames: ['Id', 'Activity Name', 'Status', 'Performer', 'Created Date', 'Application Role', 'Reference Id'],
+            colModel: [
+              { name: 'Id', index: 'Id', width: 30, hidden: true },
+              { name: 'ActivityFullName', index: 'ActivityFullName', width: 150, sortable: true },
+              { name: "Status", index: "Status", width: 80, sortable: false },
+              { name: 'Performer', index: 'Performer', width: 100, align: 'left', sortable: true },
+              { name: 'CreatedDate', index: 'CreatedDate', width: 100, align: 'left', sortable: true },
+              { name: 'AppRole', index: 'AppRole', width: 130, align: 'left', sortable: true },
+              { name: 'Id', index: 'Id', width: 100, align: 'left', sortable: false},
+              ],
+            pager: '#ActivitiesHstryPager',
+            rowNum: '10',
+            rowList: [5, 10, 20, 50, 100, 150, 200 ],
+            sortname: 'Id',
+            sortorder: "Desc",
+            viewrecords: true,
+            caption: 'Activities List'
+        });
+    });
+</script>
+
+<table id="ActivitiesHstryList" class="InnerTable"></table>
+<div id="ActivitiesHstryPager"></div>

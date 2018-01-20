@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.ORDRPT_ConsolidatedWeekReport" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.ORDRPT_ConsolidatedWeekReport, INSIGHT.Entities" table="ORDRPT_ConsolidatedWeekReport" lazy="false" >
+    <id name="Id" column="Id">
+      <generator class="identity" />
+    </id>
+    <property name="UNCode" column="UNCode" type="Int64" />
+    <property name="Commodity" column="Commodity" type="string" />
+    <property name="Temperature" column="Temperature" type="string" />
+    <property name="OrdItemsUNCode" column="OrdItemsUNCode" type="Int64" />
+
+    <property name="OrderQty_SS1" column="OrderQty_SS1" type="decimal" />
+    <property name="OrderQty_SN1" column="OrderQty_SN1" type="decimal" />
+    <property name="OrderQty_SW1" column="OrderQty_SW1" type="decimal" />
+    <property name="TotalOrdQtyWK1" column="TotalOrdQtyWK1" type="decimal" />
+
+    <property name="OrderQty_SS2" column="OrderQty_SS2" type="decimal" />
+    <property name="OrderQty_SN2" column="OrderQty_SN2" type="decimal" />
+    <property name="OrderQty_SW2" column="OrderQty_SW2" type="decimal" />
+    <property name="TotalOrdQtyWK2" column="TotalOrdQtyWK2" type="decimal" />
+
+    <property name="OrderQty_SS3" column="OrderQty_SS3" type="decimal" />
+    <property name="OrderQty_SN3" column="OrderQty_SN3" type="decimal" />
+    <property name="OrderQty_SW3" column="OrderQty_SW3" type="decimal" />
+    <property name="TotalOrdQtyWK3" column="TotalOrdQtyWK3" type="decimal" />
+
+    <property name="OrderQty_SS4" column="OrderQty_SS4" type="decimal" />
+    <property name="OrderQty_SN4" column="OrderQty_SN4" type="decimal" />
+    <property name="OrderQty_SW4" column="OrderQty_SW4" type="decimal" />
+    <property name="TotalOrdQtyWK4" column="TotalOrdQtyWK4" type="decimal" />
+
+    <property name="TotalOrdQtySS" column="TotalOrdQtySS" type="decimal" />
+    <property name="TotalOrdQtySN" column="TotalOrdQtySN" type="decimal" />
+    <property name="TotalOrdQtySW" column="TotalOrdQtySW" type="decimal" />
+    <property name="OrdQty" column="OrdQty" type="decimal" />
+
+
+  </class>
+
+  <sql-query name="OrdRptconsolidate" callable="true">
+    <query-param name="Period" type="string"/>
+    <query-param name="PeriodYear" type="string"/>
+    <query-param name="Week1" type="Int64"/>
+    <query-param name="Week2" type="Int64"/>
+    <query-param name="Week3" type="Int64"/>
+    <query-param name="Week4" type="Int64"/>
+    <return class="INSIGHT.Entities.ORDRPT_ConsolidatedWeekReport, INSIGHT.Entities">
+      <return-property name="Id" column="Id" />
+      <return-property name="UNCode" column="UNCode" />
+      <return-property name="Commodity" column="Commodity" />
+      <return-property name="Temperature" column="Temperature"  />
+      <return-property name="OrdItemsUNCode" column="OrdItemsUNCode"  />
+       
+      <return-property name="OrderQty_SS1" column="OrderQty_SS1" />
+      <return-property name="OrderQty_SN1" column="OrderQty_SN1"/>
+      <return-property name="OrderQty_SW1" column="OrderQty_SW1"  />
+      <return-property name="TotalOrdQtyWK1" column="TotalOrdQtyWK1" />
+      
+      <return-property name="OrderQty_SS2" column="OrderQty_SS2"  />
+      <return-property name="OrderQty_SN2" column="OrderQty_SN2"  />
+      <return-property name="OrderQty_SW2" column="OrderQty_SW2"/>
+      <return-property name="TotalOrdQtyWK2" column="TotalOrdQtyWK2"  />
+      
+      <return-property name="OrderQty_SS3" column="OrderQty_SS3" />
+      <return-property name="OrderQty_SN3" column="OrderQty_SN3"  />
+      <return-property name="OrderQty_SW3" column="OrderQty_SW3"  />
+      <return-property name="TotalOrdQtyWK3" column="TotalOrdQtyWK3" />
+       
+      <return-property name="OrderQty_SS4" column="OrderQty_SS4"  />
+      <return-property name="OrderQty_SN4" column="OrderQty_SN4" />
+      <return-property name="OrderQty_SW4" column="OrderQty_SW4"  />
+      <return-property name="TotalOrdQtyWK4" column="TotalOrdQtyWK4"/>
+      
+      <return-property name="TotalOrdQtySS" column="TotalOrdQtySS"  />
+      <return-property name="TotalOrdQtySN" column="TotalOrdQtySN" />
+      <return-property name="TotalOrdQtySW" column="TotalOrdQtySW" />
+      <return-property name="OrdQty" column="OrdQty" />
+      
+    </return>
+    <![CDATA[ 
+     EXEC [ORDRPT_ConsolidatedWeekReport] @SPPeriod=:Period , @SPPeriodYear=:PeriodYear ,@SPWeek1=:Week1, @SPWeek2=:Week2,@SPWeek3=:Week3 , @SPWeek4=:Week4
+    ]]>
+  </sql-query>
+</hibernate-mapping>

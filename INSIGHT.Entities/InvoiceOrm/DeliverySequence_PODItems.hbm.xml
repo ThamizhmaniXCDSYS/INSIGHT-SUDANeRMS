@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.InvoiceEntities.DeliverySequence_PODItems"  namespace="INSIGHT.Entities"  xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.InvoiceEntities.DeliverySequence_PODItems, INSIGHT.Entities" table="DeliverySequence_PODItems" lazy="false" >
+    <id name="SequenceId" column="SequenceId" type="Int64">
+      <generator class="identity" />
+    </id>
+   
+    <property name="OrderId"  column="OrderId"  type="Int64" />
+    <property name="PODItemsId"  column="PODItemsId"  type="Int64" />
+    <property name="LineId"  column="LineId"  type="Int64" />
+    <property name="UNCode"  column="UNCode"  type="Int64" />
+    <property name="Commodity"  column="Commodity"  type="string" />
+    <property name="SubstituteItemCode"  column="SubstituteItemCode"  type="Int64" />
+    <property name="SubstituteItemName"  column="SubstituteItemName"  type="string" />
+    <property name="OrderedQty" column="OrderedQty" type="decimal" />
+    <property name="DeliveredQty"  column="DeliveredQty"  type="decimal" />
+    <property name="DiscrepancyCode"  column="DiscrepancyCode"  type="string" />
+    <property name="Period"  column="Period"  type="string" />
+    <property name="PeriodYear"  column="PeriodYear"  type="string" />
+    <property name="Rank"  column="Rank"  type="Int64" />
+    <property name="Week" column="Week" type="Int64" />
+  </class>
+</hibernate-mapping>
+
+
+
+
+
+
+
+
+
+
+
+

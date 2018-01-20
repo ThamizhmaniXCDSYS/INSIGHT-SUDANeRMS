@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.ContingentWeekWiseReport_vw" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+	<class name="INSIGHT.Entities.ContingentWeekWiseReport_vw, INSIGHT.Entities" table="ContingentWeekWiseReport_vw" lazy="false" >
+		<id name="Id" column="Id">
+    
+    </id>
+		<property name="Name" column="Name" type="string" />
+		<property name="Sector" column="Sector" type="string" />
+		<property name="Period" column="Period" type="string"/>
+		<property name="ContingentType" column="ContingentType" type="string" />
+		<property name="Week1" column="Week1" type="decimal"/>
+		<property name="OrderQty1" column="OrderQty1" type="decimal"/>
+		<property name="DeliveredQty1" column="DeliveredQty1" type="decimal"/>
+		<property name="AcceptedQty1" column="AcceptedQty1" type="decimal"/>
+    <property name="InvoiceQty1" column="InvoiceQty1" type="decimal"/>
+		<property name="InvoiceValue1" column="InvoiceValue1" type="decimal"/>
+
+		<property name="Week2" column="Week2" type="decimal"/>
+		<property name="OrderQty2" column="OrderQty2" type="decimal"/>
+		<property name="DeliveredQty2" column="DeliveredQty2" type="decimal"/>
+		<property name="AcceptedQty2" column="AcceptedQty2" type="decimal"/>
+    <property name="InvoiceQty2" column="InvoiceQty2" type="decimal"/>
+		<property name="InvoiceValue2" column="InvoiceValue2" type="decimal"/>
+
+		<property name="Week3" column="Week3" type="decimal"/>
+		<property name="OrderQty3" column="OrderQty3" type="decimal"/>
+		<property name="DeliveredQty3" column="DeliveredQty3" type="decimal"/>
+		<property name="AcceptedQty3" column="AcceptedQty3" type="decimal"/>
+    <property name="InvoiceQty3" column="InvoiceQty3" type="decimal"/>
+		<property name="InvoiceValue3" column="InvoiceValue3" type="decimal"/>
+
+		<property name="Week4" column="Week4" type="decimal"/>
+		<property name="OrderQty4" column="OrderQty4" type="decimal"/>
+		<property name="DeliveredQty4" column="DeliveredQty4" type="decimal"/>
+		<property name="AcceptedQty4" column="AcceptedQty4" type="decimal"/>
+    <property name="InvoiceQty4" column="InvoiceQty4" type="decimal"/>
+		<property name="InvoiceValue4" column="InvoiceValue4" type="decimal"/>
+	</class>
+</hibernate-mapping>

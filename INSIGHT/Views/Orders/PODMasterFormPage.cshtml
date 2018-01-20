@@ -1,0 +1,78 @@
+﻿@model INSIGHT.Entities.POD
+@{
+    ViewBag.Title = "PODMasterFormPage";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+
+<script type="text/javascript">
+.ui-jqgrid tr.jqgrow td{font-size:10px;}
+    $(document).ready(function () {
+        var CreatedBy = "@ViewBag.CreatedBy";
+     
+        $('#CreatedBy').val(CreatedBy);
+        $('#txtPODNo').val('PO-00');
+        $("#CreatedDate").val($.datepicker.formatDate("dd-mm-yy", new Date()));
+    });
+  
+    function BacktopodList() {
+        window.location.href = '@Url.Content("~/Orders/PODMasterListPage")';
+    
+    }
+</script>
+@using (Html.BeginForm())
+{
+     <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="6" class="PanelHeading">
+                Order Items Detail
+            </td>
+        </tr>
+        <tr>
+            <td width="15%">
+                <label class="lblheader">
+                   
+                  PODNo</label><br />
+             @Html.TextBoxFor(a => a.PODNo, new { @id = "txtPODNo", @class = "CSSTextBox", style = "width: 90%", @ReadOnly = "ReadOnly" })
+
+                    @Html.HiddenFor(m => m.PODNo)
+                    @Html.HiddenFor(m => m.PODId)
+
+
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    CreatedBy</label> <br />
+                     
+                     @Html.TextBoxFor(m => m.CreatedBy, null, new { @class = "CSSTextBox", style = "width: 90%", @ReadOnly = "ReadOnly", @Disabled = true })
+                      @Html.HiddenFor(m => m.CreatedBy)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Created Date</label> <br />
+                         @Html.TextBox("CreatedDate", null, new { @class = "CSSTextBox", style = "width: 70%", @ReadOnly = "ReadOnly", @Disabled = true })
+                          @Html.HiddenFor(m => m.CreatedDate)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Deliver Date</label> <br />
+                        @Html.TextBoxFor(m => m.DeliveryDate, null, new { @id="DeliveryDate" ,@class = "datepicker", style = "width: 90%"})
+                         
+            </td>
+
+            <td width="15%">
+            <input type="submit" id="btnAddPOD" value="Create" />
+             <input type="button" id="btnbacktolist" value="Back to List" onclick="BacktopodList();return false;" />  
+     
+            </td>
+            
+            <td width="15%">
+           
+           <br />
+  
+            </td>
+        </tr>
+  
+
+    </table>
+    
+}

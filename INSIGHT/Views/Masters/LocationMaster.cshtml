@@ -1,0 +1,75 @@
+﻿@{
+    ViewBag.Title = "LocationMaster";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<style type="text/css">
+.ui-jqgrid .ui-pg-input
+{
+    width:30px;
+}
+.ui-jqgrid .ui-pg-selbox
+{
+    width:50px;
+   height:23px;
+}
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#LocationMaster').jqGrid({
+            url: '@Url.Content("~/Masters/LocationMasterJqgrid")',
+            datatype: 'Json',
+            type: 'GET',
+            autowidth: true,
+            height: 300,
+            colNames: ['Id', 'Location Code', 'Location Name', 'Country Code'],
+            colModel: [
+            { name: 'Id', index: 'Id', hidden: true, key: true },
+            { name: 'LocationCode', index: 'LocationCode', editable: true },
+            { name: 'LocationName', index: 'LocationName', editable: true },
+            { name: 'CountryCode', index: 'CountryCode', editable: true },
+            ],
+            rowNum: 20000,
+            rowList: [], // disable page size dropdown
+            pgbuttons: false, // disable page control like next, back button
+            pgtext: null, // disable pager text like 'Page 0 of 10'
+            sortname: 'Id',
+            sortorder: 'Asc',
+            pager: '#LocationMasterPager',
+            multiselect: true,
+            viewrecords: true,
+            shrinktofit:true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Locations List'
+           
+        });
+        $('#LocationMaster').jqGrid('filterToolbar', { searchOnEnter: true });
+        jQuery("#LocationMaster").jqGrid('navGrid', '#LocationMasterPager', { add: true, edit: false, del: true, search: false, refresh: true }, 
+        //Edit options
+            {width: 'auto', url: '@Url.Content("~/Masters/EditLocationMasterDetails/")', left: '10%', top: '10%', height: '50%', width: 400 },
+        //Add options
+            {width: 'auto', url: '@Url.Content("~/Masters/AddLocationMasterDetails/")', left: '10%', top: '10%', height: '50%', width: 400 },
+        //Delete options
+            //{width: 'auto', url: '/Masters/DeleteLocationMasterDetails/', left: '10%', top: '10%', height: '50%', width: 400, beforeShowForm: function (params) { var gsr = $("#LocationMaster").getGridParam('selrow'); var sdata = $("#LocationMaster").getRowData(gsr); return { Id: sdata.Id} } });
+                   {width: 'auto', url: '@Url.Content("~/Masters/DeleteLocationMasterDetails/")', left: '10%', top: '10%', height: '50%', width: 400,
+                   beforeShowForm: function (params) { selectedrows = $("#LocationMaster").jqGrid("getGridParam", "selarrrow"); return { Id: selectedrows} }
+                   });
+        $("#LocationMaster").jqGrid('navButtonAdd', '#LocationMasterPager', {
+            caption: "Export To Excel",
+            onClickButton: function () {
+                var ExptType = 'Excel';
+
+                window.open('LocationMasterJqgrid?ExptType=' + ExptType + '&rows=9999' + '&sidx=' + '&sord=desc' + '&page=1');
+            }
+        });
+    });
+</script>
+<table width="100%">
+<tr>
+<td>
+<table id="LocationMaster">
+</table>
+<div id="LocationMasterPager">
+</div>
+</td>
+</tr>
+</table>
+

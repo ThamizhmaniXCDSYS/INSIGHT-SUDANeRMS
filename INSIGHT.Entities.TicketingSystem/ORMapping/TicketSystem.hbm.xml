@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.TicketingSystem" namespace="INSIGHT.Entities.TicketingSystem" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="TicketSystem" table="TicketSystem" lazy="true" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="native" />
+    </id>
+    <property name="TicketNo" type="AnsiString" not-null="false" />
+    <property name="Module" type="AnsiString" not-null="false" />
+    <property name="TicketType" type="AnsiString" not-null="false" />
+    <property name="Severity" type="AnsiString" not-null="false" />
+    <property name="Priority" type="AnsiString" not-null="false" />
+    <property name="Status" type="String" not-null="false" />
+    <property name="TicketStatus" type="AnsiString" not-null="false" />
+    <property name="Comments" column="Comments" type="AnsiString" />
+    <property name="Summary" column="Summary" type="AnsiString"  />
+    <property name="Description" column="Description" type="AnsiString" />
+    <property name="CreatedDate" column="CreatedDate" type="datetime"  />
+    <property name="Reporter" column="Reporter" type="AnsiString" />
+    <property name="AssignedTo" column="AssignedTo" type="AnsiString" not-null="false" />
+    <property name="InstanceId" column="InstanceId" type="Int64"/>
+    <property name="BranchCode" column="BranchCode" type="AnsiString" />
+    <property name="DeptCode" column="DeptCode" type="AnsiString" />
+  </class>
+</hibernate-mapping>

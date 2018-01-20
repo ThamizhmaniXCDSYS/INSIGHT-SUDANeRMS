@@ -1,0 +1,203 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{5C3EFA26-745D-4B51-8E09-EC9428D44E24}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>INSIGHT.WCFServices</RootNamespace>
+    <AssemblyName>INSIGHT.WCFServices</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <UseIISExpress>false</UseIISExpress>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>4.0</OldToolsVersion>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <WcfConfigValidationEnabled>True</WcfConfigValidationEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="DashboardService.svc.svc" />
+    <Content Include="DocumentsService.svc" />
+    <Content Include="EmailService.svc" />
+    <Content Include="InvoiceService.svc" />
+    <Content Include="MastersService.svc" />
+    <Content Include="MenuService.svc" />
+    <Content Include="OrdersService.svc" />
+    <Content Include="ProcessFlowServices.svc" />
+    <Content Include="UserService.svc" />
+    <Content Include="Web.config" />
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DashboardService.svc.svc.cs">
+      <DependentUpon>DashboardService.svc.svc</DependentUpon>
+    </Compile>
+    <Compile Include="DocumentsService.svc.cs">
+      <DependentUpon>DocumentsService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="EmailService.svc.cs">
+      <DependentUpon>EmailService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="IDashboardService.svc.cs" />
+    <Compile Include="IEmailService.cs" />
+    <Compile Include="IInvoiceSC.cs" />
+    <Compile Include="IMastersSC.cs" />
+    <Compile Include="IMastersService.cs" />
+    <Compile Include="InventoryManagementService.svc.cs" />
+    <Compile Include="InvoiceService.svc.cs">
+      <DependentUpon>InvoiceService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="IOrdersService.cs" />
+    <Compile Include="IUserServiceSC.cs" />
+    <Compile Include="MastersService.svc.cs">
+      <DependentUpon>MastersService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="MenuService.svc.cs">
+      <DependentUpon>MenuService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="IMenuServiceSC.cs" />
+    <Compile Include="OrdersService.svc.cs">
+      <DependentUpon>OrdersService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="ProcessFlowServices.svc.cs">
+      <DependentUpon>ProcessFlowServices.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserService.svc.cs">
+      <DependentUpon>UserService.svc</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\INSIGHT.Component.TicketingSystem\INSIGHT.Component.TicketingSystem.csproj">
+      <Project>{DBC1F1BB-3F26-4766-A6B7-2CE257AED6FF}</Project>
+      <Name>INSIGHT.Component.TicketingSystem</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\INSIGHT.Component\INSIGHT.Component.csproj">
+      <Project>{63EB6B62-7466-46F0-BE24-F60E9C5C3F8B}</Project>
+      <Name>INSIGHT.Component</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\INSIGHT.Entities.TicketingSystem\INSIGHT.Entities.TicketingSystem.csproj">
+      <Project>{26B16E10-350A-4E9A-BD1D-2570E2AD6EC5}</Project>
+      <Name>INSIGHT.Entities.TicketingSystem</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\INSIGHT.Entities\INSIGHT.Entities.csproj">
+      <Project>{4cb29d13-96e5-4b5a-ae56-ffc281fdb21d}</Project>
+      <Name>INSIGHT.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\INSIGHT.ServiceContract.TicketingSystem\INSIGHT.ServiceContract.TicketingSystem.csproj">
+      <Project>{307DD518-DFEF-4CA3-A6AD-29C11A81A588}</Project>
+      <Name>INSIGHT.ServiceContract.TicketingSystem</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\INSIGHT.ServiceContract\INSIGHT.ServiceContract.csproj">
+      <Project>{FBC70C4E-8FFC-42D0-8BBA-8CB2911AC191}</Project>
+      <Name>INSIGHT.ServiceContract</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>29496</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>
+          </IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

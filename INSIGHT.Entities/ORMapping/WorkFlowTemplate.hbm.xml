@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="WorkFlowTemplate" table="WorkFlowTemplate" lazy="true" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="native" />
+    </id>
+    <property name="TemplateName" column="TemplateName" type="string" not-null="false" />
+    <property name="Description" column="DESCRIPTION" type="string" not-null="false" />
+  </class>
+</hibernate-mapping>

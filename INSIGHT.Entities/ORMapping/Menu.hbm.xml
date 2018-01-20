@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.Menu" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.Menu, INSIGHT.Entities" table="Menu" lazy="false" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="identity" />
+    </id>
+    <property name="MenuName" column="MenuName" type="string" />
+    <property name="ParentORChild" column="ParentORChild" type="bool" />
+    <property name="MenuLevel" column="MenuLevel" type="string" />
+    <property name="ParentRefId" column="ParentRefId" type="Int32" />
+    <property name="Role" column="Role" type="string" />
+    <property name="OrderNo" column="OrderNo" type="Int32" />
+    <property name="Controller" column="Controller" type="string" />
+    <property name="Action" column="Action" type="string" />
+    <property name="IsActive" column="IsActive" type="bool" />
+  </class>
+</hibernate-mapping>

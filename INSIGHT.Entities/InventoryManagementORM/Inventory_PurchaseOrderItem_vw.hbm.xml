@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.InventoryManagementEntities.Inventory_PurchaseOrderItem_vw" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.InventoryManagementEntities.Inventory_PurchaseOrderItem_vw, INSIGHT.Entities" table="Inventory_PurchaseOrderItem_vw" lazy="false" >
+    <id name="Id" column="Id" >
+      <!--<generator class="identity" />-->
+    </id>
+    <property name="PurchOrderId" column="PurchOrderId" type="Int64" />
+    <property name="PO" column="PO" type="Int64" />
+    <property name="POLineId" column="POLineId" type="Int64" />
+    <property name="POInvoiceId" column="POInvoiceId" type="Int64" />
+    <property name="POInvoiceItemId" column="POInvoiceItemId" type="Int64" />
+    <property name="UNCode" column="UNCode" type="Int64" />
+    <property name="Commodity" column="Commodity" type="string" />
+    <property name="OrderedQty" column="OrderedQty" type="decimal" />
+    <property name="POUnitPrice" column="POUnitPrice" type="decimal" />
+    <property name="POValue" column="POValue" type="decimal" />
+    <property name="InvoicedQty" column="InvoicedQty" type="decimal" />
+    <property name="InvoiceUnitPrice" column="InvoiceUnitPrice" type="decimal" />
+    <property name="RemainingQty" column="RemainingQty" type="decimal" />
+    <property name="Remarks" column="Remarks" type="string" />
+    <property name="InvoiceNumber" column="InvoiceNumber" type="string" />
+  </class>
+</hibernate-mapping>

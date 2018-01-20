@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.GCCRevised_vw" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+	<class name="INSIGHT.Entities.GCCRevised_vw, INSIGHT.Entities" table="GCCRevised_vw" lazy="false" >
+		<id name="Id" column="Id">
+			<!--<generator class="identity" />-->
+		</id>
+		<property name="LineId" column="LineId" type="Int64" />
+		<property name="OrderId" column="OrderId" type="Int64" />
+		<property name="Sector" column="Sector" type="string" />
+		<property name="ContingentType" column="ContingentType" type="string" />
+		<property name="Name" column="Name" type="string" />
+		<property name="Period" column="Period" type="string" />
+		<property name="PeriodYear" column="PeriodYear" type="string" />
+		<property name="ControlId" column="ControlId" type="string" />
+		<property name="ExpectedDeliveryDate" column="ExpectedDeliveryDate" type="datetime" />
+		<property name="DeliveryNoteName" column="DeliveryNoteName" type="string" />
+		<property name="DeliveryMode" column="DeliveryMode" type="string" />
+		<property name="DeliveredDate"  column="DeliveredDate"  type="string" />
+		<property name="UNCode" column="UNCode" type="Int64" />
+		<property name="Commodity" column="Commodity" type="string" />
+		<property name="OrderQty" column="OrderQty" type="decimal" />
+		<property name="SubstituteItemCode"  column="SubstituteItemCode"  type="string" />
+		<property name="SubstituteItemName"  column="SubstituteItemName"  type="string" />
+		<property name="DeliveredQty"  column="DeliveredQty"  type="decimal" />
+		<property name="AcceptedQty"  column="AcceptedQty"  type="decimal" />
+		<property name="RemainingQty"  column="RemainingQty"  type="decimal" />
+		<property name="InvoiceQty"  column="InvoiceQty"  type="decimal" />
+		<property name="DeliveredValue"  column="DeliveredValue"  type="decimal" />
+		<property name="AcceptedValue"  column="AcceptedValue"  type="decimal" />
+		<property name="FoodValue"  column="FoodValue"  type="decimal" />
+		<property name="TransportValue"  column="TransportValue"  type="decimal" />
+		<property name="InsuranceValue"  column="InsuranceValue"  type="decimal" />
+		<property name="FoodType"  column="FoodType"  type="string" />
+		<property name="InvoiceNumber"  column="InvoiceNumber"  type="string" />
+		<property name="ContingentID" column="ContingentID" type="Int64" />
+	</class>
+
+	<sql-query name="GetGCCRevisedList" callable="true">
+		<query-param name="Period" type="string"/>
+		<query-param name="PeriodYear" type="string"/>
+		<return class="INSIGHT.Entities.GCCRevised_vw, INSIGHT.Entities">
+			<return-property name="Id" column="Id" />
+			<return-property name="LineId" column="LineId" />
+			<return-property name="OrderId" column="OrderId"  />
+			<return-property name="Sector" column="Sector" />
+			<return-property name="ContingentType" column="ContingentType"  />
+			<return-property name="Name" column="Name"  />
+			<return-property name="Period" column="Period"  />
+			<return-property name="PeriodYear" column="PeriodYear" />
+			<return-property name="ControlId" column="ControlId" />
+			<return-property name="ExpectedDeliveryDate" column="ExpectedDeliveryDate"/>
+			<return-property name="DeliveryNoteName" column="DeliveryNoteName"  />
+			<return-property name="DeliveryMode" column="DeliveryMode" />
+			<return-property name="DeliveredDate"  column="DeliveredDate"  />
+			<return-property name="UNCode" column="UNCode"  />
+			<return-property name="Commodity" column="Commodity"  />
+			<return-property name="OrderQty" column="OrderQty"  />
+			<return-property name="SubstituteItemCode"  column="SubstituteItemCode"   />
+			<return-property name="SubstituteItemName"  column="SubstituteItemName"   />
+			<return-property name="DeliveredQty"  column="DeliveredQty"   />
+			<return-property name="AcceptedQty"  column="AcceptedQty"   />
+			<return-property name="RemainingQty"  column="RemainingQty"  />
+			<return-property name="InvoiceQty"  column="InvoiceQty"  />
+			<return-property name="DeliveredValue"  column="DeliveredValue"   />
+			<return-property name="AcceptedValue"  column="AcceptedValue"   />
+			<return-property name="FoodValue"  column="FoodValue"   />
+			<return-property name="TransportValue"  column="TransportValue"   />
+			<return-property name="InsuranceValue"  column="InsuranceValue"  />
+			<return-property name="FoodType"  column="FoodType"  />
+			<return-property name="InvoiceNumber"  column="InvoiceNumber"  />
+			<return-property name="ContingentID"  column="ContingentID"  />
+		</return>
+		<![CDATA[ 
+     EXEC [GCCRevisedList_SP] @Period=:Period , @PeriodYear=:PeriodYear 
+    ]]>
+	</sql-query>
+</hibernate-mapping>

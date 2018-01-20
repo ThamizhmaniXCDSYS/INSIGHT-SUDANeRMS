@@ -1,0 +1,365 @@
+﻿@{
+    ViewBag.Title = "ConsolidatedSubstitutionReport";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+
+
+<style>
+    .ui-jqgrid tr.jqgrow td {
+        font-size: 10px;
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        //function getSubstitutionStatus() {
+
+        //    var Status = { 'Authorized': 'Authorized Substitution', 'UnAuthorized Substitution': 'UnAuthorized' };
+        //    return Status;
+
+        //}
+        //function getAllSelectOptions() {
+        //    var states = {
+        //        '1': 'Alabama', '2': 'California', '3': 'Florida',
+        //        '4': 'Hawaii', '5': 'London', '6': 'Oxford'
+        //    };
+
+        //    return states;
+
+        //}
+        $('#ConsolidatedSubstitutionReport').jqGrid({
+
+            url: '@Url.Content("~/Dashboard/ConsolidatedSubstitutionReportJQGrid")',
+            type: 'GET',
+            datatype: 'json',
+            width: 1200,
+            height: 275,
+            colNames: ['Id', 'ControlId', 'OrderId', 'Sector', 'ContingentType', 'Name', 'Period', 'PeriodYear', 'Location', 'Week', 'UNCode', 'ItemName', 'SubstituteItemCode', 'SubstituteItemName', 'DelQty','Status'],
+            colModel: [
+                { name: 'Id', index: 'Id', key: true, hidden: true },
+                { name: 'ControlId', intex: 'ControlId', search: true,width:350 },
+                { name: 'OrderId', index: 'OrderId', hidden: true },
+                { name: 'Sector', index: 'Sector', hidden: true },
+                { name: 'ContingentType', index: 'ContingentType', hidden: true },
+                { name: 'Name', index: 'Name', hidden: true },
+                { name: 'Period', index: 'Period', hidden: true },
+                { name: 'PeriodYear', index: 'PeriodYear', hidden: true },
+                { name: 'Location', index: 'Location', hidden: true },
+                { name: 'Week', index: 'Week', hidden: true },
+                { name: 'UNCode', index: 'UNCode',width:100},
+                { name: 'ItemName', index: 'ItemName' },
+                { name: 'SubstituteItemCode', index: 'SubstituteItemCode',width:100 },
+                { name: 'SubstituteItemName', index: 'SubstituteItemName' },
+                {name:'DeliveredQty',index:'DeliveredQty',width:120},
+                {name: 'Status', index: 'Status', width: 150, sortable: true, align: 'center', editable: true, edittype: 'select', formatter:'Select'}
+               
+    
+               
+
+    ],
+    pager: '#ConsolidatedSubstitutionReportPager',
+    rowNum: '10000',
+    sortname: 'Id',
+    sortorder: "Asc",
+    viewrecords: true,
+    footerrow: true,
+    caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Substitution Report',
+    loadComplete: function () {
+        debugger;
+        var ids = jQuery("#ConsolidatedSubstitutionReport").jqGrid('getDataIDs');
+        //  $("tr.jqgrow:odd").addClass('RowBackGroundColor');
+        for (var i = 0; i < ids.length; i++) {
+            debugger;
+            rowData = jQuery("#ConsolidatedSubstitutionReport").jqGrid('getRowData', ids[i]);
+            debugger;
+            if (rowData.UploadStatus == "Authorized Substitution") {
+
+                $("#ConsolidatedSubstitutionReport").setCell(ids[i], "Status", "", { "color": "#1A7F03", 'font-weight': 'bold' });
+
+            }
+
+            if (rowData.UploadStatus == "UnAuthorized Substitution") {
+
+                $("#ConsolidatedSubstitutionReport").setCell(ids[i], "Status", "", { "color": "#FF0000", 'font-weight': 'bold' });
+            }
+
+
+        }
+                
+    }
+
+    });
+    //$('#ConsolidatedSubstitutionReport').jqGrid('filterToolbar', {
+    //    searchOnEnter: true, enableClear: false, afterSearch: function () {
+    //        // $('#ConsolidatedSubstitutionReport').clearGridData();
+    //    }
+    //});
+    $("#ConsolidatedSubstitutionReport").navGrid('#ConsolidatedSubstitutionReportPager', { add: false, edit: false, del: false, search: false, refresh: false });
+    $("#ConsolidatedSubstitutionReport").jqGrid('navButtonAdd', '#ConsolidatedSubstitutionReportPager', {
+        caption: "Export To Excel",
+        onClickButton: function () {
+
+            var ExptType = 'Excel';
+            var searchItems = $('#Sector').val() + ',' + $('#Location').val() + ',' + $('#contingentType').val() + ',' + $('#Contingent').val() + ',' + $('#PeriodYear').val() + ',' + $('#Period').val() + ',' + $('#Week').val();
+            window.open("ConsolidatedSubstitutionReportJQGrid" + '?searchItems=' + searchItems + '&ExptType=' + ExptType + '&rows=9999' + '&sidx=' + '&sord=desc' + '&page=1');
+        }
+    });
+
+
+
+
+    });
+    $(function () {
+        FillSector();
+        FillContingent();
+        //FillPeriod();
+        FillLocation();
+        FillWeek();
+        FillPeriodYear();
+
+        $("#Sector").change(function () {
+            FillContingent($(this).val());
+        });
+        $("#Contingent").change(function () {
+            FillLocation($("#Sector").val(), $(this).val());
+
+            var Contigent = $("#Contingent").val();
+            if (Contigent != "") {
+                var result = Contigent.indexOf("FPU") > -1;
+                if (result == true) {
+                    $("#contingentType").val("FPU");
+                }
+                else
+                    $("#contingentType").val("MIL")
+            }
+        });
+        $("#PeriodYear").change(function () {
+            FillPeriod();
+        });
+        $("#Period").change(function () {
+            FillWeek($("#Period").val(), $("#PeriodYear").val());
+        });
+        //        $("#Week").change(function () {
+        //            FillPeriod($(this).val());
+        //        });
+    });
+    function FillSector() {
+        $.getJSON('@Url.Content("~/Masters/FillSectorbyUser/")',
+    function (modelData) {
+        var select = $("#Sector");
+        select.empty();
+        select.append($('<option/>',
+    {
+        value: "",
+        text: "Select Sector"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    function FillContingent(SectorCode) {
+        $.getJSON('@Url.Content("~/Masters/FillContingentbyUser")?SectorCode=' + SectorCode,
+    function (modelData) {
+        var select = $("#Contingent");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Contingent"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillLocation(SectorCode, ContingentCode) {
+        $.getJSON('@Url.Content("~/Masters/FillLocationbyUser")?SectorCode=' + SectorCode + '&ContingentCode=' + ContingentCode,
+    function (modelData) {
+        var select = $("#Location");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Location"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillPeriod() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriod/")',
+    function (modelData) {
+        var select = $("#Period");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Period"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillWeek(Period, PeriodYear) {
+
+        $.getJSON('@Url.Content("~/Masters/FillWeek")?Period=' + Period + "&PeriodYear=" + PeriodYear,
+    function (modelData) {
+        var select = $("#Week");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Week"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    function OrderItemsSearch() {
+
+
+        var searchItems = $('#Sector').val() + ',' + $('#Location').val() + ',' + $('#contingentType').val() + ',' + $('#Contingent').val() + ',' + $('#PeriodYear').val() + ',' + $('#Period').val() + ',' + $('#Week').val();
+        $("#ConsolidatedSubstitutionReport").setGridParam(
+            {
+                datatype: "json",
+                url: '@Url.Content("~/Dashboard/ConsolidatedSubstitutionReportJQGrid")?searchItems=' + searchItems,
+                //                url: '/Reports/ConsolidateInvoicejqGrid',
+                //                postData: { Sector: Sector, ContingentType: contingentType, Name: Contingent, Period: Period },
+                page: 0
+            }).trigger("reloadGrid");
+    }
+    function ResetSearch() {
+        var searchItems = "";
+        $('#Sector').val(0);
+        $('#Contingent').val(0);
+        $('#contingentType').val("");
+        $('#Period').val(0);
+        $('#Week').val(0);
+        $("#OrderItems").setGridParam(
+            {
+                datatype: "json",
+                url: '@Url.Content("~/Reports/OrderReportjqGrid")?searchItems=' + searchItems,
+                //                url: '/Reports/ConsolidateInvoicejqGrid',
+                postData: { Sector: Sector, ContingentType: contingentType, Name: Contingent, Period: Period, Week: Week },
+                page: 0
+            }).trigger("reloadGrid");
+    }
+
+    function FillPeriodYear() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriodYear")',
+    function (modelData) {
+        var select = $("#PeriodYear");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Year"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    
+</script>
+
+
+<table class="WithBorderOnly" width="100%">
+    <tr class="PanelHeading">
+        <td colspan="8" class="PanelHeading">
+            <i class="icon-chevron-right"></i>&nbsp;Search&nbsp;
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label class="lblheader">
+                Sector</label><br />
+            @Html.DropDownList("Sector", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+        </td>
+        <td>
+            <label class="lblheader">
+                Location</label><br />
+            @Html.DropDownList("Location", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+        </td>
+        <td>
+            <label class="lblheader">
+                Contingent Type</label><br />
+            @Html.DropDownList("contingentType", new SelectList(new[]
+                                          {
+                                              new{Value="",Text="Select One"},
+                                              new{Value="FPU",Text="FPU"},
+                                              new{Value="MIL",Text="MIL"}
+                                          },
+          "Value", "Text", ""), new { @Class = "CSSDropDownList" })
+        </td>
+        <td>
+            <label class="lblheader">
+                Contingent</label><br />
+            @Html.DropDownList("Contingent", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+        </td>
+        <td>
+            <label class="lblheader">
+                Period Year</label><br />
+            @Html.DropDownList("PeriodYear", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+        </td>
+        <td>
+            <label class="lblheader">
+                Period</label><br />
+            @Html.DropDownList("Period", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+        </td>
+        <td>
+            <label class="lblheader">
+                Week</label><br />
+            @Html.DropDownList("Week", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+        </td>
+
+        <td>
+            <input type="button" id="btnSearch" value="Search" onclick="OrderItemsSearch(); return false;" />
+            @*<input type="reset" id="btnReset"
+                    value="Reset" onclick="ResetSearch(); return false;" />*@
+            @*<input type="button" id="search" value="Search" />
+                    <input type="button" id="reset" value="Reset" />*@
+        </td>
+    </tr>
+</table>
+
+
+<table id="ConsolidatedSubstitutionReport"></table>
+<div id="ConsolidatedSubstitutionReportPager"></div>

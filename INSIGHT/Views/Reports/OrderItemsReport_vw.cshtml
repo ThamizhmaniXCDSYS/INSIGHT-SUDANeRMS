@@ -1,0 +1,243 @@
+﻿@{
+    ViewBag.Title = "OrderItemsReport_vw";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<style>
+    .ui-jqgrid tr.jqgrow td {
+        font-size: 10px;
+    }
+</style>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        debugger;
+        $('#OrderItems').jqGrid({
+            url: '@Url.Content("~/Reports/OrderReportjqGridORDINV")?ReportType=' + 'ORDINV',
+            datatype: 'Json',
+            type: 'GET',
+            shrinkToFit: false,
+            height: 245,
+            width: 1200,
+            colNames: ['Id', 'Controlid', 'Invoice Number', 'Location','Contingent Type', 'Strength', 'Noofdays', 'Week', 'Period', 'Year', 'Sector', 'Contingent', 'ContingentType', 'Lineitemordered ', 'Totallineitemsubstituted ', 'Orderedqty ',
+         'Deliveredqty', 'Acceptedqty', 'Amountordered ', 'AmountDelivered', 'Amountaccepted', 'Troopstrengthdiscount', 'Othercreditnotes ', 'Weeklyinvoicediscount', 'Netamountforrations', 'AplTimelydelivery',
+         'AplOrderbylineitems', 'AplOrdersbyweight', 'AplNoofauthorizedsubstitutions', 'Totalinvoiceamount ', 'Modeoftransportation ', 'Distancekm ', 'Transportationperkgcost ', 'Totaltransportationcost ',
+         'Dn ', 'Approveddeliverydate', 'Actualdateofreceipt ', 'Daysdelay ', 'Authorizedcmr ', 'Ordercmr ', 'Acceptedcmr ', 'Cmrutilized ', 'Lineitemdelivered98 ', 'Confirmitytolineitemorder98 ', 'Conformitytoorderbyweight ',
+         'Noofsubtitution', 'Amountsubstituted ', 'Daysdelayperformance ', 'DeliveryNotes', 'ContingentID'],
+            colModel: [
+                { name: 'Id', index: 'Id', width: 300, hidden: true },
+                { name: 'Controlid', index: 'ControlId', width: 300, frozen: true  ,search: false},
+                { name: 'InvoiceNumber', index: 'InvoiceNumber', width: 300, frozen: true, search: false },
+                    { name: 'Location', index: 'Location', align: "center", width: 70, search: false, sortable: false },
+                    { name: 'ContingentType', index: 'ContingentType', align: "center", width: 70, search: false, sortable: false },
+                    { name: 'Strength', index: 'Strength', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Noofdays', index: 'NoOfDays', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Week', index: 'Week', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Period', index: 'Period', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Year', index: 'Year', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Sector', index: 'Sector', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Contingent', index: 'Contingent', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'ContingentType', index: 'ContingentType', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Lineitemordered', index: 'LineItemOrdered', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Totallineitemsubstituted', index: 'TotalLineItemSubstituted', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Orderedqty', index: 'OrderedQty', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Deliveredqty', index: 'DeliveredQty', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Acceptedqty', index: 'AcceptedQty', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Amountordered', index: 'AmountOrdered', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Deliveredvalue', index: 'Deliveredvalue', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Amountaccepted', index: 'AmountAccepted', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Troopstrengthdiscount', index: 'TroopStrengthDiscount', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Othercreditnotes', index: 'OtherCreditNotes', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Weeklyinvoicediscount', index: 'WeeklyInvoiceDiscount', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Netamountforrations', index: 'NetAmountforRations', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'AplTimelydelivery', index: 'APL_TimelyDelivery', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'AplOrderbylineitems', index: 'APL_OrderbyLineItems', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'AplOrdersbyweight', index: 'APL_OrdersbyWeight', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'AplNoofauthorizedsubstitutions', index: 'APL_NoofAuthorizedSubstitutions', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Totalinvoiceamount', index: 'TotalInvoiceAmount', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Modeoftransportation', index: 'ModeofTransportation', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Distancekm', index: 'DistanceKM', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Transportationperkgcost', index: 'TransportationPerKgCost', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Totaltransportationcost', index: 'TotalTransportationCost', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Dn', index: 'DN', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Approveddeliverydate', index: 'ApprovedDeliveryDate', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Actualdateofreceipt', index: 'ActualDateofReceipt', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Daysdelay', index: 'DaysDelay', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Authorizedcmr', index: 'AuthorizedCMR', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Ordercmr', index: 'OrderCMR', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Acceptedcmr', index: 'AcceptedCMR', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Cmrutilized', index: 'CMRUtilized', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Lineitemdelivered98', index: 'Lineitemdelivered98', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Confirmitytolineitemorder98', index: 'Confirmitytolineitemorder98', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Conformitytoorderbyweight', index: 'ConformitytoOrderbyWeight', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Noofsubtitution', index: 'Noofsubtitution', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Amountsubstituted', index: 'Amountsubstituted', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'Daysdelayperformance', index: 'DaysDelayPerformance', search: false, align: "center", width: 100, sortable: false },
+                    { name: 'DeliveryNotes', index: 'DeliveryNotes', search: false, align: "center", width: 600, sortable: false },
+                    { name: 'ContingentID', index: 'ContingentID', search: false, align: "center", width: 600, sortable: false }
+            ],
+            rowNum: 1000,
+            // scroll: true,
+            viewrecords: true,
+            rowList: [1000, 2000, 4000, 10000],
+            sortorder: 'Asc',
+            sortname: 'ControlId',
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Order Items Report List',
+            pager: 'OrderItemsPager'
+        });
+        $("#OrderItems").navGrid('#OrderItemsPager', { add: false, edit: false, del: false, search: false, refresh: false }, {}, {}, {}, {});
+        $("#OrderItems").jqGrid('filterToolbar', { searchOnEnter: true, enableClear: false });
+        $("#OrderItems").jqGrid('navButtonAdd', '#OrderItemsPager', {
+            caption: "Export To Excel",
+            onClickButton: function () {
+                debugger;
+                if ($('#PeriodYear').val() == "") {
+                    ErrMsg("Please Select Period Year");
+                    return false;
+                }
+                if ($('#Period').val() == "") {
+                    ErrMsg("Please Select Period");
+                    return false;
+                }
+                var ExptType = 'Excel';
+                var searchItems = $('#Period').val() + ',' + $('#PeriodYear').val();
+                window.open("OrderReportjqGridORDINV" + '?searchItems=' + searchItems + '&ExptType=' + ExptType + '&ReportType=' + 'ORDINV' + '&rows=9999' + '&sidx=' + '&sord=desc' + '&page=1');
+            }
+        });
+
+        $("#btnReset").click(function () {
+
+            $("input[type=text], textarea, select").val("");
+            jQuery('#OrderItems').jqGrid('clearGridData')
+.jqGrid('setGridParam', { data: data, page: 1 }).trigger('reloadGrid');
+        });
+    });
+    $(function () {
+
+        FillPeriod();
+
+        FillPeriodYear();
+
+        $("#PeriodYear").change(function () {
+            FillPeriod();
+        });
+        $("#Period").change(function () {
+            FillWeek($("#Period").val(), $("#PeriodYear").val());
+        });
+
+    });
+
+
+    function FillPeriod() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriod/")',
+    function (modelData) {
+        var select = $("#Period");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Period"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function OrderItemsSearch() {
+        debugger;
+
+        var Period = $('#Period').val();
+        var PeriodYear = $('#PeriodYear').val();
+        if ($('#PeriodYear').val() == "") {
+            ErrMsg("Please Select Period Year");
+            return false;
+        }
+        if ($('#Period').val() == "") {
+            ErrMsg("Please Select Period");
+            return false;
+        }
+
+        var searchItems = $('#Period').val() + ',' + $('#PeriodYear').val();
+
+        $('#OrderItems').setGridParam(
+            {
+                datatype: "json",
+                url: '@Url.Content("~/Reports/OrderReportjqGridORDINV")?ReportType=' + 'ORDINV' + '&SearchItems=' + searchItems,
+                page: 0
+            }).trigger("reloadGrid");
+        }
+        function ResetSearch() {
+            debugger;
+            $("input[type=text], textarea, select").val("");
+
+            var Period = $('#Period').val();
+            var PeriodYear = $('#PeriodYear').val();
+
+            $('#OrderItems').setGridParam(
+                {
+                    datatype: "json",
+                    url: '@Url.Content("~/Reports/OrderReportjqGridORDINV")?searchItems=' + searchItems + '&ReportType=' + 'ORDINV',
+
+                page: 0
+            }).trigger("reloadGrid");
+        }
+
+        function FillPeriodYear() {
+            $.getJSON('@Url.Content("~/Masters/FillPeriodYear")',
+    function (modelData) {
+        var select = $("#PeriodYear");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Year"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+</script>
+<div id="divDocuments">
+    <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="7" class="PanelHeading">
+                <i class="icon-chevron-right"></i>&nbsp;Search&nbsp;
+            </td>
+        </tr>
+        <tr>
+
+            <td colspan="1" width="20%">
+                <label class="lblheader">
+                    Period Year</label><br />
+                @Html.DropDownList("PeriodYear", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td colspan="1" width="20%">
+                <label class="lblheader">
+                    Period</label><br />
+                @Html.DropDownList("Period", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+
+            <td colspan="2">
+                <input type="button" id="btnSearch" value="Search" onclick="OrderItemsSearch(); return false;" />
+                <input type="button" id="btnReset" value="Reset" />
+            </td>
+        </tr>
+    </table>
+</div>
+<div id="OrderItemsDetails">
+    <table id="OrderItems">
+    </table>
+    <div id="OrderItemsPager">
+    </div>
+</div>

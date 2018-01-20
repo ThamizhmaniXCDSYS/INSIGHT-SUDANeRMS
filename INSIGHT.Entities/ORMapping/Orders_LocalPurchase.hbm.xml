@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping assembly="INSIGHT.Entities.Orders_LocalPurchase" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.Orders_LocalPurchase, INSIGHT.Entities" table="Orders_LocalPurchase" lazy="true" >
+    <id name="LPOrdersId" column="LPOrdersId" type="Int64">
+      <generator class="native" />
+    </id>
+
+    <property name="ControlId"  column="ControlId"  type="string" />
+    <property name="StartDate"  column="StartDate"  type="datetime" />
+    <property name="EndDate"  column="EndDate"  type="datetime" />
+    <property name="Troops"  column="Troops"  type="Int64" />
+    <property name="TotalAmount"  column="TotalAmount"  type="decimal" />
+    <property name="LineItemsOrdered"  column="LineItemsOrdered"  type="decimal" />
+    <property name="KgOrderedWOEggs"  column="KgOrderedWOEggs"  type="decimal" />
+    <property name="EggsWeight"  column="EggsWeight"  type="decimal" />
+    <property name="OrderCMR"  column="OrderCMR"  type="decimal" />
+    <property name="TotalWeight"  column="TotalWeight"  type="decimal" />
+    <property name="UNCode"  column="UNCode"  type="Int64" />
+    <property name="Commodity"  column="Commodity"  type="string" />
+    <property name="OrderQty"  column="OrderQty"  type="decimal" />
+    <property name="SectorPrice"  column="SectorPrice"  type="decimal" />
+    <property name="Total"  column="Total"  type="decimal" />
+    <property name="OrderId"  column="OrderId"  type="Int64" />
+    <property name="CreatedBy"  column="CreatedBy"  type="string" />
+    <property name="CreatedDate"  column="CreatedDate"  type="datetime" />
+
+    <property name="Sector"  column="Sector"  type="string" />
+    <property name="Name"  column="Name"  type="string" />
+    <property name="Location"  column="Location"  type="string" />
+    <property name="Period"  column="Period"  type="string" />
+    <property name="PeriodYear"  column="PeriodYear"  type="string" />
+      <property name="RequestId"  column="RequestId"  type="Int64" />
+   <property name="ValidStatus"  column="ValidStatus"  type="string" />
+  </class>
+</hibernate-mapping>

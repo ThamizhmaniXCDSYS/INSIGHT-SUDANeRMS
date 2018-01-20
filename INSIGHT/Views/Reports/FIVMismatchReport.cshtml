@@ -1,0 +1,243 @@
+﻿@{
+    ViewBag.Title = "FIVMismatchReport";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<div id="divDocuments">
+    <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="7" class="PanelHeading">
+                <i class="icon-chevron-right"></i>&nbsp;FIV Search&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="lblheader">
+                    Sector</label><br />
+                @Html.DropDownList("Sector", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Period Year</label><br />
+                @Html.DropDownList("PeriodYear", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Period</label><br />
+                @Html.DropDownList("Period", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td>
+                <label class="lblheader">
+                    Week</label><br />
+                @Html.DropDownList("Week", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+
+            <td>
+                <input type="button" id="btnSearch" value="Search" onclick="FIVItemsSearch(); return false;" />
+                <input type="reset" id="btnReset"
+                    value="Reset" onclick="ResetSearch(); return false;" />
+            </td>
+        </tr>
+    </table>
+</div>
+<div id="FIVItemsDetails">
+    <table id="FIVItemsReportList">
+    </table>
+    <div id="FIVItemsReportPager">
+    </div>
+</div>
+<script type="text/javascript">
+    function GetExcelDocumentList() {
+        $('#FIVItemsReportList').jqGrid('GridUnload');
+        jQuery("#FIVItemsReportList").jqGrid({
+            mtype: 'GET',
+            url: '@Url.Content("~/Reports/GeneratedFIVDocumentListJQGrid")?ExcelState=FIV&DocumentFor=FAILLED',
+            datatype: 'json',
+            height: '335',
+            width: '1200',
+            shrinkToFit: true,
+            colNames: ['Id', 'ControlId', 'Sector', 'Name', 'Period', 'PeriodYear', 'Week', 'Generated Date', 'Download'],
+            colModel: [
+                { name: 'Id', index: 'Id', key: true, hidden: true },
+                { name: 'ControlId', index: 'ControlId', width: 300 },
+                { name: 'Sector', index: 'Sector' },
+                { name: 'Name', index: 'Name', hidden: true },
+                { name: 'Period', index: 'Period' },
+                { name: 'PeriodYear', index: 'PeriodYear' },
+                { name: 'Week', index: 'Week' },
+                { name: 'ModifiedDate', index: 'ModifiedDate', hidden: true },
+                { width: 200 }
+            ],
+
+            pager: '#FIVItemsReportPager',
+            rowNum: '100',
+            rowList: [100, 200, 300, 400],
+            sortname: 'Id',
+            sortorder: "ASC",
+            viewrecords: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Mismatched FIV List',
+            multiselect: true,
+            viewrecords: true
+        });
+        $('#FIVItemsReportList').jqGrid('filterToolbar', { searchOnEnter: true, enableClear: false, afterSearch: function () { $('#FIVItemsReportList').clearGridData(); } });
+        jQuery("#FIVItemsReportList").jqGrid('navGrid', '#FIVItemsReportPager', { add: false, edit: false, del: true, search: false, refresh: true },
+        //Edit options
+            {},
+        //Add options
+            {},
+        //Delete options
+                                      {
+                                          width: 'auto', url: '@Url.Content("~/Orders/DeleteFIVDetails/")', left: '10%', top: '10%', height: '50%', width: 400,
+                                          beforeShowForm: function (params) {
+                                              selectedrows = $("#FIVItemsReportList").jqGrid("getGridParam", "selarrrow");
+                                              return { Id: selectedrows }
+                                          }
+                                      });
+            jQuery("#FIVItemsReportList")
+                  .navGrid('#FIVItemsReportPager', { edit: false, add: false, del: false, search: false, refresh: false })
+                     .navButtonAdd('#FIVItemsReportPager', {
+                         caption: "EXCEL ZIP Download",
+                         onClickButton: function () {
+                             var searchItems = $('#Sector').val() + ',' + ',' + ',' + ',' + $('#Period').val() + ',' + $('#Week').val() + ',' + $('#PeriodYear').val();
+                             var Period = $('#Period').val();
+                             if ($('#Sector').val() == "") {
+                                 ErrMsg("Please Select Sector");
+                                 return false;
+                             }
+
+                             if ($('#PeriodYear').val() == "") {
+                                 ErrMsg("Please Select Period Year");
+                                 return false;
+                             }
+                             if (Period == "") {
+                                 ErrMsg("Please Select Period");
+                                 return false;
+                             }
+                             if ($('#Week').val() == "") {
+                                 ErrMsg("Please Select Week Year");
+                                 return false
+                             }
+                             else {
+                                 window.open('@Url.Content("~/Reports/DownloadFIVZipFiles")?searchItems=' + searchItems + '&DocumentFor=FAILLED' + '&invType=FIV', '_blank');
+                             }
+                         }
+                     })
+                 }
+                 $(function () {
+                     GetExcelDocumentList();
+                     FillSector();
+                     FillWeek();
+                     FillPeriodYear();
+                     $("#PeriodYear").change(function () {
+                         FillPeriod();
+                     });
+                     $("#Period").change(function () {
+                         FillWeek($("#Period").val(), $("#PeriodYear").val());
+                     });
+                 });
+                 function FillSector() {
+                     $.getJSON('@Url.Content("~/Masters/FillSectorbyUser/")',
+    function (modelData) {
+        var select = $("#Sector");
+        select.empty();
+        select.append($('<option/>',
+    {
+        value: "",
+        text: "Select Sector"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+             }
+             function FillPeriodYear() {
+                 $.getJSON('@Url.Content("~/Masters/FillPeriodYear")',
+     function (modelData) {
+         var select = $("#PeriodYear");
+         select.empty();
+         select.append($('<option/>'
+     , {
+         value: "",
+         text: "Select Year"
+     }));
+         $.each(modelData, function (index, itemData) {
+
+             select.append($('<option/>',
+     {
+         value: itemData.Value,
+         text: itemData.Text
+     }));
+         });
+     });
+}
+function FillPeriod() {
+    $.getJSON('@Url.Content("~/Masters/FillPeriod/")',
+    function (modelData) {
+        var select = $("#Period");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Period"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+}
+function FillWeek(Period, PeriodYear) {
+    $.getJSON('@Url.Content("~/Masters/FillWeek/")?Period=' + Period + "&PeriodYear=" + PeriodYear,
+    function (modelData) {
+        var select = $("#Week");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Week"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FIVItemsSearch() {
+        var Sector = $('#Sector').val();
+        var ContingentType = $('#contingentType').val();
+        var Name = $('#Contingent').val();
+        var Period = $('#Period').val();
+        var Week = $('#Week').val();
+        var searchItems = $('#Sector').val() + ',' + ',' + ',' + ',' + $('#Period').val() + ',' + $('#Week').val() + ',' + $('#PeriodYear').val();
+        $("#FIVItemsReportList").setGridParam(
+            {
+                datatype: "json",
+                url: '@Url.Content("~/Reports/GeneratedFIVDocumentListJQGrid")?ExcelState=FIV&DocumentFor=FAILLED' + '&searchItems=' + searchItems,
+                page: 0
+            }).trigger("reloadGrid");
+        }
+        function ResetSearch() {
+            var searchItems = "";
+            $('#Sector').val(0);
+            $('#Contingent').val(0);
+            $('#contingentType').val("");
+            $('#Period').val(0);
+            $('#PeriodYear').val(0);
+            $('#Week').val(0);
+            $("#FIVItemsReportList").clearGridData();
+        }
+</script>
+

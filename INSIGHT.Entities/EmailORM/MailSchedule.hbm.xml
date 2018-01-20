@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping assembly="INSIGHT.Entities.EmailEntities.MailSchedule" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.EmailEntities.MailSchedule, INSIGHT.Entities" table="MailSchedule" lazy="false" >
+    <id name="MailScheduleId"  column="MailScheduleId"  type="Int64" >
+      <generator class="identity" />
+    </id>
+    <property name="MailPeriodMasterId"  column="MailPeriodMasterId"  type="Int64" />
+    <property name="MailTemplateMasterId"  column="MailTemplateMasterId"  type="Int64" />
+    <property name="ScheduleDate"  column="ScheduleDate"  type="datetime" />
+    <property name="UserName"  column="UserName"  type="string" />
+    <property name="UserMailId"  column="UserMailId"  type="string" />
+    <property name="UserRefId"  column="UserRefId"  type="Int64" />
+    <property name="CreatedDate"  column="CreatedDate"  type="datetime" />
+    <property name="CreatedBy"  column="CreatedBy"  type="string" />
+    <property name="ModifiedBy"  column="ModifiedBy"  type="string" />
+    <property name="ModifiedDate"  column="ModifiedDate"  type="datetime" />
+    <property name="IsActive"  column="IsActive"  type="bool" />
+  </class>
+</hibernate-mapping>

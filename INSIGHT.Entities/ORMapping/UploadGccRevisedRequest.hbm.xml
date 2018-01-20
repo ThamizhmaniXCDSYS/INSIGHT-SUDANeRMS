@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.UploadGccRevisedRequest" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.UploadGccRevisedRequest, INSIGHT.Entities" table="UploadGccRevisedRequest" lazy="false" >
+    <id name="Id" column="Id">
+      <generator class="identity" />
+    </id>
+    <property name="Period" column="Period" type="string" />
+    <property name="PeriodYear" column="PeriodYear" type="string" />
+
+    <property name="FileName" column="FileName" type="string" />
+
+
+    <property name="CreatedBy" column="CreatedBy" type="string" />
+    <property name="CreatedDate" column="CreatedDate" type="datetime" />
+    <property name="ModifiedBy" column="ModifiedBy" type="string" />
+    <property name="ModifiedDate" column="ModifiedDate" type="datetime" />
+
+    <!--<property name="DocumentData" column="DocumentData" type="varbinary(MAX)"/>-->
+    <property name="DocumentData"  type="Serializable" >
+      <column name="DocumentData" sql-type="varbinary(MAX)" length="2147483647"></column>
+    </property>
+
+  </class>
+</hibernate-mapping>

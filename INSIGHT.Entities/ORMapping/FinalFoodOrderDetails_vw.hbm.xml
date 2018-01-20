@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.FinalFoodOrderDetails_vw" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.FinalFoodOrderDetails_vw, INSIGHT.Entities" table="FinalFoodOrderDetails_vw" lazy="false" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="identity" />
+    </id>
+    <property name="PeriodYear" column="PeriodYear" type="string"/>
+    <property name="Period" column="Period" type="string"/>
+    <property name="TroopsStrength" column="TroopsStrength" type="decimal"/>
+    <property name="TotalAmount" column="TotalAmount" type="decimal"/>
+    <property name="TotalWeight" column="TotalWeight" type="decimal"/>
+  </class>
+</hibernate-mapping>
+

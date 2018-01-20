@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.ORDRPT_FinalReport_SP" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.ORDRPT_FinalReport_SP, INSIGHT.Entities" table="ORDRPT_FinalReport_SP" lazy="false" >
+    <id name="Id" column="Id">
+      <generator class="identity" />
+    </id>
+      <property name="UNCode" column="UNCode" type="Int64"/>
+      <property name="Temperature" column="Temperature" type="string"/>
+      <property name="Commodity" column="Commodity" type="string"/>
+      <property name="OrdQty_WK1" column="OrdQty_WK1" type="decimal"/>
+      <property name="OrdQty_WK2" column="OrdQty_WK2" type="decimal"/>
+      <property name="OrdQty_WK3" column="OrdQty_WK3" type="decimal"/>
+      <property name="OrdQty_WK4" column="OrdQty_WK4" type="decimal"/>
+      <property name="WeekTotal" column="WeekTotal" type="decimal"/>
+      <property name="DryTotal" column="DryTotal" type="decimal"/>
+      <property name="ChillTotal" column="ChillTotal" type="decimal"/>
+      <property name="FrozenTotal" column="FrozenTotal" type="decimal"/>
+      <property name="DryWKTotal" column="DryWKTotal" type="decimal"/>
+      <property name="ChillWKTotal" column="ChillWKTotal" type="decimal"/>
+      <property name="FrozenWKTotal" column="FrozenWKTotal" type="decimal"/>
+      <property name="DryDAYTotal" column="DryDAYTotal" type="decimal"/>
+      <property name="ChillDAYTotal" column="ChillDAYTotal" type="decimal"/>
+      <property name="FrozenDAYTotal" column="FrozenDAYTotal" type="decimal"/>
+
+  </class>
+  <sql-query name="GetFinalFoodList" callable="true">
+    <query-param name="Period" type="string"/>
+    <query-param name="PeriodYear" type="string"/>
+    <query-param name="Week1" type="Int64"/>
+    <query-param name="Week2" type="Int64"/>
+    <query-param name="Week3" type="Int64"/>
+    <query-param name="Week4" type="Int64"/>
+      
+    <return class="INSIGHT.Entities.ORDRPT_FinalReport_SP, INSIGHT.Entities">
+      <return-property name="Id" column="Id" />
+      <return-property name="UNCode" column="UNCode"/>
+      <return-property name="Temperature" column="Temperature" />
+      <return-property name="Commodity" column="Commodity" />
+      <return-property name="OrdQty_WK1" column="OrdQty_WK1" />
+      <return-property name="OrdQty_WK2" column="OrdQty_WK2" />
+      <return-property name="OrdQty_WK3" column="OrdQty_WK3" />
+      <return-property name="OrdQty_WK4" column="OrdQty_WK4"/>
+      <return-property name="WeekTotal" column="WeekTotal" />
+      <return-property name="DryTotal" column="DryTotal" />
+      <return-property name="ChillTotal" column="ChillTotal" />
+      <return-property name="FrozenTotal" column="FrozenTotal" />
+      <return-property name="DryWKTotal" column="DryWKTotal" />
+      <return-property name="ChillWKTotal" column="ChillWKTotal"/>
+      <return-property name="FrozenWKTotal" column="FrozenWKTotal" />
+      <return-property name="DryDAYTotal" column="DryDAYTotal" />
+      <return-property name="ChillDAYTotal" column="ChillDAYTotal" />
+      <return-property name="FrozenDAYTotal" column="FrozenDAYTotal" />
+     
+    </return>
+    <![CDATA[ 
+     EXEC [ORDRPT_FinalReport_SP] @spPeriod=:Period , @spPeriodYear=:PeriodYear ,@SPWeek1=:Week1,@SPWeek2=:Week2,@SPWeek3=:Week3,@SPWeek4=:Week4
+    ]]>
+  </sql-query>
+</hibernate-mapping>

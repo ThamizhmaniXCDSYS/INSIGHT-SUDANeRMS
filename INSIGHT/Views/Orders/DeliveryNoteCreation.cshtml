@@ -1,0 +1,673 @@
+﻿@{
+    ViewBag.Title = "DeliveryNoteCreation";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<style>
+    .ui-jqgrid tr.jqgrow td
+    {
+        font-size: 10px;
+    }
+    input[disabled], select[disabled], textarea[disabled], input[readonly], select[readonly], textarea[readonly]
+    {
+        cursor: default;
+        background-color: #FFFFFF;
+        color: Black;
+    }
+</style>
+<script type="text/javascript" language="javascript">
+
+    //function FillAutoAllDeliveryDate(Id) {
+    //    debugger;
+    //    var det = $('#txtDeliveryDate_' + Id).val();
+    //    ID = $('#PODItemsJQGrid').jqGrid('getDataIDs');
+    //    ID.splice($.inArray(Id.toString(), ID), 1);
+    //    for (var i = 0; i < ID.length; i++) {
+    //        if ($('#txtDeliveryDate_' + ID[i]).val() == "") {
+    //            $('#txtDeliveryDate_' + ID[i]).val(det);
+    //        }
+    //    }
+
+    //}
+
+    function DateChangeDetails(cellvalue) {
+        //debugger;
+        var Date = cellvalue.split(" ");
+        var dd = Date[0];
+        var time = Date[1];
+        var value = Date[0].split("-");
+        var mm = value[0];
+        var dd1 = value[1];
+        var yy = value[2];
+        var resultField = dd1 + "-" + mm + "-" + yy + "";
+        return resultField;
+
+    }
+    function SaveAccQtyinPODItemsTbl(id) {
+    var acc=$('#AcceptedQty_'+id).val();
+    var del=$('#'+id+'_DeliveredQty').val();
+    if(parseFloat(acc)>parseFloat(del))
+    {
+    ErrMsg('The Accepted Quantity can not be greater than Delivered Quantity');
+    return false;
+    }
+    if($('#'+id+'_AcceptedQty').val()==0.00){
+    if($('#'+id+'_OrderQty').val()>=$('#'+id+'_DeliveredQty').val())
+    {
+     $('#'+id+'_RemQtyForAccQty').val($('#'+id+'_DeliveredQty').val()-$('#AcceptedQty_'+id).val());
+     
+     }
+    else{
+    $('#'+id+'_RemQtyForAccQty').val($('#'+id+'_OrderQty').val()-$('#AcceptedQty_'+id).val());
+    
+    }
+     }
+        if ($('#' + id + '_AcceptedQty').val() == 0.00) {
+            $.ajax({
+                url: '@Url.Content("~/Orders/SaveAccQtyinPODItemsTbl")?PODItemsId=' + $('#' + id + "_PODItemsId").val() + '&AcceptedQty=' + $('#AcceptedQty_' + id).val(),
+                type: 'POST',
+                dataType: 'json',
+                traditional: true,
+                success: function (data) {
+                  
+                    //$("#PODItemsJQGrid").trigger("reloadGrid");
+                   // 3_AcceptedQty
+                    
+                    $('#' + id + '_AcceptedQty').val(data);
+                },
+                loadError: function (xhr, status, error) {
+                    msgError = $.parseJSON(xhr.responseText).Message;
+                    ErrMsg(msgError, function () { });
+                }
+            });
+        }
+        
+    
+    }
+    function createtxtboxaccqt(cellvalue, options, rowObject) {
+       // debugger;
+          if ($("#txtAcceptedDate").val() != '')
+              return "<input id='AcceptedQty_" + rowObject[0] + "'  onkeypress='return AllowNumericValue(this);' onchange='CalculateRemQty("+rowObject[0]+"); SaveAccQtyinPODItemsTbl(" + rowObject[0] + ");'   style='width: 65px; font-size:10px' type='text'/>";
+          else {
+              return "<input id='AcceptedQty_" + rowObject[0] + "' disabled=true  onkeypress='return AllowNumericValue(this);' onblur='SaveAccQtyinPODItemsTbl(" + rowObject[0] + ");'   style='width: 65px; font-size:10px' type='text'/>";
+             // $("#AcceptedQty_" + rowObject[0]).attr("disabled", "disabled");
+          }
+      }
+  
+     
+     // calculating the remaining quantity
+     function CalculateRemQty(id){
+    //debugger;
+ var acc=$('#AcceptedQty_'+id).val();
+    var del=$('#'+id+'_DeliveredQty').val();
+    if(parseFloat(acc)>parseFloat(del))
+    {
+   
+   
+    ErrMsg('The Accepted Quantity can not be greater than Delivered Quantity');
+    return false;
+    }
+    if($('#'+id+'_AcceptedQty').val()==0.00){
+    if($('#'+id+'_OrderQty').val()>=$('#'+id+'_DeliveredQty').val())
+    {
+     $('#'+id+'_RemQtyForAccQty').val($('#'+id+'_DeliveredQty').val()-$('#AcceptedQty_'+id).val());
+     
+     }
+    else{
+    $('#'+id+'_RemQtyForAccQty').val($('#'+id+'_OrderQty').val()-$('#AcceptedQty_'+id).val());
+    
+    }
+     }
+     }
+
+        function MoveData(rdata) {
+     
+            var id = rdata.split('_');
+            //Calculating remaining quantity
+            //Remaining qty ends here 
+            
+     
+            if ($('#AcceptedQty_' + id[1]).val() == 0.00 &&  $('#'+id[1]+'_AcceptedQty').val()==0.00 ) {
+
+                $('#AcceptedQty_' + id[1]).val($('#' + id[1] + '_DeliveredQty').val());
+                $.ajax({
+                    url: '@Url.Content("~/Orders/SaveAccQtyinPODItemsTbl")?PODItemsId=' + $('#' + id[1] + "_PODItemsId").val() + '&AcceptedQty=' + $('#AcceptedQty_' + id[1]).val(),
+                    type: 'POST',
+                    dataType: 'json',
+                    traditional: true,
+                    success: function (data) {
+                    $('#' + id[1] + '_AcceptedQty').val(data);
+                        $.ajax({
+                            url: '@Url.Content("~/Orders/CheckingDeliveryNote")?DeliveryNoteId=' + '@ViewBag.DeliveryNoteId',
+                            type: 'POST',
+                            dataType: 'json',
+                            traditional: true,
+                            success: function (deldata) {
+                                if (deldata == "Success") {
+                                    $('#completeBtn').attr('disabled', false);
+                                }
+                            }
+                        });
+                    },
+                    loadError: function (xhr, status, error) {
+                        msgError = $.parseJSON(xhr.responseText).Message;
+                        ErrMsg(msgError, function () { });
+                    }
+                });
+            }
+
+        }
+        //Move all data 
+        function MoveAllData(ID){
+        //debugger;
+         var id = ID;
+         for (var i = 0; i < id.length; i++) {
+
+          if ($('#AcceptedQty_' + id[i]).val() == 0.00 &&  $('#'+id[i]+'_AcceptedQty').val()==0.00 ) {
+         
+                $('#AcceptedQty_' + id[i]).val($('#' + id[i] + '_DeliveredQty').val());
+                $.ajax({
+                    url: '@Url.Content("~/Orders/SaveAccQtyinPODItemsTbl")?PODItemsId=' + $('#' + id[i] + "_PODItemsId").val() + '&AcceptedQty=' + $('#AcceptedQty_' + id[i]).val(),
+                    type: 'POST',
+                    dataType: 'json',
+                    traditional: true,
+                    success: function (data) {
+                    
+                  
+                  // $("#PODItemsJQGrid").trigger("reloadGrid");
+              //  $('#' + id[i] + '_AcceptedQty').val(data)
+                        $.ajax({
+                            url: '@Url.Content("~/Orders/CheckingDeliveryNote")?DeliveryNoteId=' + '@ViewBag.DeliveryNoteId',
+                            type: 'POST',
+                            dataType: 'json',
+                            traditional: true,
+                            success: function (deldata) {
+                                if (deldata == "Success") {
+                                
+                                   // $('#' + id[i] + '_AcceptedQty').val(data);
+                                    $('#completeBtn').attr('disabled', false);
+                                }
+                            }
+                        });
+                    },
+                    loadError: function (xhr, status, error) {
+                        msgError = $.parseJSON(xhr.responseText).Message;
+                        ErrMsg(msgError, function () { });
+                    }
+                });
+            }
+        
+        }
+        
+        }
+        //Delivered Date Textbox
+        function CreateDeldatetxtbox(cellvalue, options, rowObject) {
+            return "<input id='txtDeliveryDate_" + rowObject[0] + "'  readonly style='width:200px'  background-color='#FFFFFF' type='text' onchange='return AutoFillDeliveryDate(" + rowObject[0] + ");'' />";
+        }
+
+        function AutoFillDeliveryDate(Id) {
+          //  debugger;
+            
+            //51620_DeliveredDate
+            var det = $('#'+Id+'_DeliveredDate').val();
+            
+            ID = $('#PODItemsJQGrid').jqGrid('getDataIDs');
+           // alert(ID);
+            ID.splice($.inArray(Id.toString(), ID), 1);
+
+            for (var i = 0; i < ID.length; i++) {
+                if ($('#' + ID[i] + '_DeliveredDate').val() == "")
+                {
+                    $('#' + ID[i] + '_DeliveredDate').val(det);
+
+
+                }
+                //if ($('#txtDeliveryDate_' + ID[i]).val() == "") {
+                //    $('#txtDeliveryDate_' + ID[i]).val(det);
+                //    //var RemainingQty = $('#PODItemsJQGrid').jqGrid("getCell", ID[i], "PODItemsId");
+                //    //PODItemsArray += $('#' + ID[i] + "_PODItemsId").val() + ",";
+                
+                //}
+            }
+            saveDeliveredDate();
+          
+         
+        }
+        function saveDeliveredDate() {
+           // debugger;
+            var PODItemsArray = "";
+            var deldate = "";
+            var ID1 = $('#PODItemsJQGrid').jqGrid('getDataIDs');
+            for (var i = 0; i < ID1.length; i++) {
+                if ($('#' + ID1[i] + '_DeliveredDate').val() != "") {
+                    PODItemsArray += $('#' + ID1[i] + "_PODItemsId").val() + ",";
+                    deldate += $('#' + ID1[i] + '_DeliveredDate').val() + ",";
+           
+                }
+
+            }
+            PODItemsArray = PODItemsArray.slice(0, -1);
+            deldate = deldate.slice(0, -1);
+  
+            
+          $.ajax({
+              url: '@Url.Content("~/Orders/SaveDeliveredDateinPODItemsTblForAll")?AllPODItemsId=' + PODItemsArray + '&AllDeliveredDate=' + deldate,
+                        type: 'POST',
+                        dataType: 'json',
+                        traditional: true,
+                        success: function (data) {
+                            $("#PODItemsJQGrid").trigger("reloadGrid");
+                        },
+                        loadError: function (xhr, status, error) {
+                            msgError = $.parseJSON(xhr.responseText).Message;
+                            ErrMsg(msgError, function () { });
+                        }
+                    });
+         }
+        function SaveDeliveryNoteDetails() {
+            //debugger;
+        var AllPODItemsId="";
+        ID = $('#PODItemsJQGrid').jqGrid('getDataIDs');
+        
+            for (var i = 0; i < ID.length; i++) {
+                AllPODItemsId +=  $('#' + ID[i] + '_PODItemsId').val() + ",";
+    
+                }
+
+            AllPODItemsId = AllPODItemsId.slice(0, -1);
+            
+            var AcceptedBy = $('#txtAcceptedBy').val();
+            //var AcceptedDate = $('#txtAcceptedDate').val();
+            //if (AcceptedDate == "") {
+            //    ErrMsg('Enter the Delivery Date');
+            //} 
+             if(AcceptedBy=="") {
+                 ErrMsg('Accepted By can note be empty');
+            }
+        $.ajax({
+            url: '@Url.Content("~/Orders/SaveDeliveredDateinPODItemsTbl")?AllPODItemsId=' + AllPODItemsId + '&AcceptedBy=' + AcceptedBy,
+                        type: 'POST',
+                        dataType: 'json',
+                        traditional: true,
+                        success: function (data) {
+                       //  $("#PODItemsJQGrid").trigger("reloadGrid");
+
+                        InfoMsg("Delivery Date added Successfully");
+                        window.location.href = '@Url.Content("~/Orders/DeliveryNoteCreation")?DeliveryNoteId=@ViewBag.DeliveryNoteId';
+                        },
+                        loadError: function (xhr, status, error) {
+                            msgError = $.parseJSON(xhr.responseText).Message;
+                            ErrMsg(msgError, function () { });
+                        }
+                    });
+        
+        }
+
+        $(document).ready(function () {
+            var lastsel2;
+
+            $.ajax({
+                url:'@Url.Content("~/Orders/CheckingDeliveryNote")?DeliveryNoteId=' + '@ViewBag.DeliveryNoteId',
+                type: 'POST',
+                dataType: 'json',
+                traditional: true,
+                success: function (deldata) {
+                    if (deldata == "Success") {
+                        $('#completeBtn').attr('disabled', false);
+                    }
+                    else
+                        $('#completeBtn').attr('disabled', true);
+                }
+
+            });
+
+            $('#txtAcceptedBy').val('@ViewBag.AcceptedBy');
+            if ('@ViewBag.AcceptedDate' != "") {
+                Dateonly('@ViewBag.AcceptedDate')
+
+
+                $('#txtAcceptedDate').val(actualdt);
+
+            }
+
+            $('#createDelivPDF').click(function () {
+                // window.location.href = '@Url.Action("PrintDeliveryReports", "PdfGeneration")';
+                window.open('@Url.Content("~/PdfGeneration/PrintDeliveryReports")?DeliveryNoteId=' + '@ViewBag.DeliveryNoteId', 'DeliveryNote', 'window settings');
+                return false;
+            });
+
+            $('#completeBtn').click(function () {
+                $.ajax({
+                    url: '@Url.Content("~/Orders/CompletedInDeliveryNote")?DeliveryNoteId=' + '@ViewBag.DeliveryNoteId',
+                    type: 'POST',
+                    dataType: 'json',
+                    //traditional: true,
+                    success: function (data) {
+                        if (data == null | data == "null") {
+                            InfoMsg("Enter the all Accepted Qty");
+                        }
+                            
+                        else {
+                            InfoMsg("Delivery Note Completed Successfully");
+                        }
+                    },
+                    loadError: function (xhr, status, error) {
+                        msgError = $.parseJSON(xhr.responseText).Message;
+                        ErrMsg(msgError, function () { });
+                    }
+                });
+            });
+            function SaveDeliveredDateinPODItemsTbl(id) {
+                //debugger;
+                
+                
+                var DeliveredDate = $('#' + id + '_DeliveredDate').val();
+                $.ajax({
+                    url: '@Url.Content("~/Orders/SaveDeliveredDateinPODItemsTbl")?PODItemsId=' + $('#' + id + "_PODItemsId").val() + '&DeliveredDate=' + $('#' + id + '_DeliveredDate').val(),
+                    type: 'POST',
+                    dataType: 'json',
+                    traditional: true,
+                    success: function (data) {
+          
+                    //   window.location.href = '/Orders/DeliveryNoteCreation?DeliveryNoteId=@ViewBag.DeliveryNoteId';
+
+                    },
+                    loadError: function (xhr, status, error) {
+                        msgError = $.parseJSON(xhr.responseText).Message;
+                        ErrMsg(msgError, function () { });
+                    }
+                });
+
+
+            }
+
+            $("#PODItemsJQGrid").jqGrid({
+                url: '@Url.Content("~/Orders/DeliveryAndAcceptQtyUpdateJqgrid")?DeliveryNoteId=' + '@ViewBag.DeliveryNoteId',
+                datatype: 'json',
+                type: 'GET',
+                shrinkToFit: true,
+                colNames: ['Id', 'PODItemsId', 'Order Id', 'Delivery Number', 'Contigent', 'LineId', 'Period', 'Week', 'Sector', 'Location', 'UNCode', 'Commodity', 'OrdQty', 'DelQty', '', 'AcpQty', 'Prev AccQty', 'RemQty','RemQty','DisCode', 'SubUNCode', 'SubCommodity', 'Status', 'Delivery Date', ''],
+                colModel: [
+                            { name: 'Id', index: 'Id', hidden: true, editable: true, key: true },
+                            { name: 'PODItemsId', index: 'PODItemsId', hidden: true, editable: true },
+                            { name: 'OrderId', index: 'OrderId', width: 20, hidden: true },
+                            { name: 'DeliveryNoteName', index: 'DeliverynoteName', width: 100, search: true, hidden: true },
+                            { name: 'Name', index: 'Name', width: 70, hidden: true },
+                            { name: 'LineId', index: 'LineId', hidden: true },
+                            { name: 'Period', name: 'Period', hidden: true, search: false },
+                            { name: 'Week', name: 'Week', width: 40, hidden: true },
+                            { name: 'Sector', index: 'Sector', width: 40, hidden: true },
+                            { name: 'Location', index: 'Location', width: 50, hidden: true },
+                            { name: 'UNCode', index: 'UNCode', search: false, width: 40, search: true },
+                            { name: 'Commodity', index: 'Commodity', search: false, width: 180, search: true },
+                            { name: 'OrderQty', index: 'OrderQty', search: false, width: 35,editable:true,editoptions: { disabled: true, class: 'NoBorder', style: " background-color:#FFFFFF; border-color:#FFFFFF;font-size:10px;"}  },
+                            { name: 'DeliveredQty', index: 'DeliveredQty', editable: true, sortable: false, width: 35, search: false, editoptions: { disabled: true, class: 'NoBorder', style: " background-color:#FFFFFF; border-color:#FFFFFF;font-size:10px;"} },
+                            { name: 'MoveIcon', index: 'MoveIcon', sortable: false, width: 15, search: false },
+                            { name: 'AcceptedQty1', index: 'AcceptedQty1', search: false, formatter: createtxtboxaccqt, width: 40 },
+                            { name: 'AcceptedQty', index: 'AcceptedQty', search: false, editable: true, hidden: false, width: 40, editoptions: { disabled: true, class: 'NoBorder', style: " background-color:#FFFFFF; border-color:#FFFFFF;font-size:10px;"} },
+                            { name:'RemQtyForAccQty',index:'RemQtyForAccQty', width:30,editable:true,search:false,editoptions: { disabled: true, class: 'NoBorder', style: " background-color:#FFFFFF; border-color:#FFFFFF;font-size:10px;"}},
+                            { name: 'RemainingQty', index: 'RemainingQty', search: false, width: 40, hidden: true },
+                            { name: 'DiscrepancyCode', index: 'DiscrepancyCode', search: false, width: 40 },
+                            { name: 'SubstituteItemCode', index: 'SubstituteItemCode', width: 40, search: false },
+                            { name: 'SubstituteItemName', index: 'SubstituteItemName', search: false },
+                            { name: 'Status', index: 'Status', search: false, editable: true, hidden: true },
+                            {
+                                name: 'DeliveredDate', index: 'DeliveredDate', width: 60, editable: true, search: false, hidden: false,
+                                editoptions: {
+                                    style: "font-size:10px;",
+                                    dataInit: function (el) {
+                                        $(el).datepicker({
+                                            dateFormat: 'dd-mm-yy',
+                                            onSelect: function (dateText, inst) {
+                                                var id = parseInt($(this).attr("id"));
+                                                AutoFillDeliveryDate(id);
+                                                //SaveDeliveredDateinPODItemsTbl(parseInt($(this).attr("id")), dateText);
+                                            },
+                                            beforeShow: function () {
+                                                var id = parseInt($(this).attr("id"));
+                                            }
+                                        }).attr('readonly', 'readonly');
+                                    }
+                                }
+                            },
+                            {name: 'ExpectedDeliveryDate', index: 'ExpectedDeliveryDate', width: 190, editable: true, hidden: true }
+              ],
+                gridComplete: function () {
+                    $("#PODItemsJQGrid_cb").css("width", "25px");
+                    $("#PODItemsJQGrid tbody tr").children().first("td").css("width", "30px");
+                    ID = $('#PODItemsJQGrid').jqGrid('getDataIDs');
+
+                    //                    for (var i = 0, list = ID.length; i < list; i++) {
+                    //                        var Id = ID[i];
+                    //                        $('#txtDeliveryDate_' + Id).datepicker({ dateFormat: 'dd-mm-yy' });
+                    //                    }
+
+                    $('.move').click(function () {
+
+                        var rdata = $(this).attr('Id');
+                        if ($('#txtAcceptedDate').val() != "") {
+                            MoveData(rdata);
+                        }
+                        else {
+                            ErrMsg('Enter the Delivery Date');
+                            return false;
+                        }
+                    })
+                    
+                },
+                onSelectRow: function (id) {
+                   
+
+                },
+                loadComplete: function () {
+                //debugger;
+                    var $this = $(this), rows = this.rows, l = rows.length, i, row;
+                     ID = $('#PODItemsJQGrid').jqGrid('getDataIDs');
+                    $(this).hide();
+                    for (i = 1; i < l; i++) {
+                        row = rows[i];
+                        if ($(row).hasClass("jqgrow")) {
+                            $this.jqGrid('editRow', row.id);
+                        }
+                    }
+                    $(this).show();
+                    ID = $('#PODItemsJQGrid').jqGrid('getDataIDs');
+
+                     $('#jqgh_PODItemsJQGrid_MoveIcon').toggleClass('icon-white icon-chevron-right move');
+                         $('#jqgh_PODItemsJQGrid_MoveIcon').click(function () {
+                          
+                        if ($('#txtAcceptedDate').val() != "") {
+                            MoveAllData(ID);
+                        }
+                        else {
+                            ErrMsg('Enter the Delivery Date');
+                            return false;
+                        }
+                });
+
+                },
+                serializeRowData: function (postData) {
+                    postData.DeliveredDate = DateChangeDetails(postData.DeliveredDate);
+                    return postData;
+                },
+                editurl: '@Url.Content("~/orders/UpdateAcceptQtyfromDeliveryPage")',
+                pager: '#PODItemsJQGridPager',
+                rowNum: '1000',
+                // rowList: [5, 10, 20, 50],
+                sortname: 'UNCode',
+                sortorder: 'Asc',
+                width: 850,
+                height: 400,
+                autowidth: true,
+                multiselect:true,
+                //viewrecords: true,
+
+                rowList: [],        // disable page size dropdown
+                pgbuttons: false,     // disable page control like next, back button
+                pgtext: null,         // disable pager text like 'Page 0 of 10'
+                viewrecords: true,
+
+                caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;PODItems List'
+            });
+            
+            $("#PODItemsJQGrid").jqGrid('navGrid', '#PODItemsJQGridPager', { del: false, add:false, edit: false, search: false });
+            $('#PODItemsJQGrid').jqGrid('filterToolbar', { searchOnEnter: true, enableClear: false, afterSearch: function () { $('#PODItemsJQGrid').clearGridData(); } });
+            $("#PODItemsJQGrid").jqGrid('navButtonAdd', '#PODItemsJQGridPager', {
+                buttonicon: "ui-icon-plus",
+                caption: "",
+                onClickButton: function () {
+                    var id = $('#PODItemsJQGrid').jqGrid('getGridParam', 'selarrrow');
+                    AddPODItems();
+                }
+            });
+            $("#PODItemsJQGrid").jqGrid('navButtonAdd', '#PODItemsJQGridPager', {
+                buttonicon: "ui-icon-trash",
+                caption: "",
+                onClickButton: function () {
+                  
+                    DeletePODItems();
+                }
+            });
+        });
+        //Back button
+            function BackToList() {
+
+
+                window.location.href = '@Url.Content("~/Orders/PODItemsManagement")?PODId=@ViewBag.PODId';
+
+
+            }
+
+    //POPUP for adding new poditems
+    function AddPODItems() {
+        //debugger;
+        //alert();
+        LoadPopupDynamicaly('@Url.Content("~/Orders/AddNewPODIteminDeliveryNote")?DeliverynoteName= @ViewBag.DeliveryNoteName &OrderId=@ViewBag.OrderId &PODId=@ViewBag.PODId &DeliveryNoteId=@ViewBag.DeliveryNoteId' , $('#AddNewPODItems'),
+                 function () {
+                 }, '', 400, 400,"Add Delivery Item");
+
+    }
+    //Deleting poditems
+    function DeletePODItems() {
+        debugger;
+        var PODItemsIds = "";
+        var id = $('#PODItemsJQGrid').jqGrid('getGridParam', 'selarrrow');
+        var ids = id.toString().split(',');
+        for (var i = 0; i < ids.length; i++) {
+            PODItemsIds += $('#' + ids[i] + "_PODItemsId").val() + ',';
+
+        }
+        PODItemsIds = PODItemsIds.slice(0, -1);
+
+        $.ajax({
+            url: '@Url.Content("~/Orders/DeletePODItemsInDeliveryNotePage")?PODItemsIds=' + PODItemsIds,
+            type: 'POST',
+            dataType: 'json',
+            traditional: true,
+            success: function (data) {
+                $("#PODItemsJQGrid").trigger("reloadGrid");
+            },
+            loadError: function (xhr, status, error) {
+                msgError = $.parseJSON(xhr.responseText).Message;
+                ErrMsg(msgError, function () { });
+            }
+        });
+    
+    }
+</script>
+@using (Html.BeginForm())
+{
+    <table width="100%" class="WithBorderOnly">
+        <tr valign="top">
+            <td width="100%" colspan="2">
+                <table width="100%">
+                    <tr class="PanelHeading">
+                        <td colspan="4" width="100%">
+                            Delivery Note Details
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="25%">
+                            <label class="lblheader">
+                                Delivery Number</label><br />
+                            @ViewBag.DeliveryNoteName
+                        </td>
+                         <td width="25%">
+                            <label class="lblheader">
+                                ControlId</label><br />
+                            @ViewBag.ControlId
+                        </td>
+                         <td width="25%">
+                            <label class="lblheader">
+                                Exp.DeliveryDate</label><br />
+                            @ViewBag.ExpectedDeliveryDate
+                        </td>
+                         <td width="25%">
+                            <label class="lblheader">
+                                Contingent</label><br />
+                            @ViewBag.Name
+                        </td>
+                        </tr>
+                    <tr>
+                        <td width="25%">
+                            <label class="lblheader">
+                                Contingent</label><br />
+                            @ViewBag.Name
+                        </td>
+                        <td width="25%">
+                            <label class="lblheader">
+                                Week</label><br />
+                            @ViewBag.Week
+                        </td>
+                        <td width="25%">
+                            <label class="lblheader">
+                                Sector</label><br />
+                            @ViewBag.Sector
+                        
+                        <td width="25%">
+                            <label class="lblheader">
+                                Location</label><br />
+                            @ViewBag.Location
+                      
+                 
+                  @*      <td width="25%">
+                            <label class="lblheader">
+                                Accepted By</label><br />
+                            @Html.TextBox("txtAcceptedBy", null, new { id = "txtAcceptedBy", @class = "CSSTextBox", style = "width: 60%" })
+                        </td>
+                        <td width="25%">
+                            <label class="lblheader">
+                                Delivery Date</label><br />
+                            @Html.TextBox("txtAcceptedDate", null, new { @class = "datepicker", style = "width: 60%" })
+                        </td>*@
+                       
+                           @* <input type="button" id="btnSave" value="Save" onclick="return SaveDeliveryNoteDetails();" />&nbsp;&nbsp;&nbsp;&nbsp;*@
+                           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="button" value="Delivery PDF" id="createDelivPDF" />&nbsp;&nbsp;&nbsp;<input type="button" value="Back" onclick="BackToList();return false;" />
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+}
+<table width="100%">
+    <tr>
+    </tr>
+    <tr>
+        <td>
+            <table id="PODItemsJQGrid">
+            </table>
+            <div id="PODItemsJQGridPager">
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            &nbsp;&nbsp;&nbsp;
+            <input type="button" value="Completed" id="completeBtn" />
+        </td>
+    </tr>
+</table>
+<div id="AddNewPODItems"></div>
+
+

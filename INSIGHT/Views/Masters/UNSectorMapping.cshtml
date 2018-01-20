@@ -1,0 +1,71 @@
+﻿@{
+    ViewBag.Title = "UNSectorMapping";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<style type="text/css">
+    .ui-jqgrid .ui-pg-input
+    {
+        width: 30px;
+    }
+    .ui-jqgrid .ui-pg-selbox
+    {
+        width: 50px;
+        height: 23px;
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#UNSectorMapMaster').jqGrid({
+            url: '@Url.Content("~/Masters/UNSectorMappingtJqgrid")',
+            datatype: 'Json',
+            type: 'GET',
+            autowidth: true,
+            height: 300,
+            colNames: ['Id', 'Mapping Code', 'UNCode','Commodity', 'Sector Code', 'Price/Unit'],
+            colModel: [
+            { name: 'Id', index: 'Id', hidden: true, key: true },
+            { name: 'MappingCode', index: 'MappingCode', editable: true ,hidden:true},
+            { name: 'UNCode', index: 'UNCode', editable: true },
+             { name: 'Commidity', index: 'Commidity', editable: true },
+            { name: 'SectorCode', index: 'SectorCode', editable: true },
+            { name: 'UnitPrice', index: 'UnitPrice', search: false, editable: true },
+            ],
+            rowNum: 20000,
+            rowList: [], // disable page size dropdown
+            pgbuttons: false, // disable page control like next, back button
+            pgtext: null, // disable pager text like 'Page 0 of 10'
+            sortname: 'Id',
+            sortorder: 'Asc',
+            pager: '#UNSectorMapMasterPager',
+            multiselect: true,
+            viewrecords: true,
+            shrinktofit: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;UNSector Map List'
+        });
+        $('#UNSectorMapMaster').jqGrid('filterToolbar', { searchOnEnter: true });
+        jQuery("#UNSectorMapMaster").jqGrid('navGrid', '#UNSectorMapMasterPager', { add: true, edit: false, del: true, search: false, refresh: true },
+        //Edit options
+            {width: 'auto', url: '@Url.Content("~/Masters/EditUNSectorMapppingMasterDetails/")', left: '10%', top: '10%', height: '50%', width: 400 },
+        //Add options
+            {width: 'auto', url: '@Url.Content("~/Masters/AddUNSectorMapppingMasterDetails/")', left: '10%', top: '10%', height: '50%', width: 400 },
+        //Delete options
+            {width: 'auto', url: '@Url.Content("~/Masters/DeleteUNSectorMapppingMasterDetails/")', left: '10%', top: '10%', height: '50%', width: 400, beforeShowForm: function (params) { var gsr = $("#UNSectorMapMaster").getGridParam('selrow'); var sdata = $("#UNSectorMapMaster").getRowData(gsr); return { Id: sdata.Id} } }
+                );
+        $("#UNSectorMapMaster").jqGrid('navButtonAdd', '#UNSectorMapMasterPager', {
+            caption: "Export To Excel",
+            onClickButton: function () {
+                var ExptType = 'Excel';
+
+                window.open('UNSectorMappingtJqgrid?ExptType=' + ExptType + '&rows=9999' + '&sidx=' + '&sord=desc' + '&page=1');
+            }
+        });
+    });
+</script>
+<table width="100%"><tr>
+<td>
+<table id="UNSectorMapMaster">
+</table>
+<div id="UNSectorMapMasterPager">
+</div>
+</td>
+</tr></table>

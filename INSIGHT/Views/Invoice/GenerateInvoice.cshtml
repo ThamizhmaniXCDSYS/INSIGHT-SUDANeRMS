@@ -1,0 +1,270 @@
+﻿@{
+    ViewBag.Title = "GenerateInvoice";
+                    //Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<style type="text/css">
+    input[disabled], input[readonly] {
+        background-color: #eeeeee;
+        cursor: default;
+    }
+</style>
+<script type="text/javascript">
+
+    $(function () {
+        $(".datepicker").datepicker();
+        FillSector1();
+        FillContingent1();
+        FillPeriod1();
+        FillLocation1();
+        FillPeriodYear1();
+        $("#Period1").change(function () {
+            FillWeek1($("#PeriodYear1").val(), $(this).val());
+        });
+        //        $("#btnPDF").disable = "true";
+
+        $("#Sector1").change(function () {
+            FillContingent1($(this).val());
+        });
+
+        $("#Contingent1").change(function () {
+
+            FillLocation1($("#Sector1").val(), $(this).val());
+
+            var Contigent = $("#Contingent1").val();
+            if (Contigent != "") {
+                var result = Contigent.indexOf("FPU") > -1;
+                if (result == true) {
+                    $("#contingentType1").val("FPU");
+                }
+                else
+                    $("#contingentType1").val("MIL")
+            }
+        });
+    });
+
+
+    function GenerateInvoice() {
+        var searchItems = $('#Sector1').val() + ',' + $('#contingentType1').val() + ',' + $('#Contingent1').val() + ',' + $('#Period1').val() + ',' + $('#PeriodYear1').val() + ',' + $('#Week1').val();
+        var Period = $('#Period1').val();
+
+        if ($('#Sector1').val() == "") {
+            ErrMsg("Please Select Sector");
+            return false;
+        }
+        else if ($('#contingentType1').val() == "") {
+            ErrMsg("Please Select ContingentType");
+            return false;
+        }
+        else if (Period == "") {
+            ErrMsg("Please Select Period");
+            return false;
+        }
+        else if ($('#PeriodYear1').val() == "") {
+            ErrMsg("Please Select Period Year");
+            return false;
+        }
+        else if ($('#PeriodYear1').val() == "") {
+            ErrMsg("Please Select Period Year");
+            return false;
+        }
+        else if ($('#Week1').val() == "") {
+            ErrMsg("Please Select Week");
+            return false;
+        }
+        else {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/Invoice/GenerateInvoicePopup")?searchItems=' + searchItems + '&invoiceDt=' + $('#invoiceDt').val(),
+                success: function (data) {
+                    var str = data.split('/');
+                    SucessMsg("Invoice Generated : Successfull :" + str[0] + " and " + " already Exist :" + str[1]);
+                },
+                dataType: "json"
+            });
+        }
+}
+
+function FillSector1() {
+    $.getJSON('@Url.Content("~/Masters/FillSectorbyUser/")',
+function (modelData) {
+    var select = $("#Sector1");
+    select.empty();
+    select.append($('<option/>', { value: "", text: "Select Sector" }));
+    $.each(modelData, function (index, itemData) {
+        select.append($('<option/>', { value: itemData.Value, text: itemData.Text }));
+    });
+});
+}
+function FillContingent1(SectorCode) {
+    $.getJSON('@Url.Content("~/Masters/FillContingentbyUser/")?SectorCode=' + SectorCode,
+function (modelData) {
+    var select = $("#Contingent1");
+    select.empty();
+    select.append($('<option/>', { value: "", text: "Select Contingent" }));
+    $.each(modelData, function (index, itemData) {
+        select.append($('<option/>', { value: itemData.Value, text: itemData.Text }));
+    });
+});
+}
+
+function FillLocation1(SectorCode, ContingentCode) {
+    $.getJSON('@Url.Content("~/Masters/FillLocationbyUser/")?SectorCode=' + SectorCode + '&ContingentCode=' + ContingentCode,
+function (modelData) {
+    var select = $("#Location1");
+    select.empty();
+    select.append($('<option/>'
+, {
+    value: "",
+    text: "Select Location"
+}));
+    $.each(modelData, function (index, itemData) {
+
+        select.append($('<option/>',
+{
+    value: itemData.Value,
+    text: itemData.Text
+}));
+    });
+});
+}
+
+function FillPeriod1() {
+    $.getJSON('@Url.Content("~/Masters/FillPeriod/")',
+function (modelData) {
+    var select = $("#Period1");
+    select.empty();
+    select.append($('<option/>'
+, {
+    value: "",
+    text: "Select Period"
+}));
+    $.each(modelData, function (index, itemData) {
+
+        select.append($('<option/>',
+{
+    value: itemData.Value,
+    text: itemData.Text
+}));
+    });
+});
+}
+function FillWeek1(PeriodYear, Period) {
+    $.getJSON('@Url.Content("~/Masters/FillWeekbyPeriodandPeriodYear/")?PeriodYear=' + PeriodYear + '&Period=' + Period,
+     function (modelData) {
+         var select = $("#Week1");
+         select.empty();
+         select.append($('<option/>', { value: "", text: "Select Week" }));
+         $.each(modelData, function (index, itemData) {
+             select.append($('<option/>', { value: itemData.Value, text: itemData.Text }));
+         });
+     });
+    }
+    function ResetGenerateInvoice() {
+        var searchItems = "";
+        $('#Sector1').val(0);
+        $('#Contingent1').val(0);
+        $('#contingentType1').val("");
+        $('#Period1').val(0);
+        $('#Week1').val(0);
+        $('#invoiceDt').val("");
+    }
+    function FillPeriodYear1() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriodYear")',
+function (modelData) {
+    var select = $("#PeriodYear1");
+    select.empty();
+    select.append($('<option/>'
+, {
+    value: "",
+    text: "Select Year"
+}));
+    $.each(modelData, function (index, itemData) {
+
+        select.append($('<option/>',
+{
+    value: itemData.Value,
+    text: itemData.Text
+}));
+    });
+});
+}
+</script>
+
+<br />
+<table class="WithoutBorderOnly" width="100%" border="0">
+    <tr>
+        <td valign="middle">
+            <label class="lblheader" style="width: 50%">
+                Sector</label><br />
+        </td>
+        <td align="center">
+            @Html.DropDownList("Sector1", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList", style = "width: 70%" })
+        </td>
+    </tr>
+    <tr>
+        <td valign="middle">
+            <label class="lblheader" style="width: 50%">
+                Contingent Type</label><br />
+        </td>
+        <td align="center">
+            @Html.DropDownList("contingentType1", new SelectList(new[]
+                                          {
+                                              new{Value="",Text="Select One"},
+                                              new{Value="FPU",Text="FPU"},
+                                              new{Value="MIL",Text="MIL"}
+                                          },
+          "Value", "Text", ""), new { @Class = "CSSDropDownList", style = "width: 70%" })
+        </td>
+    </tr>
+    <tr>
+        <td valign="middle">
+            <label class="lblheader" style="width: 50%">
+                Contingent</label><br />
+        </td>
+        <td align="center">
+            @Html.DropDownList("Contingent1", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList", style = "width: 70%" })
+        </td>
+    </tr>
+    <tr>
+        <td valign="middle">
+            <label class="lblheader" style="width: 50%">
+                Period Year</label><br />
+        </td>
+        <td align="center">
+            @Html.DropDownList("PeriodYear1", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList", style = "width: 70%" })
+        </td>
+    </tr>
+    <tr>
+        <td valign="middle">
+            <label class="lblheader" style="width: 50%">
+                Period</label><br />
+        </td>
+        <td align="center">
+            @Html.DropDownList("Period1", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList", style = "width: 70%" })
+        </td>
+    </tr>
+    <tr>
+        <td valign="middle">
+            <label class="lblheader" style="width: 50%">
+                Week</label><br />
+        </td>
+        <td align="center">
+            @Html.DropDownList("Week1", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList", style = "width: 70%" })
+        </td>
+    </tr>
+    <tr>
+        <td valign="middle">
+            <label class="lblheader" style="width: 50%">
+                Invoice Date</label><br />
+        </td>
+        <td align="center">
+            @Html.TextBox("invoiceDt", null, new { @class = "datepicker", style = "width: 70%", @readonly = "readonly" })
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" valign="bottom">
+            <input type="button" id="btnGenerate" value="Generate" onclick="GenerateInvoice(); return false;" /><input
+                type="reset" id="btnReset" value="Reset" onclick="ResetGenerateInvoice(); return false;" />
+        </td>
+    </tr>
+</table>

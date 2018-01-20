@@ -1,0 +1,257 @@
+﻿@model INSIGHT.Entities.Orders
+@{
+    ViewBag.Title = "ConsolidateFoodReport";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+
+
+<style>
+    #dvLoading {
+        /*background: url("../../../Images/Sun.gif") no-repeat center center;*/
+        background: url("../Images/Sun.gif") no-repeat center center;
+        height: 100%;
+        width: 100%;
+        position: fixed;
+        z-index: 1000;
+        left: 0%;
+        top: 15%;
+        margin: -25px 0 0 -25px;
+    }
+</style>
+<script type="text/javascript">
+    function GetExcelDocumentList() {
+       
+        $('#ExcelDocumentList').jqGrid('GridUnload');
+        jQuery("#ExcelDocumentList").jqGrid({
+            mtype: 'GET',
+            url: '@Url.Content("~/ExcelGeneration/ExcelDocumentListJQGrid")?ExcelState=' + "Consolidate Food Order Report",
+            datatype: 'json',
+            height: '335',
+            width: '1200',
+            shrinkToFit: true,
+            colNames: ['Id', 'Document Name', 'Sector', 'ContingentType', 'Name', 'Period', 'PeriodYear','Generated Date', 'Download'],
+            colModel: [
+                { name: 'Id', index: 'Id', key: true, hidden: true },
+                { name: 'ControlId', index: 'ControlId', width: 300 },
+                { name: 'Sector', index: 'Sector', hidden: true },
+                { name: 'ContingentType', index: 'ContingentType', hidden: true },
+                { name: 'Name', index: 'Name', hidden: true },
+                { name: 'Period', index: 'Period' },
+                { name: 'PeriodYear', index: 'PeriodYear' },
+                { name: 'ModifiedDate', index: 'ModifiedDate' },
+                { width: 200 }
+            ],
+            pager: '#ExcelDocumentListPager',
+            rowNum: '100',
+            rowList: [100, 200, 300, 400],
+            sortname: 'Id',
+            sortorder: "ASC",
+            viewrecords: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;GCC Reviced Document Management',
+            multiselect: true,
+            viewrecords: true
+        });
+        $('#ExcelDocumentList').jqGrid('filterToolbar', { searchOnEnter: true, enableClear: false, afterSearch: function () { $('#ExcelDocumentList').clearGridData(); } });
+        jQuery("#ExcelDocumentList")
+              .navGrid('#ExcelDocumentListPager', { edit: false, add: false, del: false, search: false, refresh: false })
+              .navButtonAdd('#ExcelDocumentListPager', {
+                  caption: "EXCEL ZIP Download",
+                  onClickButton: function () {
+                      var searchItems = ',' + ',' + ',' + ',' + $('#PeriodYear').val();
+                      if ($('#PeriodYear').val() == "") {
+                          ErrMsg("Please Select Period Year");
+                          return false;
+                      }
+                      else {
+                          window.open('@Url.Content("~/Invoice/DownloadZipFiles")?searchItems=' + searchItems + '&PDF=' + false + '&EXCEL=' + true + '&invType=' + "Consolidate Food Order Report", '_blank');
+                      }
+                  }
+              })
+    }
+
+    $(function () {
+        $('#dvLoading').hide()
+            .ajaxStart(function () {
+                $(this).hide(); // show on any Ajax event.
+            })
+        GetExcelDocumentList();
+
+        FillPeriod();
+
+        FillPeriodYear();
+        //        $("#btnPDF").disable = "true";
+
+       
+        $("#Period").change(function () {
+            var Period = $("#Period").val();
+            if (Period != "") {
+                $('#btnPDF').attr('disabled', false);
+                $('#btnExcel').attr('disabled', false);
+            }
+            else {
+                $('#btnPDF').attr('disabled', true);
+                $('#btnExcel').attr('disabled', true);
+            }
+        });
+   $("#btnGCCRevisedGenerate").click(function () {
+         
+           
+            $('#dvLoading').hide()
+            .ajaxStart(function () {
+                $(this).show(); // show on any Ajax event.
+            })
+            
+            var searchItems = ',' + ',' + ',' + $('#Period').val() + ',' + $('#PeriodYear').val();
+           
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/Reports/GenerateFinalRequisitionReport")?Period=' + $('#Period').val()+'&PeriodYear='+$('#PeriodYear').val(),
+                success: function (data) {
+                    debugger;
+                  
+                            $('#dvLoading').hide()
+                            .ajaxStop(function () {
+                                $(this).hide(); // hide it when it is done.
+                            });
+                            SucessMsg( data);
+                            $("#ExcelDocumentList").setGridParam(
+                            {
+                                datatype: "json",
+                                url: '@Url.Content("~/ExcelGeneration/ExcelDocumentListJQGrid")?ExcelState=' + "Consolidate Food Order Report" + '&searchItems=' + searchItems,
+                                page: 0
+                            }).trigger("reloadGrid");
+                     
+                    },
+                    datatype: "json"
+                });
+          
+        });
+    });
+
+
+    function FillPeriod() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriod/")',
+    function (modelData) {
+        var select = $("#Period");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Period"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function InvoiceSearch() {
+
+        var Sector = $('#Sector').val();
+        var Contingent = $('#Contingent').val();
+        var ClientName = $('#Location').val();
+        var Location = $('#Period').val();
+        var searchItems =  ',' + ',' +  ',' + $('#Period').val() + ',' + $('#PeriodYear').val();
+
+        $("#ExcelDocumentList").setGridParam(
+            {
+                datatype: "json",
+                url: '@Url.Content("~/ExcelGeneration/ExcelDocumentListJQGrid")?ExcelState=' + "Consolidate Food Order Report" + '&searchItems=' + searchItems,
+                page: 0
+            }).trigger("reloadGrid");
+    }
+    function ResetInvoiceSearch() {
+        var searchItems = "";
+        $('#Sector').val(0);
+        $('#Contingent').val(0);
+        $('#contingentType').val("");
+        $('#Period').val(0);
+        $('#PeriodYear').val(0);
+        $("#ExcelDocumentList").clearGridData();
+    }
+
+    function FillPeriodYear() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriodYear")',
+    function (modelData) {
+        var select = $("#PeriodYear");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Year"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function ExcelDownload(Id) {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Content("~/ExcelGeneration/PeriodListCheck")?Period=' + Period + '&searchItems=' + searchItems,
+                  success: function (data) {
+                      if (data == true) {
+                          window.open('@Url.Content("~/PdfGeneration/InvoicePrint")?Period=' + Period + '&searchItems=' + searchItems, '_blank');
+                      }
+                      else {
+                          ErrMsg("The&nbsp;" + Period + "&nbsp;Period does Not contain Week&nbsp;" + data);
+                          $('#btnPDF').attr('disabled', true);
+                          return false;
+                      }
+                  },
+                  dataType: "json"
+              });
+          }
+</script>
+@using (Html.BeginForm())
+{
+  
+<div id="divDocuments">
+    <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="6" class="PanelHeading">
+                <i class="icon-chevron-right"></i>&nbsp;GCC Consolidate Orders  Search&nbsp;
+            </td>
+        </tr>
+        <tr>
+           <td width="10%">
+                <label class="lblheader">
+                    Period Year</label><br />
+                @Html.DropDownList("PeriodYear", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td width="10%">
+                <label class="lblheader">
+                    Period</label><br />
+                @Html.DropDownList("Period", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            
+            <td colspan="4" width="50%">
+                <input type="button" id="btnSearch" value="Search" onclick="InvoiceSearch(); return false;" /><input
+                    type="reset" id="btnReset" value="Reset" onclick="ResetInvoiceSearch(); return false;" />
+                <input type="button" id="btnGCCRevisedGenerate" value="Generate Consolidated Order Report" />
+               @* <input type="submit"  id="btnsubmit" value="Generate Consolidated Order Report" />*@
+            </td>
+        </tr>
+    </table>
+</div>
+<table id="ExcelDocumentList">
+</table>
+<div id="ExcelDocumentListPager">
+</div>
+
+<div id="dvLoading">
+</div>
+
+
+}

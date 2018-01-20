@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.Documents" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.Documents, INSIGHT.Entities" table="Documents" lazy="false" >
+    <id name="Upload_Id" column="Upload_Id" type="Int64">
+      <generator class="identity" />
+    </id>
+    <property name="EntityRefId">
+      <column name="EntityRefId" sql-type="Int64"  />
+    </property>
+    <property name="FileId">
+      <column name="FileId" sql-type="string"  />
+    </property>
+    <property name="FileName">
+      <column name="FileName" sql-type="string"  />
+    </property>
+    <property name="UploadedOn">
+      <column name="UploadedOn" sql-type="datetime"  />
+    </property>
+    <property name="UploadedBy">
+      <column name="UploadedBy" sql-type="string" />
+    </property>
+    <property name="Status">
+      <column name="Status" sql-type="string"  />
+    </property>
+    <property name="ActualDocument">
+      <column name="ActualDocument" sql-type="string" />
+    </property>
+
+    <property name="DocumentData"  type="Serializable" >
+      <column name="DocumentData" not-null="false" sql-type="varbinary(MAX)" length="2147483647"></column>
+
+    </property>
+    <property name="DocumentSize" column="DocumentSize" type="string" not-null ="false"></property>
+    <property name="AppName" column="AppName" type="string" not-null ="false"></property>
+    <property name="DocumentType" column="DocumentType" type="string" not-null ="false"></property>
+
+  </class>
+</hibernate-mapping>

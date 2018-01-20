@@ -1,0 +1,196 @@
+﻿@{
+    ViewBag.Title = "PeriodWiseDeductionReport1";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<style>
+    
+    .ui-jqgrid tr.jqgrow td{font-size:10px;}
+    .ui-widget-content .subgrid-cell {
+        background: #ffffff;
+    }
+
+    .subgrid-cell .ui-helper-hidden {
+        display: none;
+    }
+
+    .ui-widget-content .subgrid-cell {
+        background: #ffffff;
+    }
+
+    .ui-sgcollapsed sgcollapsed {
+        display: none;
+    }       
+
+    .ui-jqgrid-bdiv {
+        background: #ffffff;
+        height: auto;
+    }
+</style>
+
+<script type="text/javascript">
+    var PeriodReport = "";
+    var SectorTable = "";
+
+    $(document).ready(function () {
+        $.ajax({
+            type: 'Get',
+            url: '@Url.Content("~/Dashboard/GetPeriodYearGraph_DeductionChart")',
+            success: function (data) {
+               
+                var chart = new FusionCharts('@Url.Content("~/Charts/FCF_Column2D.swf")', "Period Year Details", "580", "150");
+                chart.setDataXML(data);
+                chart.render("PeriodYearGraph");
+            },
+            async: false,
+            dataType: "text"
+        });
+
+       
+       
+        $('#PeriodWiseReport').jqGrid({
+
+            url: '@Url.Content("~/Dashboard/PeriodWiseDeductionReportJQGrid")?Flag=PERIODYEAR',
+            type: 'GET',
+            datatype: 'json',
+            height: '400',
+            colNames: ['Id', 'Period(Year)', 'APL_TimelyDelivery', 'APL_OrderbyLineItems', 'APL_OrdersbyWeight', 'APL_NoofAuthorizedSubstitutions'],
+            colModel: [
+
+            { name: 'Id', index: 'Id',hidden:true},
+            { name: 'PeriodYear', index: 'PeriodYear', key: true,width:100 },
+            { name: 'APL_TimelyDelivery', index: 'APL_TimelyDelivery',width:120 },
+            { name: 'APL_OrderbyLineItems', index: 'APL_OrderbyLineItems', width: 120 },
+            { name: 'APL_OrdersbyWeight', index: 'APL_OrdersbyWeight', width: 120 },
+            { name: 'APL_NoofAuthorizedSubstitutions', index: 'APL_NoofAuthorizedSubstitutions', width: 120 }
+
+
+            ],
+            pager: 'PeriodWiseReportPager',
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Periodwise Deduction Report',
+            rowNum: '20',
+            rowList: [200, 300, 400, 500],
+            sortname: 'Id',
+            sortorder: 'Asc',
+            width: 600,
+            multiselect: false,
+            subGrid: true,
+            subGridOptions: { openicon: "ui-helper-hidden" },
+
+            subGridRowExpanded: function (PeriodGridDiv_Id, row_id) {
+                debugger;
+                var selectedData_PeriodYear = $('#PeriodWiseReport').jqGrid('getRowData', row_id);
+
+                var PeriodGridTable, PeriodGridPager;
+                PeriodGridTable = PeriodGridDiv_Id + "_t";
+                PeriodGridPager = "p_" + PeriodGridDiv_Id;
+                PeriodReport = PeriodGridTable
+                $("#" + PeriodGridDiv_Id).html("<table id='" + PeriodGridTable + "' ></table><div id='" + PeriodGridPager + "' ></div>");
+                jQuery("#" + PeriodGridTable).jqGrid({
+                    url: '@Url.Content("~/Dashboard/PeriodWiseDeductionReportJQGrid")?Flag=PERIOD&Criteria=' + row_id,
+                    datatype: 'json',
+                    colNames: ['Id', 'Period', 'APL_TimelyDelivery', 'APL_OrderbyLineItems', 'APL_OrdersbyWeight', 'APL_NoofAuthorizedSubstitutions'],
+                    colModel: [
+                         { name: 'Id', index: 'Id',hidden:true},
+                         { name: 'Period', index: 'Period',width:90 },
+                         { name: 'APL_TimelyDelivery', index: 'APL_TimelyDelivery', width: 111 },
+                         { name: 'APL_OrderbyLineItems', index: 'APL_OrderbyLineItems', width: 111 },
+                         { name: 'APL_OrdersbyWeight', index: 'APL_OrdersbyWeight', width: 111 },
+                         { name: 'APL_NoofAuthorizedSubstitutions', index: 'APL_NoofAuthorizedSubstitutions', width: 111 }
+                    ],
+
+                    sortname: 'Id',
+                    sortorder: "asc",
+                    height:'auto',
+                    //pager: PeriodGridPager,
+              
+
+                    //subGridRowExpanded: function (SectorGridDiv_Id, row_id) {
+                    //    //var selectedDate_Period 
+                    //    var SectorGridTable, SectorGridPager;
+                    //    SectorGridTable = SectorGridDiv_Id + "_t";
+                    //    SectorGridPager = "P_" + SectorGridDiv_Id;
+                    //    SectorTable = SectorGridTable;
+                    //    $("#" + SectorGridDiv_Id).html("<table id='" + SectorGridTable + "' ></table><div id='" + SectorGridPager + "' ></div>");
+                    //    jQuery("#"+)
+                    //}
+                });
+                $("#" + PeriodGridTable).closest("div.ui-jqgrid-view").children("div.ui-jqgrid-hdiv").hide();
+            }
+
+        });
+        $("#" + PeriodWiseReport).closest("div.ui-jqgrid-view").children("div.ui-jqgrid-hdiv").hide();
+      
+        
+
+    });
+    function MCClickEvent(Periodyear) {
+        debugger;
+        if (Periodyear==1314)
+            PeriodGraph('13-14');
+        else if(Periodyear==1415)
+            PeriodGraph('14-15')
+     //  PeriodGraph('13-14');
+
+
+    }
+  
+    function PeriodGraph(Period) {
+        debugger;
+        $.ajax({
+
+            type: 'Get',
+            url: '@Url.Content("~/Dashboard/GetPeriodGraph_DeductionChart")?Criteria=' + Period,
+            success: function (data) {
+                
+                var chart = new FusionCharts("~/Charts/FCF_MSLine.swf", "Period Graph Details", "570", "280");
+                chart.setDataXML(data);
+                chart.render("PeriodGraph");
+            },
+            async: false,
+            dataType: "text"
+         });
+    }
+   
+</script>
+<table id="Maintable" width="100%" border="1px">
+    <tr>
+        <td width="50%">
+            <table id="PeriodWiseReport"></table>
+            <div id="PeriodWiseReportPager"></div>
+        </td>
+        <td width="50%" valign="top">
+            <table>
+                <tr>
+                    <td>
+                       <div align="right" id="PeriodYearGraph"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div align="centre" id="PeriodGraph"></div>
+                    </td>
+                </tr>
+            </table>
+
+
+            @* <table border="1"  width="100%">
+                <tr>
+                    <td bgcolor="red" style="height:200px;"></td>
+                </tr>
+                <tr>
+                    <td bgcolor="blue" style="height:300px;"><div id="PeriodGraph"></div></td>
+                </tr>
+            </table>*@
+
+        </td>
+
+    </tr>
+
+
+
+</table>
+$.ajax(function(){
+
+
+
+});

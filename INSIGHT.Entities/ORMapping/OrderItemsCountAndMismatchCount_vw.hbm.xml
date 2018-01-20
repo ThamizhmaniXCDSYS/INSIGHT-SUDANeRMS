@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping assembly="INSIGHT.Entities.OrderItemsCountAndMismatchCount_vw" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.OrderItemsCountAndMismatchCount_vw, INSIGHT.Entities" table="OrderItemsCountAndMismatchCount_vw" lazy="true" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="identity"></generator>
+    </id>
+    <property name="Sector">
+      <column name="Sector" sql-type="varchar" not-null="false" />
+    </property>
+    <property name="Contingent">
+      <column name="Contingent" sql-type="varchar" not-null="false" />
+    </property>
+    <property name="Period">
+      <column name="Period" sql-type="varchar" not-null="false" />
+    </property>
+    <property name="OrderId">
+      <column name="OrderId" sql-type="numeric" not-null="false" />
+    </property>
+    <property name="LineItemsOrdered">
+      <column name="LineItemsOrdered" sql-type="decimal" not-null="false" />
+    </property>
+    <property name="ActualItems">
+      <column name="ActualItems" sql-type="int" not-null="false" />
+    </property>
+  </class>
+</hibernate-mapping>

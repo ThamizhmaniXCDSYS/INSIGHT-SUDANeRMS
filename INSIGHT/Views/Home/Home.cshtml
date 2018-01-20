@@ -1,0 +1,268 @@
+﻿@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+                //  Layout = null;
+}
+<head>
+    <meta charset="utf-8" />
+    <link href='@Url.Content("~/Content/Homedesign/css/style.css")' rel="stylesheet" type="text/css" />
+    <link href='@Url.Content("~/Content/Homedesign/css/flexslider.css")' rel="stylesheet" type="text/css" />
+    <link href='@Url.Content("~/Content/slider/themes/2/js-image-slider.css")' rel="stylesheet" type="text/css" />
+    <script src='@Url.Content("~/Content/Homedesign/js/jquery.flexslider-min.js")' type="text/javascript"></script>
+    <script src='@Url.Content("~/Content/Homedesign/js/functions.js")' type="text/javascript"></script>
+    <script src='@Url.Content("~/Content/slider/themes/2/js-image-slider.js")' type="text/javascript"></script>
+    <style type="text/css">
+        .PageDescription {
+            position: inherit;
+            padding: 10px;
+            font: bold 15px Arial;
+            background-color: #ffffff;
+            text-shadow: 0px 0px 0px #771201;
+            /*line-height: 22px;*/
+            color: #0099FF;
+        }
+    </style>
+</head>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $.ajax({
+            type: 'Get',
+            url: '@Url.Content("~/Dashboard/GetInvoiceProcessed_Dashboard?Flag=INVPROCESSED")',
+            success: function (data) {
+
+                var chart = new FusionCharts('@Url.Content("~/Charts/FCF_MSColumn2D.swf")', "Period Year Details", "280", "300");
+                chart.setDataXML(data);
+                chart.render("INVPROCESSED");
+
+            },
+            async: false,
+            dataType: "text"
+        });
+
+
+        $.ajax({
+            type: 'Get',
+            url: '@Url.Content("~/Dashboard/GetInvoiceValue_Dashboard?Flag=INVVALUE")',
+            success: function (data) {
+
+                var chart = new FusionCharts('@Url.Content("~/Charts/FCF_MSBar2D.swf")', "Period Year Details", "280", "300");
+                chart.setDataXML(data);
+                chart.render("INVVALUE");
+
+            },
+            async: false,
+            dataType: "text"
+        });
+
+        $.ajax({
+            type: 'Get',
+            url: '@Url.Content("~/Dashboard/GetContingentCount_Dashboard?Flag=CONTINGENTCOUNT")',
+            success: function (data) {
+
+                var chart = new FusionCharts('@Url.Content("~/Charts/FCF_Column2D.swf")', "Period Year Details", "280", "300");
+                chart.setDataXML(data);
+                chart.render("CONTINGENTCOUNT");
+
+            },
+            async: false,
+            dataType: "text"
+        });
+
+
+        $.ajax({
+            type: 'Get',
+            url: '@Url.Content("~/Dashboard/GetTroops_Dashboard?Flag=TROOPS")',
+            success: function (data) {
+
+                var chart = new FusionCharts('@Url.Content("~/Charts/Cylinder.swf")', "Period Year Details", "150", "220");
+                chart.setDataXML(data);
+                chart.render("TROOPS13-14");
+
+            },
+            async: false,
+            dataType: "text"
+        });
+
+
+
+        $.ajax({
+            type: 'Get',
+            url: '@Url.Content("~/Dashboard/GetTroops_Dashboard14to15?Flag=TROOPS")',
+            success: function (data) {
+
+                var chart = new FusionCharts('@Url.Content("~/Charts/Cylinder.swf")', "Period Year Details", "150", "220");
+                chart.setDataXML(data);
+                chart.render("TROOPS14-15");
+
+            },
+            async: false,
+            dataType: "text"
+        });
+
+
+
+
+
+
+
+
+    });
+
+
+    function GetAssessmentRankList() {
+        var Campus = $('#ddlCampusList').val();
+        var Grade = $('#ddlgrade').val();
+        $.ajax({
+            type: 'Get',
+            async: false,
+            url: '@Url.Content("~/AdminTemplate/GetAssessmentRankList/")?Campus=' + Campus + '&Grade=' + Grade,
+            success: function (data) {
+                //var a = 0;
+                debugger;
+                //alert(Object.keys(data).length);
+                //alert(data[0].Mark);
+
+                if (data[0] != null) {
+                    var FirstRankCylinder = "<chart caption='First Rank' manageResize='1' bgColor='FFFFFF' bgAlpha='0' showBorder='0' lowerLimit='0' upperLimit='20' showTickMarks='1' showTickValues='1' showLimits='1' decmials='0' cylFillColor='#8A2BE2' baseFontColor='CC0000' chartLeftMargin='10' chartRightMargin='10' chartTopMargin='10'>";
+                    FirstRankCylinder += "<value>" + data[0].Mark + "</value><annotations><annotationGroup showBelow='1'><annotation type='rectangle' x='60' y='60' toX='60' toY='60' color='FFFFFF' alpha='20' showBorder='1' borderColor='CC0000' borderThickness='2' radius='10'/>";
+                    FirstRankCylinder += "</annotationGroup></annotations></chart>";
+
+                    var FirstRankChart = new FusionCharts('@Url.Content("~/Charts/Cylinder.swf")', "Assess 360", "100", "150");
+                    FirstRankChart.setDataXML(FirstRankCylinder);
+                    FirstRankChart.render("FirstRank");
+                }
+                else {
+                    var FirstRankCylinder = "<chart caption='First Rank' manageResize='1' bgColor='FFFFFF' bgAlpha='0' showBorder='0' lowerLimit='0' upperLimit='20' showTickMarks='1' showTickValues='1' showLimits='1' decmials='0' cylFillColor='#8A2BE2' baseFontColor='CC0000' chartLeftMargin='10' chartRightMargin='10' chartTopMargin='10'>";
+                    FirstRankCylinder += "<value>0</value><annotations><annotationGroup showBelow='1'><annotation type='rectangle' x='60' y='60' toX='60' toY='60' color='FFFFFF' alpha='20' showBorder='1' borderColor='CC0000' borderThickness='2' radius='10'/>";
+                    FirstRankCylinder += "</annotationGroup></annotations></chart>";
+
+                    var FirstRankChart = new FusionCharts('@Url.Content("~/Charts/Cylinder.swf")', "Assess 360", "100", "150");
+                    FirstRankChart.setDataXML(FirstRankCylinder);
+                    FirstRankChart.render("FirstRank");
+                }
+
+                if (data[1] != null) {
+                    var SecondRankCylinder = "<chart caption='First Rank' manageResize='1' bgColor='FFFFFF' bgAlpha='0' showBorder='0' lowerLimit='0' upperLimit='20' showTickMarks='1' showTickValues='1' showLimits='1' decmials='0' cylFillColor='#6baa01' baseFontColor='CC0000' chartLeftMargin='10' chartRightMargin='10' chartTopMargin='10'>";
+                    SecondRankCylinder += "<value>" + data[1].Mark + "</value><annotations><annotationGroup showBelow='1'><annotation type='rectangle' x='60' y='60' toX='60' toY='60' color='FFFFFF' alpha='20' showBorder='1' borderColor='CC0000' borderThickness='2' radius='10'/>";
+                    SecondRankCylinder += "</annotationGroup></annotations></chart>";
+
+                    var SecondRankChart = new FusionCharts('@Url.Content("~/Charts/Cylinder.swf")', "Assess 360", "100", "150");
+                    SecondRankChart.setDataXML(SecondRankCylinder);
+                    SecondRankChart.render("SecondRank");
+                }
+                else {
+                    var SecondRankCylinder = "<chart caption='First Rank' manageResize='1' bgColor='FFFFFF' bgAlpha='0' showBorder='0' lowerLimit='0' upperLimit='20' showTickMarks='1' showTickValues='1' showLimits='1' decmials='0' cylFillColor='#6baa01' baseFontColor='CC0000' chartLeftMargin='10' chartRightMargin='10' chartTopMargin='10'>";
+                    SecondRankCylinder += "<value>0</value><annotations><annotationGroup showBelow='1'><annotation type='rectangle' x='60' y='60' toX='60' toY='60' color='FFFFFF' alpha='20' showBorder='1' borderColor='CC0000' borderThickness='2' radius='10'/>";
+                    SecondRankCylinder += "</annotationGroup></annotations></chart>";
+
+                    var SecondRankChart = new FusionCharts('@Url.Content("~/Charts/Cylinder.swf")', "Assess 360", "100", "150");
+                    SecondRankChart.setDataXML(SecondRankCylinder);
+                    SecondRankChart.render("SecondRank");
+                }
+
+                if (data[2] != null) {
+                    var ThirdRankCylinder = "<chart caption='First Rank' manageResize='1' bgColor='FFFFFF' bgAlpha='0' showBorder='0' lowerLimit='0' upperLimit='20' showTickMarks='1' showTickValues='1' showLimits='1' decmials='0' cylFillColor='#f8bd19' baseFontColor='CC0000' chartLeftMargin='10' chartRightMargin='10' chartTopMargin='10'>";
+                    ThirdRankCylinder += "<value>" + data[2].Mark + "</value><annotations><annotationGroup showBelow='1'><annotation type='rectangle' x='60' y='60' toX='60' toY='60' color='FFFFFF' alpha='20' showBorder='1' borderColor='CC0000' borderThickness='2' radius='10'/>";
+                    ThirdRankCylinder += "</annotationGroup></annotations></chart>";
+
+                    var ThirdRankChart = new FusionCharts('@Url.Content("~/Charts/Cylinder.swf")', "Assess 360", "100", "150");
+                    ThirdRankChart.setDataXML(ThirdRankCylinder);
+                    ThirdRankChart.render("ThirdRank");
+                }
+                else {
+                    var ThirdRankCylinder = "<chart caption='First Rank' manageResize='1' bgColor='FFFFFF' bgAlpha='0' showBorder='0' lowerLimit='0' upperLimit='20' showTickMarks='1' showTickValues='1' showLimits='1' decmials='0' cylFillColor='#f8bd19' baseFontColor='CC0000' chartLeftMargin='10' chartRightMargin='10' chartTopMargin='10'>";
+                    ThirdRankCylinder += "<value>0</value><annotations><annotationGroup showBelow='1'><annotation type='rectangle' x='60' y='60' toX='60' toY='60' color='FFFFFF' alpha='20' showBorder='1' borderColor='CC0000' borderThickness='2' radius='10'/>";
+                    ThirdRankCylinder += "</annotationGroup></annotations></chart>";
+
+                    var ThirdRankChart = new FusionCharts('@Url.Content("~/Charts/Cylinder.swf")', "Assess 360", "100", "150");
+                    ThirdRankChart.setDataXML(ThirdRankCylinder);
+                    ThirdRankChart.render("ThirdRank");
+                }
+                //var chart = new FusionCharts("../../Content/AdminTemplate/Content/FusionCharts/Charts/FCF_Line.swf", "Example", "400", "230");
+                //chart.setDataXML(data);
+                //chart.render("CountChart");
+            }
+        });
+    }
+
+
+
+
+</script>
+@using (Html.BeginForm("Home", "Home"))
+{
+    <br />
+    <table class="InnerTable" width="100%" style="height: 380px">
+        <tr>
+            <td width="55%">
+                <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                        <td>
+                            <div id="INVPROCESSED"></div>
+                        </td>
+                        <td>
+                            <div id="INVVALUE"></div>
+                        </td>
+                        <td>
+                            <div id="CONTINGENTCOUNT"></div>
+                        </td>
+                        <td >
+                            <div align="center"><b>Troops Strength</b></div>
+                            <table>
+                                <tr>
+                                   
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>13-14</b></td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>14-15</b></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div id="TROOPS13-14"></div>
+                                    </td>
+                                    <td>
+                                        <div id="TROOPS14-15"></div>
+                                    </td>
+                                </tr>
+
+                            </table>
+
+                        </td>
+                    </tr>
+                </table>
+            </td>
+
+        </tr>
+        <tr>
+            <td colspan="2" width="100%">
+                <br />
+                <fieldset>
+                    <div style="background-color: #B6B6B6; height: 100%; width: 100%; font-style: italic; text-align: left;">
+                        Description of the system
+                        <br />
+                    </div>
+                    <p>
+                        <br />
+                        GCC SERVICES is a well-respected and renowned integrated remote site services company,
+                        offering construction, camp services, and catering. Among our clients we have a
+                        reputation for providing customized and innovative solutions with a personal touch.
+                        We offer an all-round capability of strong resources, know-how, corporate support
+                        and experience in supporting remote site operations and, above all, assurance of
+                        a quality service at a competitive price. We provide you home away from home.<br />
+                        <br />
+                        We are managed by the same dedicated and innovative international management team
+                        that has formed the company in Kuwait in 2003 and grown it since. Today our scope
+                        of services extends across the full spectrum of Remote Site support services, from
+                        facility design and construction to leasing, operations management, and maintenance
+                        of civilian and military infrastructure.<br />
+                        <br />
+                        We provide full real life support services, skilled and unskilled manpower supply,
+                        as well as facilities management, utilities and environmental services to a wide
+                        range of sites in the Oil & Gas, Defense, Mining, and Construction sectors.<br />
+                    </p>
+                </fieldset>
+            </td>
+        </tr>
+    </table>
+}

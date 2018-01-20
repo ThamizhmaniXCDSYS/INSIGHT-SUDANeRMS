@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.InventoryManagementEntities.PORequestMaster" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+	<class name="INSIGHT.Entities.InventoryManagementEntities.PORequestMaster, INSIGHT.Entities" table="PORequestMaster" lazy="false" >
+		<id name="POId" column="POId" type="Int64">
+			<generator class="identity" />
+		</id>
+		<property name="PONumber" column="PONumber" type="Int64" />
+		<property name="POIssueddate" column="POIssueddate" type="datetime" />
+		<property name="POStatus" column="POStatus" type="string" />
+		<property name="InvoiceCurrency" column="InvoiceCurrency" type="string" />
+		
+		<property name="Supplier" column="Supplier" type="string" />
+		<property name="SupplierNo" column="SupplierNo" type="string" />
+		
+		<property name="CreatedDate" column="CreatedDate" type="datetime" />
+		<property name="CreatedBy" column="CreatedBy" type="string" />
+		<property name="ModifiedDate" column="ModifiedDate" type="datetime" />
+		<property name="ModifiedBy" column="ModifiedBy" type="string" />
+		<property name="RequestId" column="RequestId" type="Int64" />
+	</class>
+</hibernate-mapping>

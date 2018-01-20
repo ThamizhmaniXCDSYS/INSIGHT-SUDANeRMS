@@ -1,0 +1,64 @@
+﻿@model INSIGHT.Entities.InventoryManagementEntities.Inventory_PurchaseOrder
+@{
+    ViewBag.Title = "PODetailsList";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+@using (Html.BeginForm())
+{
+    <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="6" class="PanelHeading">
+                <i class="icon-chevron-right"></i>&nbsp;PO Details
+            </td>
+        </tr>
+        <tr>
+            <td width="15%">
+                <label class="lblheader">
+                    PO #</label><br />
+                @Html.DisplayFor(m => m.PO)
+                @Html.HiddenFor(m => m.PO)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    PO Issued date</label>
+                <br />
+                @String.Format("{0:dd/MM/yyyy }", Model.POIssuedDate, new { @id = "lbsPOIssueddate" })
+                @Html.HiddenFor(m => m.POIssuedDate)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Supplier</label>
+                <br />
+                @Html.DisplayFor(m => m.Supplier)
+                @Html.HiddenFor(m => m.Supplier)
+            </td>
+            <td width="15%">
+                <label class="lblheader">
+                    Supplier #</label>
+                <br />
+                @Html.DisplayFor(m => m.SupplierNumber)
+                @Html.HiddenFor(m => m.SupplierNumber)
+            </td>
+            
+        </tr>
+        <tr>
+            <td width="15%">
+                <label class="lblheader">
+                    Invoice Currency</label><br />
+                @Html.DisplayFor(m => m.POCurrency)
+                @Html.HiddenFor(m => m.POCurrency)
+            </td>
+            <td width="16%">
+                <input type="button" id="btnBack" value="Back To List" onclick="BackToList(); return false;" />
+            </td>
+        </tr>
+
+    </table>
+    @Html.HiddenFor(m => m.PurchOrderId) 
+    @Html.HiddenFor(a => a.PurchOrderId, new { id = "PurchOrderId" })
+}
+<table id="PODetailsList">
+</table>
+<div id="PODetailsListPager">
+</div>
+<script src='@Url.Content("~/Scripts/InventoryManagementScripts/PODetailsList.js")'></script>

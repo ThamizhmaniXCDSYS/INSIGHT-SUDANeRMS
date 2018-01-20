@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.ORDRPT_BulkFoodOrder_SP" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.ORDRPT_BulkFoodOrder_SP, INSIGHT.Entities" table="ORDRPT_BulkFoodOrder_SP" lazy="false" >
+    <id name="Id" column="Id">
+      <generator class="identity" />
+    </id>
+    <property name="UNCode" column="UNCode" type="Int64" />
+    <property name="Commodity" column="Commodity" type="string" />
+    
+    <property name="OrdQty_SS" column="OrdQty_SS" type="decimal" />
+    <property name="OrdQty_SN" column="OrdQty_SN" type="decimal" />
+    <property name="OrdQty_SW" column="OrdQty_SW" type="decimal" />
+    <property name="TotalOrdQty" column="TotalOrdQty" type="decimal" />
+    
+    <property name="Troops_SN" column="Troops_SN" type="Int64" />
+    <property name="Troops_SS" column="Troops_SS" type="Int64" />
+    <property name="Troops_SW" column="Troops_SW" type="Int64" />
+   
+
+    
+
+  </class>
+
+  <sql-query name="BulkFoodOrderList" callable="true">
+    <query-param name="Period" type="string"/>
+    <query-param name="PeriodYear" type="string"/>
+    
+    <return class="INSIGHT.Entities.ORDRPT_BulkFoodOrder_SP, INSIGHT.Entities">
+      <return-property name="Id" column="Id" />
+      <return-property name="UNCode" column="UNCode" />
+      <return-property name="Commodity" column="Commodity" />
+      <return-property name="OrdQty_SS" column="OrdQty_SS"  />
+      <return-property name="OrdQty_SN" column="OrdQty_SN" />
+      <return-property name="OrdQty_SW" column="OrdQty_SW"  />
+      <return-property name="TotalOrdQty" column="TotalOrdQty"  />
+      <return-property name="Troops_SN" column="Troops_SN" />
+      <return-property name="Troops_SS" column="Troops_SS" />
+      <return-property name="Troops_SW" column="Troops_SW" />
+
+
+
+    </return>
+    <![CDATA[ 
+     EXEC [ORDRPT_BulkFoodOrder_SP] @SPPeriod=:Period , @SPPeriodYear=:PeriodYear 
+    ]]>
+  </sql-query>
+</hibernate-mapping>

@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.Vw_WeekWiseFinalOutPut" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.Vw_WeekWiseFinalOutPut, INSIGHT.Entities" table="Vw_WeekWiseFinalOutPut" lazy="false" >
+
+    <id name="Id" column="Id">
+    </id>
+    <property name="OrderId" column="OrderId" type="Int64" />
+    <property name="Name" column="Name" type="string" />
+    <property name="Sector" column="Sector" type="string" />
+    <property name="Period" column="Period" type="string"/>
+    <property name="ControlId" column="ControlId" type="string"/>
+    <property name="ContingentType" column="ContingentType" type="string" />
+    <property name="Location" column="Location" type="string" />
+    <property name="Rank" column="Rank" type="Int64" />
+    <property name="Week" column="Week" type="Int64"/>
+    <property name="OrderQty" column="OrderQty" type="decimal"/>
+    <property name="DeliveredQty" column="DeliveredQty" type="decimal"/>
+    <property name="AcceptedQty" column="AcceptedQty" type="decimal"/>
+    <property name="InvoiceQty" column="InvoiceQty" type="decimal"/>
+    <property name="InvoiceValue" column="InvoiceValue" type="decimal"/>
+    <property name="PeriodYear" column="PeriodYear" type="string" />
+    
+
+    
+  </class>
+</hibernate-mapping>

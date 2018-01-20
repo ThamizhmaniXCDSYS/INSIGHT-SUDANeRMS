@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.InventoryManagementEntities.Inventory_PurchaseOrder" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+	<class name="INSIGHT.Entities.InventoryManagementEntities.Inventory_PurchaseOrder, INSIGHT.Entities" table="Inventory_PurchaseOrder" lazy="false" >
+		<id name="PurchOrderId" column="PurchOrderId" type="Int64">
+			<generator class="identity" />
+		</id>
+		<property name="PO" column="PO" type="Int64" />
+		<property name="POIssuedDate" column="POIssuedDate" type="datetime" />
+		<property name="POCurrency" column="POCurrency" type="string" />
+		<property name="Supplier" column="Supplier" type="string" />
+		<property name="SupplierNumber" column="SupplierNumber" type="string" />
+    <property name="InvoiceAmount" column="InvoiceAmount" type="decimal" />
+		<property name="CreatedDate" column="CreatedDate" type="datetime" />
+		<property name="CreatedBy" column="CreatedBy" type="string" />
+		<property name="ModifiedDate" column="ModifiedDate" type="datetime" />
+		<property name="ModifiedBy" column="ModifiedBy" type="string" />
+		<property name="RequestId" column="RequestId" type="Int64" />
+	</class>
+</hibernate-mapping>

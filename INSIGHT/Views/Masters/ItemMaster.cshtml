@@ -1,0 +1,75 @@
+@{
+    ViewBag.Title = "Item";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<style type="text/css">
+.ui-jqgrid .ui-pg-input
+{
+    width:30px;
+}
+.ui-jqgrid .ui-pg-selbox
+{
+    width:50px;
+   height:23px;
+}
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#ItemMaster').jqGrid({
+            url: '@Url.Content("~/Masters/UNAMEIDMasterJqGrid")',
+            datatype: 'Json',
+            type: 'GET',
+            autowidth: true,
+            height: 300,
+            colNames: ['Id', 'UNCode', 'Commodity', 'Unit Size Request', 'APLCode'],
+            colModel: [
+            { name: 'Id', index: 'Id', hidden: true,key:true},
+            { name: 'UNCode', index: 'UNCode', editable: true, editrules: { integer: true} },
+            { name: 'Commodity', index: 'Commodity', editable: true },
+            { name: 'UnitSizeReq', index: 'UnitSizeReq', editable: true },
+            { name: 'APLCode', index: 'APLCode', editable: true, editrules: { integer: true} },
+            ],
+            rowNum: 20000,
+            rowList: [], // disable page size dropdown
+            pgbuttons: false, // disable page control like next, back button
+            pgtext: null, // disable pager text like 'Page 0 of 10'
+            sortname: 'Id',
+            sortorder: 'Asc',
+            pager: '#ItemMasterPager',
+            multiselect: true,
+            viewrecords: true,
+            shrinktofit: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Item List'
+        });
+        $('#ItemMaster').jqGrid('filterToolbar', { searchOnEnter: true });
+        jQuery("#ItemMaster").jqGrid('navGrid', '#ItemMasterPager', { add: true, edit: false, del: true, search: false, refresh: true }, 
+        //Edit options
+            {width: 'auto', url: '@Url.Content("~/Masters/EditItemMaster/")', left: '10%', top: '10%', height: '50%', width: 400 },
+        //Add options
+        {width: 'auto', url: '@Url.Content("~/Masters/AddItemMaster/")', left: '10%', top: '10%', height: '50%', width: 400 },
+        //Delete options
+            //{width: 'auto', url: '/Masters/DeleteItemMaster/', left: '10%', top: '10%', height: '50%', width: 400, beforeShowForm: function (params) { var gsr = $("#ItemMaster").getGridParam('selrow'); var sdata = $("#ItemMaster").getRowData(gsr); return { Id: sdata.Id} } 
+            {width: 'auto', url: '@Url.Content("~/Masters/DeleteItemMaster/")', left: '10%', top: '10%', height: '50%', width: 400,
+             beforeShowForm: function (params) {selectedrows = $("#ItemMaster").jqGrid("getGridParam", "selarrrow");return { Id: selectedrows}} 
+            });
+
+        $("#ItemMaster").jqGrid('navButtonAdd', '#ItemMasterPager', {
+            caption: "Export To Excel",
+            onClickButton: function () {
+                var ExptType = 'Excel';
+               
+                window.open('UNAMEIDMasterJqGrid?ExptType=' + ExptType + '&rows=9999' + '&sidx=' + '&sord=desc' + '&page=1');
+            }
+        });
+    });
+</script>
+<table width="100%">
+<tr>
+<td>
+<table id="ItemMaster">
+</table>
+<div id="ItemMasterPager">
+</div>
+</td>
+</tr>
+</table>

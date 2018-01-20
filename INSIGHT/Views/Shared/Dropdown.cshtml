@@ -1,0 +1,11 @@
+﻿@{
+    Layout = null;
+}
+
+<select>
+    <option value=''>------Select------</option>
+    @foreach (KeyValuePair<string,string> value in Model) {
+        <option value='@value.Key'>@value.Value</option>
+    }
+
+</select>

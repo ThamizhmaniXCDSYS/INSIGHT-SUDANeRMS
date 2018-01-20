@@ -1,0 +1,1391 @@
+﻿@using INSIGHT.Entities.PDFEntities
+@model SingleInvoice
+@{
+    var color = "blue";
+    int recordCnt = 0;
+    int recordFlag = 0;
+    int Id = 0;
+    long SubtituteId = 0;
+    decimal AcceptedAmount = 0;
+    decimal TotalAccQty = 0;
+    long SubtituteCount = 0;
+    string UnCode = "";
+}
+<table cellpadding="1" cellspacing="0" width="791" style="font-family: Arial, Helvetica, sans-serif; font-size: 7px;">
+    <tr>
+        <td align="left" colspan="19" rowspan="4">
+            <img width="128" height="30" src="@Model.ImageUrl" alt="GCC Logo Original size" />
+        </td>
+    </tr>
+</table>
+<table border="0.5" cellpadding="1" cellspacing="0" width="791" style="font-family: Arial, Helvetica, sans-serif; font-size: 7px; border: medium">
+    <tr bgcolor="#0099CC" color="white">
+        <td align="center" colspan="19">
+            <b>Invoice</b>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="19">
+            <table border="0">
+                <tr>
+                    <td>
+                        <b>Reference No </b>
+                    </td>
+                    <td>
+                        @Model.Reference
+                    </td>
+                    <td>
+                        <b>Period:</b>
+                    </td>
+                    <td>
+                        @Model.Period
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Delivery Point</b>
+                    </td>
+                    <td>
+                        @Model.DeliveryPoint
+                    </td>
+                    <td>
+                        <b>DOS:</b>
+                    </td>
+                    <td>
+                        @Model.DOS
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>UN ID of the FFO:</b>
+                    </td>
+                    <td>
+                        @Model.UNID
+                    </td>
+                    <td>
+                        <b>Delivery Week:</b>
+                    </td>
+                    <td>
+                        @Model.DeliveryWeek
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Strength:</b>
+                    </td>
+                    <td>
+                        @Model.Strength
+                    </td>
+                    <td>
+                        <b>Delivery Mode:</b>
+                    </td>
+                    <td>
+                        @Model.DeliveryMode
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Man Days:</b>
+                    </td>
+                    <td>
+                        @Model.ManDays
+                    </td>
+                    <td>
+                        <b>Approved Delivery Dates:</b>
+                    </td>
+                    <td>
+                        @Model.ApprovedDelivery
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Accepted CMR:</b>
+                    </td>
+                    <td>
+                        @{
+                            string sAcceptedCMR1 = @Model.AcceptedCMR.ToString("N");
+                        }
+                        @sAcceptedCMR1
+                    </td>
+                    <td>
+                        <b>Actual Delivery Date</b>
+                    </td>
+                    <td>
+                        @Model.ActualDeliveryDate
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+<table border="0.5" cellpadding="1" cellspacing="0" width="791.5" style="font-family: Arial, Helvetica, sans-serif; font-size: 7px; border: medium">
+    <thead>
+        <tr bgcolor="#0099CC" color="white">
+            <td align="center">Week/DN No./Ser. No.
+            </td>
+            <td align="center">UNRS Code
+            </td>
+            <td colspan="5" align="left">&nbsp;&nbsp;&nbsp; Description
+            </td>
+            <td align="center">OrdQty
+            </td>
+            <td align="center">DelQty
+            </td>
+            <td align="center">AccQty
+            </td>
+            <td align="center">Price/Unit
+            </td>
+            <td align="center">NetAmt
+            </td>
+            <td align="center">APL Wts
+            </td>
+            <td align="center">Disc Code
+            </td>
+            <td align="center">UOM
+            </td>
+            <td align="center">OrdVal
+            </td>
+            <td align="center" colspan="3">DelNote
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+
+        @if (@Model.DeliveryDetails != null)
+        {
+
+
+            foreach (var item in @Model.DeliveryDetails)
+            {
+                recordCnt = recordCnt + 1;
+            <tr>
+                <td align="center" style="font-size: 7px;">
+                    @{
+                Id = Id + 1;
+                    }
+                    @Id
+                </td>
+            </tr>
+            <tr>
+                <td align="center" style="font-size: 7px;">
+                    @item.UNCode
+                </td>
+            </tr>    
+
+            <tr>
+                <td colspan="5" style="font-size: 6px;">
+                    @item.Commodity
+                </td>
+            </tr>        
+
+            <tr>
+                <td align="right" style="font-size: 7px;">
+                    @{ string ordqty = "";
+                       if (@item.OrderQty > 0)
+                       {
+                           ordqty = string.Format("{0:0.000}", (Math.Round(@item.OrderQty, 3)));
+                       }
+                       else
+                       {
+                           ordqty = string.Format("{0:0.000}", (decimal)0.000);
+                       }
+                    }
+                    @ordqty
+                </td>
+            </tr>
+            <tr>
+                <td align="right" style="font-size: 7px;">
+                    @{ 
+                       string deliveredOrdQty = "";
+                       if (@item.DeliveredOrdQty > 0)
+                       {
+                           deliveredOrdQty = string.Format("{0:0.000}", (Math.Round(@item.DeliveredOrdQty, 3)));
+                       }
+                       else
+                       {
+                           deliveredOrdQty = string.Format("{0:0.000}", (decimal)0.000);
+                       }
+                    }
+                    @deliveredOrdQty
+                </td>
+            </tr>
+            <tr>
+                <td align="right" style="font-size: 7px;">
+                    @{ 
+                       string invoiceQty = "";
+                       if (@item.InvoiceQty > 0)
+                       {
+                           invoiceQty = string.Format("{0:0.000}", (Math.Round(@item.InvoiceQty, 3)));
+                       }
+                       else
+                       {
+                           invoiceQty = string.Format("{0:0.000}", (decimal)0.000);
+                       }
+                    }
+                    @invoiceQty
+                </td>
+            </tr>
+            <tr>
+                <td align="right" style="font-size: 7px;">
+                    @{ 
+                       string SectorPrice = string.Format("{0:C}", (@item.SectorPrice));
+                    }
+                    @SectorPrice
+                </td>
+            </tr>
+            <tr>
+                <td align="right" style="font-size: 7px;">
+                    @{ decimal netAmt = Math.Round(@item.NetAmt, 2);
+                       string SnetAmt = string.Format("{0:C}", (netAmt));
+                    }
+                    @SnetAmt
+                </td>
+            </tr>
+            <tr>
+                <td align="right" style="font-size: 7px;">
+                    @{ string aplWeight = "";
+                       if (@item.APLWeight > 0)
+                       {
+                           aplWeight = string.Format("{0:0.00}", (Math.Round(@item.APLWeight, 2)));
+                       }
+                       else
+                       {
+                           aplWeight = string.Format("{0:0.00}", (decimal)0.00);
+                       }
+                    }
+                    @aplWeight%
+                </td>
+            </tr>
+            <tr>
+                <td style="font-size: 7px;">
+                    @item.DiscrepancyCode
+                </td>
+            </tr>
+            <tr>
+                <td style="font-size: 7px;">
+                    @item.UOM
+                </td>
+            </tr>
+            <tr>
+                <td align="right" style="font-size: 7px;">
+                    @{ decimal orderValue = Math.Round(@item.OrderValue, 2);
+                       string SorderValue = string.Format("{0:C}", (orderValue));
+                    }
+                    @SorderValue
+                </td>
+            </tr>
+            <tr>
+                <td align="center" colspan="3" style="font-size: 7px;">
+                    @item.DeliveryNote
+                </td>
+            </tr>
+            }
+        }
+    </tbody>
+
+
+</table>
+<table border="0.5" cellpadding="1" cellspacing="0" width="791" style="font-family: Arial, Helvetica, sans-serif; font-size: 7px; border: medium">
+    <tr>
+        <td rowspan="4" align="center">
+            @Id
+        </td>
+        <td colspan="6">
+            <b>Week @Model.DeliveryWeek sub total without Eggs</b>
+        </td>
+        <td align="right">
+            @{ decimal orderedQtySum = Math.Round(@Model.OrderedQtySum, 3);
+               string sorderedQtySum = string.Format("{0:0.000}", (orderedQtySum));
+                //string sorderedQtySum = string.Format("{0:N}", (orderedQtySum));
+            }
+            <b>@sorderedQtySum</b>
+        </td>
+        <td align="right">
+            <b>@{decimal DelQtySumTot = Math.Round((@Model.DeliveredQtySum), 3);
+                 string sDelQtySumTot = string.Format("{0:0.000}", (DelQtySumTot));
+                //string sDelQtySumTot = string.Format("{0:N}", (DelQtySumTot));
+            }@sDelQtySumTot</b>
+        </td>
+        <td align="right">
+            @{ decimal invoiceQtySum = Math.Round((@Model.InvoiceQtySum), 3);
+               string sinvoiceQtySum = string.Format("{0:0.000}", (invoiceQtySum));
+                //string sinvoiceQtySum = string.Format("{0:N}", (invoiceQtySum));
+            }
+            <b>@sinvoiceQtySum</b>
+        </td>
+        <td></td>
+        <td align="right">
+            @{ decimal NetAmountSum = Math.Round((@Model.NetAmountSum), 2);
+               string sNetAmountSum = string.Format("{0:C}", (NetAmountSum));
+            }
+            <b>@sNetAmountSum</b>
+        </td>
+        <td align="right">
+            <b>@Model.AboveCount</b>
+        </td>
+        <td colspan="2"></td>
+        <td align="right">
+            @{decimal OrdervalueSum = Math.Round(@Model.OrdervalueSum, 2);
+              string sOrdervalueSum = string.Format("{0:C}", (OrdervalueSum));
+            }
+            <b>@sOrdervalueSum</b>
+        </td>
+        <td colspan="3"></td>
+    </tr>
+    <tr>
+        <td colspan="6">
+            <b>Week @Model.DeliveryWeek Eggs in KG</b>
+        </td>
+        <td align="right">
+            @{ decimal EggOrderedQtySum = Math.Round(@Model.EggOrderedQtySum, 3);
+               string strEggOrderedQtySum = string.Format("{0:0.000}", (EggOrderedQtySum));
+            }
+            <b>@strEggOrderedQtySum</b>
+        </td>
+        <td align="right">
+            @{ decimal EggDeliveredQtySum = Math.Round(@Model.EggDeliveredQtySum, 3);
+               string strEggDeliveredQtySum = string.Format("{0:0.000}", (EggDeliveredQtySum));
+            }
+            <b>@strEggDeliveredQtySum</b>
+        </td>
+        <td align="right">
+            @{ decimal EggInvoiceQtySum = Math.Round(@Model.EggInvoiceQtySum, 3);
+               string strEggInvoiceQtySum = string.Format("{0:0.000}", (EggInvoiceQtySum));
+            }
+            <b>@strEggInvoiceQtySum</b>
+        </td>
+        <td></td>
+        <td align="right"></td>
+        <td align="right">
+            <b>@Model.BelowCount</b>
+        </td>
+        <td colspan="2"></td>
+        <td align="right">
+            <b>$-</b>
+        </td>
+        <td colspan="3"></td>
+    </tr>
+    <tr>
+        <td colspan="6">
+            <b>Week @Model.DeliveryWeek sub total with Eggs in KG</b>
+        </td>
+        <td align="right">
+            @{ decimal TotalOrderedQtySum = Math.Round(@Model.TotalOrderedQtySum, 3);
+               string sTotalOrderedQtySum = string.Format("{0:0.000}", (TotalOrderedQtySum));
+                //string sTotalOrderedQtySum = string.Format("{0:N}", (TotalOrderedQtySum));
+            }
+            <b>@sTotalOrderedQtySum </b>
+        </td>
+        <td align="right">
+            <b>@{decimal DelQtySum = Math.Round((@Model.TotalDeliveredQtySum), 3);
+                 string sDelQtySum = string.Format("{0:0.000}", (DelQtySum));
+                //string sDelQtySum = string.Format("{0:N}", (DelQtySum));
+            }@sDelQtySum</b>
+        </td>
+        <td align="right">
+            @{ decimal TotalInvoiceQtySum = Math.Round((@Model.TotalInvoiceQtySum), 3);
+               string sTotalInvoiceQtySum = string.Format("{0:0.000}", (TotalInvoiceQtySum));
+                //string sTotalInvoiceQtySum = string.Format("{0:N}", (TotalInvoiceQtySum));
+            }
+            <b>@sTotalInvoiceQtySum</b>
+        </td>
+        <td></td>
+        <td align="right">
+            @{ decimal netAmountSum = Math.Round((@Model.NetAmountSum), 2);
+               string snetAmountSum = string.Format("{0:C}", (netAmountSum));
+            }
+            <b>@snetAmountSum</b>
+        </td>
+        <td align="right">
+            @{ decimal countPercent = Math.Round((@Model.CountPercent), 2);
+               string strcountPercent = string.Format("{0:C}", (countPercent));
+            }
+            <b>@strcountPercent%</b>
+        </td>
+        <td colspan="2"></td>
+        <td align="right">
+            @{ decimal ordervalueSum = Math.Round(@Model.OrdervalueSum, 2);
+               string sordervalueSum = string.Format("{0:C}", (ordervalueSum));
+            }
+            <b>@sordervalueSum</b>
+        </td>
+        <td colspan="3"></td>
+    </tr>
+
+</table>
+
+<br />
+<newpage />
+<table border="0.5" cellpadding="1" cellspacing="0" width="650" style="font-family: Arial, Helvetica, sans-serif; font-size: 7px; border: medium">
+    <tr>
+        <td align="center" colspan="18">
+            <i><b>Substitutions</b></i>
+        </td>
+    </tr>
+    <tr bgcolor="#0099CC" color="white">
+        <td align="center">
+            <b>UNRS Code </b>
+        </td>
+        <td align="center" colspan="2">
+            <b>Substituted With COMMODITY </b>
+        </td>
+        <td align="center">
+            <b>Delivered Quantity </b>
+        </td>
+        <td align="center">
+            <b>UNIT COST </b>
+        </td>
+        <td align="center">
+            <b>UNRS Code </b>
+        </td>
+        <td align="center" colspan="4">
+            <b>COMMODITY </b>
+        </td>
+        <td align="center">
+            <b>Ordered </b>
+        </td>
+        <td align="center">
+            <b>Accepted Quantity </b>
+        </td>
+        <td align="center">
+            <b>UNIT COST </b>
+        </td>
+        <td align="center">
+            <b>Accepted Amount </b>
+        </td>
+        <td align="center">
+            <b>APL Weight</b>
+        </td>
+        <td align="center" colspan="3">
+            <b>DelNote</b>
+        </td>
+    </tr>
+    @if (@Model.SDeliveryList != null)
+    {
+        foreach (var item in @Model.SDeliveryList)
+        {
+            SubtituteId = SubtituteId + 1;
+        <tr>
+            <td align="center">
+                @{ 
+            if (@item.SubstituteItemCode != 0) { UnCode = string.Format("{0,-10}", @item.SubstituteItemCode); }
+                }
+                @UnCode
+                @{
+            UnCode = "";
+                }
+            </td>
+            <td align="center" colspan="2">
+                @item.SubstituteItemName
+            </td>
+            <td align="center">
+                @{ decimal deliveredQty = Math.Round(@item.DeliveredQty, 3);
+                   string sdeliveredQty = string.Format("{0:0.000}", deliveredQty);
+                }
+                @sdeliveredQty
+            </td>
+            <td align="center">
+
+                @{ 
+                   string SubstituteSectorPrice = "";
+                   if (@item.SubstituteSectorPrice != 0) { SubstituteSectorPrice = string.Format("{0:C}", (@item.SubstituteSectorPrice)); }
+                                     
+                }
+                @SubstituteSectorPrice
+            </td>
+            <td align="center">
+                @item.UNCode
+            </td>
+            <td align="center" colspan="4">
+                @item.Commodity
+            </td>
+            <td align="center">
+                @{ 
+                   string orderedQty = "";
+                   if (@item.OrderedQty > 0)
+                   {
+                       orderedQty = string.Format("{0:0.000}", (Math.Round(@item.OrderedQty, 3)));
+                   }
+                }
+                @orderedQty
+            </td>
+            <td align="center">
+                @{ decimal acceptedQty = Math.Round(@item.InvoiceQty, 3);
+                   string sacceptedQty = string.Format("{0:0.000}", acceptedQty);
+                }
+                @sacceptedQty
+            </td>
+            <td align="center">
+                @{ 
+                   string SectorPrice = string.Format("{0:C}", (@item.SectorPrice));
+                }
+                @SectorPrice
+
+            </td>
+            <td align="center">
+                @{
+                   if (@item.APLWeight >= 98) { SubtituteCount = SubtituteCount + 1; }
+                   string sAcceptedAmount = string.Format("{0:C}", (@item.AcceptedAmt));
+                   
+                }
+                @sAcceptedAmount
+            </td>
+            <td>
+                @{ 
+                   string APLWeight = "";
+                   if (@item.APLWeight > 0)
+                   {
+                       APLWeight = string.Format("{0:0.00}", (Math.Round(@item.APLWeight, 2))) + "%";
+                   }
+                }
+                @APLWeight</td>
+            <td align="center" colspan="3">@item.DeliveryNoteName</td>
+        </tr>
+        }
+    }
+    @if (@Model.SDeliveryList.Count == 0)
+    {
+        for (int i = 0; i < 2; i++)
+        {
+        <tr>
+            <td align="center"></td>
+            <td align="center" colspan="2"></td>
+            <td align="center"></td>
+            <td align="center"></td>
+            <td align="center"></td>
+            <td align="center" colspan="4"></td>
+            <td align="center"></td>
+            <td align="center"></td>
+            <td align="center"></td>
+            <td align="center">
+                <b>$ 0.00</b>
+            </td>
+            <td align="center"></td>
+            <td align="center" colspan="3"></td>
+        </tr>   
+        }
+    }
+    <tr bgcolor="#0099CC" color="white">
+        <td align="center">&nbsp;
+        </td>
+        <td align="center" colspan="2">
+            <b>Sub Total </b>
+        </td>
+        <td align="center">
+            @{ decimal SDeliveryQuantity = Math.Round(@Model.SDeliveryQuantity, 3);
+               string sSDeliveryQuantity = string.Format("{0:0.000}", SDeliveryQuantity);
+            }
+            <b>@sSDeliveryQuantity</b>
+        </td>
+        <td align="center" colspan="6">
+            <b></b>
+        </td>
+        <td align="center">
+            @{ decimal SOrderedQuantity = Math.Round(@Model.SOrderedQuantity, 3);
+               string sSOrderedQuantity = string.Format("{0:0.000}", SOrderedQuantity);
+            }
+            <b>@sSOrderedQuantity</b>
+        </td>
+        <td align="center">
+            @{ decimal SAcceptedQuantity = Math.Round(@Model.SAcceptedQuantity, 3);
+               string sSAcceptedQuantity = string.Format("{0:0.000}", SAcceptedQuantity);
+            }
+            <b>@sSAcceptedQuantity</b>
+        </td>
+        <td align="center">
+            <b></b>
+        </td>
+        <td align="center">
+            @{ decimal SAcceptedamt = Math.Round(@Model.SAcceptedamt, 2);
+               string sSAcceptedamt = string.Format("{0:C}", (SAcceptedamt));
+            }
+            <b>@sSAcceptedamt</b>
+        </td>
+        <td align="center">
+            <b></b>
+        </td>
+        <td align="center" colspan="3">
+            <b></b>
+        </td>
+    </tr>
+</table>
+<br />
+<table border="0.5" cellpadding="1" cellspacing="0" width="650.2" style="font-family: Arial, Helvetica, sans-serif; font-size: 7px; border: medium">
+    <tr>
+        <td align="center" colspan="18">
+            <i><b>Replacements</b></i>
+        </td>
+    </tr>
+    <tr bgcolor="#0099CC" color="white">
+        <td align="center">
+            <b>UNRS Code </b>
+        </td>
+        <td align="center" colspan="2">
+            <b>Replacement With COMMODITY </b>
+        </td>
+        <td align="center">
+            <b>Delivered Quantity </b>
+        </td>
+        <td align="center">
+            <b>UNIT COST </b>
+        </td>
+        <td align="center">
+            <b>UNRS Code </b>
+        </td>
+        <td align="center" colspan="4">
+            <b>COMMODITY </b>
+        </td>
+        <td align="center">
+            <b>Ordered </b>
+        </td>
+        <td align="center">
+            <b>Accepted Quantity </b>
+        </td>
+        <td align="center">
+            <b>UNIT COST </b>
+        </td>
+        <td align="center">
+            <b>Accepted Amount </b>
+        </td>
+        <td align="center">
+            <b>APL Weight</b>
+        </td>
+        <td align="center" colspan="3">
+            <b>DelNote</b>
+        </td>
+    </tr>
+    @if (@Model.RDeliveryList != null)
+    {
+        foreach (var item in @Model.RDeliveryList)
+        {
+        <tr>
+            <td align="center">
+                @{ 
+            if (@item.SubstituteItemCode != 0) { UnCode = string.Format("{0,-10}", @item.SubstituteItemCode); }
+                }
+                @UnCode
+                @{
+            UnCode = "";
+                    
+                }
+            </td>
+            <td align="center" colspan="2">
+                @item.SubstituteItemName
+            </td>
+            <td align="center">
+                @{ decimal deliveredQty = Math.Round(@item.DeliveredQty, 3);
+                   string sdeliveredQty = string.Format("{0:0.00}", deliveredQty);
+                }
+                @sdeliveredQty
+            </td>
+            <td align="center">
+
+                @{ 
+                   string ReplacementSectorPrice = "";
+                   if (@item.SubstituteSectorPrice != 0) { ReplacementSectorPrice = string.Format("{0:C}", (@item.SubstituteSectorPrice)); }
+                                     
+                }
+                @ReplacementSectorPrice
+            </td>
+            <td align="center">
+                @item.UNCode
+            </td>
+            <td align="center" colspan="4">
+                @item.Commodity
+            </td>
+            <td align="center">
+                @{ 
+                   string orderedQty = "";
+                   if (@item.OrderedQty > 0)
+                   {
+                       orderedQty = string.Format("{0:0.000}", (Math.Round(@item.OrderedQty, 3)));
+                   }
+                }
+                @orderedQty
+            </td>
+            <td align="center">
+                @{ decimal acceptedQty = Math.Round(@item.InvoiceQty, 3);
+                   string sacceptedQty = string.Format("{0:0.000}", acceptedQty);
+                }
+                @sacceptedQty
+            </td>
+            <td align="center">
+                @{ 
+                   string SectorPrice = string.Format("{0:C}", (@item.SectorPrice));
+                }
+                @SectorPrice
+
+            </td>
+            <td align="center">
+                @{
+                   if (@item.APLWeight >= 98) { SubtituteCount = SubtituteCount + 1; }
+                   string sAcceptedAmount = string.Format("{0:C}", (@item.AcceptedAmt));
+                   
+                }
+                @sAcceptedAmount
+            </td>
+            <td>
+                @{ 
+                   string APLWeight = "";
+                   if (@item.APLWeight > 0)
+                   {
+                       APLWeight = string.Format("{0:0.000}", (Math.Round(@item.APLWeight, 3))) + "%";
+                   }
+                }
+                @APLWeight</td>
+            <td align="center" colspan="3">@item.DeliveryNoteName</td>
+        </tr>
+        }
+    }
+    @if (@Model.RDeliveryList.Count == 0)
+    {
+        for (int i = 0; i < 2; i++)
+        {
+        <tr>
+            <td align="center"></td>
+            <td align="center" colspan="2"></td>
+            <td align="center"></td>
+            <td align="center"></td>
+            <td align="center"></td>
+            <td align="center" colspan="4"></td>
+            <td align="center"></td>
+            <td align="center"></td>
+            <td align="center"></td>
+            <td align="center">
+                <b>$ 0.00</b>
+            </td>
+            <td align="center"></td>
+            <td align="center" colspan="3"></td>
+        </tr>   
+        }
+    }
+    <tr bgcolor="#0099CC" color="white">
+        <td align="center">&nbsp;
+        </td>
+        <td align="center" colspan="2">
+            <b>Sub Total </b>
+        </td>
+        <td align="center">
+            @{ decimal RDeliveryQuantity = Math.Round(@Model.RDeliveryQuantity, 3);
+               string sRDeliveryQuantity = string.Format("{0:0.000}", RDeliveryQuantity);
+            }
+            <b>@sRDeliveryQuantity</b>
+        </td>
+        <td align="center" colspan="6">
+            <b></b>
+        </td>
+        <td align="center">
+            @{ decimal ROrderedQuantity = Math.Round(@Model.ROrderedQuantity, 3);
+               string sROrderedQuantity = string.Format("{0:0.000}", ROrderedQuantity);
+            }
+            <b>@sROrderedQuantity</b>
+        </td>
+        <td align="center">
+            @{ decimal RAcceptedQuantity = Math.Round(@Model.RAcceptedQuantity, 3);
+               string sRAcceptedQuantity = string.Format("{0:0.000}", RAcceptedQuantity);
+            }
+            <b>@sRAcceptedQuantity</b>
+        </td>
+        <td align="center">
+            <b></b>
+        </td>
+        <td align="center">
+            @{ decimal RAcceptedamt = Math.Round(@Model.RAcceptedamt, 2);
+               string rRAcceptedamt = string.Format("{0:C}", (RAcceptedamt));
+            }
+            <b>@rRAcceptedamt</b>
+        </td>
+        <td align="center">
+            <b></b>
+        </td>
+        <td align="center" colspan="3">
+            <b></b>
+        </td>
+    </tr>
+</table>
+<br />
+<table cellpadding="1" cellspacing="0" width="600" style="font-family: Arial, Helvetica, sans-serif; font-size: 7px; border: medium">
+    @{
+        long NOD = @Model.TotalDays;
+    }
+    <tr>
+        <td rowspan="8" colspan="7">
+            <table border="0.5" style="font-family: Arial, Helvetica, sans-serif; font-size: 7px; border: medium">
+                <tr>
+                    <td>
+                        <b>Number of Days Delay</b>
+                    </td>
+                    <td></td>
+                    <td align="right">
+                        @NOD
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <b>Total Line Items ordered</b>
+                    </td>
+                    <td align="right">
+                        @Id
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <b>Total Line Items Received >= 98</b>
+                    </td>
+                    <td align="right">
+                        @{ long count = (long)@Model.AboveCount + @SubtituteCount; }
+                        @count
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <b>Order Quantity</b>
+                    </td>
+                    <td align="right">
+                        @{ decimal totalOrderedQtySum = Math.Round(@Model.TotalOrderedQtySum, 3);
+                           string stotalOrderedQtySum = string.Format("{0:0.000}", (totalOrderedQtySum));
+                            //string stotalOrderedQtySum = totalOrderedQtySum.ToString("N"); 
+                        }
+                        @stotalOrderedQtySum
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <b>Delivered Quantity</b>
+                    </td>
+                    <td align="right">
+                        @{ 
+                            //decimal TotalDeliveredQtySum = Math.Round((@Model.TotalDeliveredQtySum + @Model.SDeliveryQuantity + @Model.RDeliveryQuantity), 3);
+                            string sTotalDeliveredQtySum = string.Format("{0:0.000}", (@Model.TotalDeliveredQtySum));
+                            //string sTotalDeliveredQtySum = TotalDeliveredQtySum.ToString("N"); 
+                        }
+                        @sTotalDeliveredQtySum
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <b>Accepted Quantity</b>
+                    </td>
+                    <td align="right">
+                        @{
+                            //TotalAccQty = Math.Round((@Model.TotalInvoiceQtySum + @Model.SAcceptedQuantity + @Model.RAcceptedQuantity), 3);
+                            string sTotalAccQty = string.Format("{0:0.000}", (@Model.TotalAcceptedQtySum));
+                            //string sTotalAccQty = TotalAccQty.ToString("N"); 
+                        }
+                        @sTotalAccQty
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <b>Number Line Items Ordered</b>
+                    </td>
+                    <td align="right">
+                        @* @{ decimal UNSubstituteCount = Math.Round(@Model.UNItemCount, 0);
+                           var Sub = "";
+                           long lineItemstotal = 0;
+                           if (@SubtituteId == 0)
+                           {
+                               Sub = "-";
+
+                           }
+                           else
+                           {
+                               Sub = @SubtituteId.ToString();
+                               lineItemstotal = @SubtituteId;
+                           }
+                           //long lineItems = @Id - @lineItemstotal;
+                           long lineItems = 0;
+                           if (Convert.ToInt64(@UNSubstituteCount) != 0)
+                           { lineItems = @Id + Convert.ToInt64(@UNSubstituteCount) - @lineItemstotal; }
+                           else
+                           { lineItems = @Id - @lineItemstotal; }
+                        }
+                        @lineItems*@
+                        @Id
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <b>Number of Authorized substitutions</b>
+                    </td>
+                    <td align="right">
+                        @Model.SubstituteCount
+                    </td>
+                </tr>
+            </table>
+        </td>
+        <td rowspan="8">&nbsp;
+        </td>
+        <td rowspan="8" colspan="6">
+            <table border="0.5" style="font-family: Arial, Helvetica, sans-serif; font-size: 7px; border: medium">
+                @{ 
+                    decimal CmRUtilised = 0;
+                    decimal OrderCMR = Math.Round((@Model.OrdervalueSum / @Model.ManDays), 2);
+                    decimal AcceptedCMR = Math.Round(((@Model.NetAmountSum + @Model.SAcceptedamt + @Model.RAcceptedamt) / @Model.ManDays), 2);
+                    if ((AcceptedCMR != 0) && (@Model.AuthorizedCMR != 0))
+                    {
+                        CmRUtilised = Math.Round((AcceptedCMR / OrderCMR) * 100, 2);
+                    }
+                }
+                <tr>
+                    <td>
+                        <b>Authorized CMR</b>
+                    </td>
+                    <td align="right">
+                        @{
+                            
+                            string sAuthorizedCMR = @Model.AuthorizedCMR.ToString("N"); 
+                            
+                        }
+                        @sAuthorizedCMR
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Order CMR</b>
+                    </td>
+                    <td align="right">
+                        @{
+                            //string sOrderCMR = OrderCMR.ToString("N"); 
+                            string sOrderCMR = @Model.OrderCMR.ToString("N"); 
+                        }
+                        @sOrderCMR
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Accepted CMR</b>
+                    </td>
+                    <td align="right">
+                        @{
+                            string sAcceptedCMR = @Model.AcceptedCMR.ToString("N"); 
+                        }
+                        @sAcceptedCMR
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>% Of CMR Utilized</b>
+                    </td>
+                    <td align="right">
+                        @*@CmRUtilised%*@
+                        @Model.CMRUtilized %
+                    </td>
+                </tr>
+            </table>
+            <br />
+            <table border="1">
+                <tr>
+                    <td align="center">
+                        <b>Food order value for APL Purposes</b>
+                    </td>
+                    <td align="right">
+                        @{ decimal TotalOrdervalueSum = Math.Round(@Model.OrdervalueSum, 2);
+                           string sTotalOrdervalueSum = string.Format("{0:C}", (TotalOrdervalueSum));
+                        }
+                        @sTotalOrdervalueSum
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+<br />
+<newpage />
+<table border="0.5" cellpadding="1" cellspacing="0" width="750" style="font-family: Arial, Helvetica, sans-serif; font-size: 7px; border: medium">
+    <tr>
+        <td align="center" colspan="25">
+            <i><b>Performance Details</b></i>
+        </td>
+    </tr>
+    <tr bgcolor="#0099CC" color="white">
+        <td colspan="12">Amount at risk in terms of a percentage of a Weekly invoice (Rations)"C" for each
+            Delivery Point
+        </td>
+        <td colspan="3">15%
+        </td>
+        <td colspan="10">
+            @{
+                //decimal deliveryPoint = Math.Round(((@Model.SAcceptedamt + @Model.RAcceptedamt + @Model.NetAmountSum) / 100) * 15, 2);
+                decimal deliveryPoint = Math.Round(((@Model.NetRationAmount) / 100) * 15, 2);
+                string sdeliveryPoint = string.Format("{0:C}", (deliveryPoint));
+            }
+            @sdeliveryPoint
+        </td>
+    </tr>
+    <tr>
+        <td colspan="8" align="center">Performance Service Level
+        </td>
+        <td colspan="1" align="center">APL Code
+        </td>
+        <td colspan="2" align="center">Target %
+        </td>
+        <td colspan="2" align="center">Acceptable
+        </td>
+        <td colspan="4" align="center">Band (level of performance)
+        </td>
+        <td colspan="4" align="center">Service Level Credit - % of invoice
+        </td>
+        <td colspan="2" align="center">Performance
+        </td>
+        <td colspan="2" align="center">Deduction
+        </td>
+    </tr>
+    <tr>
+        <td colspan="8" rowspan="2" align="justify">1. Conformity to Delivery Schedule
+        </td>
+        <td colspan="1" rowspan="2" align="center">S</td>
+        <td colspan="2" rowspan="2" align="center">On time delivery
+        </td>
+        <td colspan="2" rowspan="2" align="center">On time
+        </td>
+        <td align="center" colspan="2">1 day delay
+        </td>
+        <td align="center" colspan="2">40.00%
+        </td>
+        <td align="center" colspan="2">1.20%
+        </td>
+        <td align="center" colspan="2"></td>
+        <td colspan="2" rowspan="2" align="center">
+            @{ decimal sDeliveryPerformance = Math.Round(@Model.DeliveryPerformance, 0);
+               string ssDeliveryPerformance = string.Format("{0:0}", (sDeliveryPerformance));
+            }
+            @ssDeliveryPerformance
+        </td>
+        <td colspan="2" rowspan="2" align="center">
+            @{ decimal DeliveryDeduction = Math.Round(@Model.DeliveryDeduction, 2);
+               string sDeliveryDeduction = string.Format("{0:C}", (DeliveryDeduction));
+            }
+            - @sDeliveryDeduction
+        </td>
+    </tr>
+    <tr>
+        <td align="center" colspan="2">2 day delay
+        </td>
+        <td align="center" colspan="2">100.00%
+        </td>
+        <td align="center" colspan="2">3.00%
+        </td>
+        <td colspan="2"></td>
+    </tr>
+    <tr>
+        <td colspan="8" rowspan="2" align="justify">2. Conformity to Order by Line Items Number of line items ordered is delivered
+            (including authorized substitutions) 
+        </td>
+        <td colspan="1" rowspan="2" align="center">L</td>
+        <td colspan="2" rowspan="2" align="center">100%
+        </td>
+        <td colspan="2" rowspan="2" align="center">98%
+        </td>
+        <td align="center" colspan="2">95% - &lt;98%
+        </td>
+        <td align="center" colspan="2">40.00%
+        </td>
+        <td align="center" colspan="2">1.20%
+        </td>
+        <td colspan="2"></td>
+        <td colspan="2" rowspan="2" align="center">
+            @{ decimal LineItemPerformance = Math.Round(@Model.LineItemPerformance, 2);
+               string sLineItemPerformance = string.Format("{0:0.00}", (LineItemPerformance));
+            }
+            @sLineItemPerformance%
+        </td>
+        <td colspan="2" rowspan="2" align="center">
+            @{ decimal LineItemDeduction = Math.Round(@Model.LineItemDeduction, 2);
+               string sLineItemDeduction = string.Format("{0:C}", (LineItemDeduction));
+            }
+            - @sLineItemDeduction
+        </td>
+    </tr>
+    <tr>
+        <td align="center" colspan="2">&lt;92% - &lt;95%
+        </td>
+        <td align="center" colspan="2">100.00%
+        </td>
+        <td align="center" colspan="2">3.00%
+        </td>
+        <td colspan="2"></td>
+    </tr>
+    <tr>
+        <td colspan="8" rowspan="2" align="justify">3. Conformity to Orders by weight: Quantity kg/ltr/each Quantity of food order in
+            Kg/Ltr is delivered (including authorized substitutions)
+        </td>
+        <td colspan="1" rowspan="2" align="center">Q</td>
+        <td colspan="2" rowspan="2" align="center">100%
+        </td>
+        <td colspan="2" rowspan="2" align="center">95%
+        </td>
+        <td align="center" colspan="2">92% - &lt;95%
+        </td>
+        <td align="center" colspan="2">40.00%
+        </td>
+        <td align="center" colspan="2">1.80%
+        </td>
+        <td colspan="2"></td>
+        <td colspan="2" rowspan="2" align="center">
+            @{ decimal OrderWightPerformance = Math.Round(@Model.OrderWightPerformance, 2);
+               string sOrderWightPerformance = string.Format("{0:0.00}", (OrderWightPerformance));
+            }
+            @sOrderWightPerformance%
+        </td>
+        <td colspan="2" rowspan="2" align="center">
+            @{ decimal OrderWightDeduction = Math.Round(@Model.OrderWightDeduction, 2);
+               string sOrderWightDeduction = string.Format("{0:C}", (OrderWightDeduction));
+            }
+            - @sOrderWightDeduction
+        </td>
+    </tr>
+    <tr>
+        <td align="center" colspan="2">&lt;90% - &lt;92%
+        </td>
+        <td align="center" colspan="2">100.00%
+        </td>
+        <td align="center" colspan="2">4.50%
+        </td>
+        <td colspan="2"></td>
+    </tr>
+    <tr>
+        <td colspan="8" rowspan="2" align="justify">4. Food Order Compliance-Availability : Number of authorized substitutions
+        </td>
+        <td colspan="1" rowspan="2" align="center">A</td>
+        <td colspan="2" rowspan="2" align="center">0%
+        </td>
+        <td colspan="2" rowspan="2" align="center">3%
+        </td>
+        <td align="center" colspan="2">3% - &lt;4%
+        </td>
+        <td align="center" colspan="2">40.00%
+        </td>
+        <td align="center" colspan="2">1.80%
+        </td>
+        <td colspan="2"></td>
+        <td colspan="2" rowspan="2" align="center">
+            @{ decimal SubtitutionPerformance = Math.Round(@Model.SubtitutionPerformance, 2);
+               string sSubtitutionPerformance = string.Format("{0:0.00}", (SubtitutionPerformance));
+            }
+            @sSubtitutionPerformance%
+        </td>
+        <td colspan="2" rowspan="2" align="center">
+            @{ decimal SubtitutionDeduction = Math.Round(@Model.SubtitutionDeduction, 2);
+               string sSubtitutionDeduction = string.Format("{0:C}", (SubtitutionDeduction));
+            }
+            - @sSubtitutionDeduction
+        </td>
+    </tr>
+    <tr>
+        <td align="center" colspan="2">4% - 5% +
+        </td>
+        <td align="center" colspan="2">100.00%
+        </td>
+        <td align="center" colspan="2">4.50%
+        </td>
+        <td colspan="2"></td>
+    </tr>
+    <tr>
+        <td rowspan="5" colspan="25">Methodology: Verification shall be determined by the UN in its sole discretion.
+            The service credit shall be computed according to the following formula: Service
+            Level Credit = A x B x C ( A = Allocation (% of at risk amount) B =% of allocation
+            C = At risk amount )
+        </td>
+    </tr>
+</table>
+<br />
+<table cellpadding="1" cellspacing="0" width="750.5" style="font-family: Arial, Helvetica, sans-serif; font-size: 7px; border: medium">
+    <tr>
+        <td colspan="11">
+            <table>
+                <tr>
+                    <td colspan="10">NPA01 - Quantity under-delivered not relevant
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="10">NPA02 - Quantity ordered does not meet packing size requirements
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="10">NPA03 - Unreasonable denied access to delivery points
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="10">NPA04 - UN proposed substitution
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="10">NPA05 – Other
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="10">AS- Authorized Substitution
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="10">AR – Authorized Replacement 
+                    </td>
+                </tr>
+            </table>
+        </td>
+        <td colspan="3" valign="top">
+            <table border="1" style="font-family: Arial, Helvetica, sans-serif; font-size: 7px; border: medium">
+                <tr>
+                    <td colspan="2"><b>APL Deductions</b>
+                    </td>
+                    <td align="right">
+                        @{ decimal AplDetTotal = Math.Round((@Model.DeliveryDeduction + @Model.LineItemDeduction + @Model.OrderWightDeduction + @Model.SubtitutionDeduction), 2);
+                           string sAplDetTotal = string.Format("{0:C}", (AplDetTotal));
+                        }
+                        - @sAplDetTotal
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+@{
+    decimal AmtAccept = Math.Round((@Model.NetAmountSum + @Model.SAcceptedamt + @Model.RAcceptedamt), 2);
+    decimal tropstgh = Math.Round((0 * AplDetTotal), 2);
+    decimal OtherCreditNote = Math.Round((0 * AplDetTotal), 2);
+    //decimal Weeklywise = Math.Round((0 * AplDetTotal), 2);
+    //decimal NetRationAmt = Math.Round((tropstgh + OtherCreditNote + Weeklywise + AmtAccept), 2);
+
+    ////Modified by Thamizhmani
+    decimal Weeklywise = 0;
+    Weeklywise = Math.Round(Convert.ToDecimal(0.35 / 100) * AmtAccept, 2);//
+
+    decimal AccAmtTransportation = 0;
+    //AccAmtTransportation = Math.Round(Convert.ToDecimal(0.31 / 100) * TotalAccQty, 2);
+
+    decimal AplDetect = Math.Round(@AplDetTotal, 2);
+    decimal confirmityCMR = 0;
+    if (@AcceptedCMR > @Model.AuthorizedCMR)
+    {
+        confirmityCMR = (@AcceptedCMR - @Model.AuthorizedCMR) * @Model.Strength * 7;
+    }
+    decimal NetRationAmt = AmtAccept - Weeklywise - confirmityCMR;
+}
+
+<table cellpadding="1" cellspacing="0" width="750.5" style="font-family: Arial, Helvetica, sans-serif; font-size: 7px; border: medium">
+    <tr>
+        <td rowspan="8" colspan="8">&nbsp;
+        </td>
+        <td rowspan="8" colspan="6">
+            <table border="1">
+                <tr>
+                    <td><b>Amount Accepted</b>
+                    </td>
+                    <td></td>
+                    <td align="right">
+                        @{
+                            string sAmtAccept = string.Format("{0:C}", (@Model.AmountAccepted));
+                        }
+                        @sAmtAccept
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Confirmity to CMR</b>
+                    </td>
+                    <td></td>
+                    <td align="right">
+                        @{
+                            string sConfirmity = string.Format("{0:C}", (@Model.confirmityCMR));
+                        }
+                        - @sConfirmity
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Troops Strength</b>
+                    </td>
+                    <td></td>
+                    <td align="right">
+                        @{
+                            string stropstgh = string.Format("{0:C}", (tropstgh));
+                        }
+                        @stropstgh
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Other Credit Notes</b>
+                    </td>
+                    <td></td>
+                    <td align="right">
+                        @{
+                            string sOtherCreditNote = string.Format("{0:C}", (OtherCreditNote));
+                        }
+                        @sOtherCreditNote
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Weekly Invoice</b>
+                    </td>
+                    <td>-0.35%</td>
+                    <td align="right">
+                        @{
+                            string sWeeklywise = string.Format("{0:C}", (@Model.Weeklyinvoicediscount));
+                        }
+                        - @sWeeklywise
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Net amount for Rations</b>
+                    </td>
+                    <td></td>
+                    <td align="right">
+                        @{
+                            string sNetRationAmt = string.Format("{0:C}", (@Model.NetRationAmount));
+                        }
+                        @sNetRationAmt
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Accepted Amount Transportation</b>
+                    </td>
+                    <td>@Model.RatePerKg</td>
+                    <td align="right">
+                        @{
+                            string sAccAmtTransportation = string.Format("{0:C}", (@Model.AcceptedTransportCost));
+                        }
+                        @sAccAmtTransportation
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>APL Deductions</b>
+                    </td>
+                    <td></td>
+                    <td align="right">
+                        @{
+                            string sAplDetect = string.Format("{0:C}", (AplDetect));
+                        }
+                        - @sAplDetect
+                    </td>
+                </tr>
+
+                <tr bgcolor="#0099CC" color="white">
+                    <td>&nbsp;
+                    </td>
+                    <td>&nbsp;
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><b>Total Invoice</b>
+                    </td>
+                    <td></td>
+                    <td align="right">
+                        @{
+                            string TotalInvoice = string.Format("{0:C}", (Math.Round((NetRationAmt - AplDetect + @Model.AcceptedTransportCost), 2)));
+                        }
+                        @TotalInvoice
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td rowspan="5" colspan="25"><b>Disclaimer:</b> In the interest of ensuring a smooth invoicing/payment process, GCC SERVICES herewith signs this GRR with the intent to officially review the Weekly Billing Discount and APL formulas.
+                                                 We will submit a correction/recovery request as applicable.
+        </td>
+    </tr>
+</table>
+
+
+
+

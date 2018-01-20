@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.UNAMID" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.UNAMID, INSIGHT.Entities" table="Users" lazy="false" >
+
+    <id name="Id" column="Id" type="Int64">
+    </id>
+    <property name="UNCode" column="UNCode" type="Int64"/>
+    <property name="Commodity" column="Commodity" type="string"/>
+    <property name="OrderQty" column="OrderQty" type="Int64"/>
+    <property name="SectorPrice" column="SectorPrice" type="Int64"/>
+    <property name="Total" column="Total" type="Int64"/>
+  </class>
+</hibernate-mapping>

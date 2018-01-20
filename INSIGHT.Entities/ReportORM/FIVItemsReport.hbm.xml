@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.ReportEntities.FIVItemsReport"  namespace="INSIGHT.Entities"  xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.ReportEntities.FIVItemsReport, INSIGHT.Entities" table="FIVItemsMismatch_vw" lazy="false" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="identity" />
+    </id>
+    <property name="OrderId"  column="OrderId"  type="Int64" />
+    <property name="ControlId"  column="ControlId"  type="string" />
+    <property name="DeliveryNoteName"  column="DeliveryNoteName"  type="string" />
+    <property name="UNCode"  column="UNCode"  type="Int64" />
+    <property name="SubstituteItemCode"  column="SubstituteItemCode"  type="Int64" />
+    <property name="OrderQty"  column="OrderQty"  type="decimal" />
+    <property name="DeliveredQty"  column="DeliveredQty"  type="decimal" />
+    <property name="AcceptedQty"  column="AcceptedQty"  type="decimal" />
+    <property name="InvoiceQty"  column="InvoiceQty"  type="decimal" />
+    <property name="SectorPrice"  column="SectorPrice"  type="decimal" />
+    <property name="Total"  column="Total"  type="decimal" />
+    <property name="Comment"  column="Comment"  type="string" />
+    <property name="InvoiceNumber"  column="InvoiceNumber"  type="string" />
+    <property name="DiscrepancyCode"  column="DiscrepancyCode"  type="string" />
+  </class>
+
+  <sql-query name="GenerateFIVReportList" callable="true">
+    <query-param name="OrderId" type="string"/>
+    <return class="INSIGHT.Entities.ReportEntities.FIVItemsReport, INSIGHT.Entities">
+      <return-property name="Id" column="Id" />
+      <return-property name="OrderId" column="OrderId" />
+      <return-property name="ControlId" column="ControlId"  />
+      <return-property name="DeliveryNoteName" column="DeliveryNoteName" />
+      <return-property name="UNCode" column="UNCode"  />
+      <return-property name="SubstituteItemCode" column="SubstituteItemCode"  />
+      <return-property name="OrderQty" column="OrderQty"  />
+      <return-property name="DeliveredQty" column="DeliveredQty" />
+      <return-property name="AcceptedQty" column="AcceptedQty" />
+      <return-property name="InvoiceQty" column="InvoiceQty" />
+      <return-property name="SectorPrice" column="SectorPrice"/>
+      <return-property name="Total" column="Total"  />
+      <return-property name="Comment" column="Comment" />
+      <return-property name="InvoiceNumber"  column="InvoiceNumber"  />
+      <return-property name="DiscrepancyCode" column="DiscrepancyCode"  />
+    </return>
+    <![CDATA[ 
+     EXEC [GenerateFIVReportByOrderId_SP] @OrderId=:OrderId
+    ]]>
+  </sql-query>
+</hibernate-mapping>

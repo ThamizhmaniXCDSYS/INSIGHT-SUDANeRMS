@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.ORDRPT_SummaryTroops" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.ORDRPT_SummaryTroops, INSIGHT.Entities" table="ORDRPT_SummaryTroops" lazy="false" >
+    <id name="Id" column="Id">
+      <generator class="identity" />
+    </id>
+    <property name="Period" column="Period"  type="string" />
+    <property name="PeriodYear" column="PeriodYear" type="string"/>
+    <property name="FinalSector" column="FinalSector" type="string" />
+    <property name="FinalWeek" column="FinalWeek" type="Int64"/>
+    <property name="FinalTroops" column="FinalTroops" type="Int64" />
+    <property name="Category" column="Category" type="string"/>
+    <property name="CreatedDate" column="CreatedDate" type="datetime"/>
+  </class>
+</hibernate-mapping>
+

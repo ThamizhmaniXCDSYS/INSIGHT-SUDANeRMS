@@ -1,0 +1,226 @@
+﻿@{
+                    //ViewBag.Title = "WeekGeneratePartial";
+                    //Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<style type="text/css">
+    input[disabled], input[readonly] {
+        background-color: #eeeeee;
+        cursor: default;
+    }
+    #dvLoading {
+        /*background: url("../../../Images/Sun.gif") no-repeat center center;*/
+        background: url("../Images/Sun.gif") no-repeat center center;
+        height: 100%;
+        width: 100%;
+        position: fixed;
+        z-index: 1000;
+        left: 0%;
+        top: 15%;
+        margin: -25px 0 0 -25px;
+    }
+</style>
+<script type="text/javascript">
+    $(function () {
+        $('#dvLoading').hide()
+            .ajaxStart(function () {
+                $(this).hide(); // show on any Ajax event.
+            })
+        FillPeriod1();
+        FillWeek1();
+        FillPeriodYear1();
+        $(".datepicker").datepicker();
+        $("#PeriodYear1").change(function () {
+            FillPeriod1();
+        });
+        $("#Period1").change(function () {
+            FillWeek1($("#Period1").val(), $("#PeriodYear1").val());
+        });
+        //        $("#btnPDF").disable = "true";
+    });
+
+    function FillWeek1(Period, PeriodYear) {
+        debugger;
+        $.getJSON('@Url.Content("~/Masters/FillWeek/")?Period=' + Period + "&PeriodYear=" + PeriodYear,
+    function (modelData) {
+        var select = $("#Week1");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Week"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function GenerateInvoice() {
+        $('#dvLoading').hide()
+            .ajaxStart(function () {
+                $(this).show(); // show on any Ajax event.
+            })
+        var searchItems = ',' + ',' + $('#Week1').val() + ',' + $('#Period1').val() + ',' + $('#PeriodYear1').val();
+        var Period = $('#Period1').val();
+
+        if ($('#PeriodYear1').val() == "") {
+            ErrMsg("Please Select Period Year");
+            return false;
+        }
+        else if (Period == "") {
+            ErrMsg("Please Select Period");
+            return false;
+        }
+
+        else if ($('#Week1').val() == "") {
+            ErrMsg("Please Select Week");
+            return false;
+        }
+        else {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/Reports/WeekGeneratePopup")?searchItems=' + searchItems,
+                success: function (data) {
+                    $("#DivGenerateInvoice").dialog("close");
+                    $('#dvLoading').hide()
+                            .ajaxStop(function () {
+                                $(this).hide(); // hide it when it is done.
+                            });
+                    SucessMsg("Week Report is started to Generate");
+                    var searchItems1 =  ',' +  ',' + ',' + $('#Period1').val() + ',' + $('#Week1').val() + ',' + $('#PeriodYear1').val();
+                    $("#OrderItems").setGridParam(
+                    {
+                        datatype: "json",
+                        url: '@Url.Content("~/Reports/OrderReportjqGrid")?searchItems=' + searchItems1 + '&ReportType=' + 'WKINV',
+                        page: 0
+                    }).trigger("reloadGrid");
+                    
+                },
+                dataType: "json"
+            });
+        }
+}
+
+function ResetGenerateInvoice() {
+    var searchItems = "";
+    $('#Period1').val(0);
+    $('#PeriodYear1').val(0);
+    $('#Week1').val(0);
+}
+function FillPeriodYear1() {
+    $.getJSON('@Url.Content("~/Masters/FillPeriodYear")',
+function (modelData) {
+    var select = $("#PeriodYear1");
+    select.empty();
+    select.append($('<option/>'
+, {
+    value: "",
+    text: "Select Year"
+}));
+    $.each(modelData, function (index, itemData) {
+
+        select.append($('<option/>',
+{
+    value: itemData.Value,
+    text: itemData.Text
+}));
+    });
+});
+}
+function FillPeriod1() {
+    $.getJSON('@Url.Content("~/Masters/FillPeriod/")',
+function (modelData) {
+    var select = $("#Period1");
+    select.empty();
+    select.append($('<option/>'
+, {
+    value: "",
+    text: "Select Period"
+}));
+    $.each(modelData, function (index, itemData) {
+
+        select.append($('<option/>',
+{
+    value: itemData.Value,
+    text: itemData.Text
+}));
+    });
+});
+}
+</script>
+
+<br />
+<table class="WithoutBorderOnly" width="100%" border="0">
+    @*  <tr>
+        <td valign="middle">
+            <label class="lblheader" style="width: 50%">
+                Sector</label><br />
+        </td>
+        <td align="center">
+            @Html.DropDownList("Sector1", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList", style = "width: 70%" })
+        </td>
+    </tr>
+    <tr>
+        <td valign="middle">
+            <label class="lblheader" style="width: 50%">
+                Contingent Type</label><br />
+        </td>
+        <td align="center">
+            @Html.DropDownList("contingentType1", new SelectList(new[]
+                                          {
+                                              new{Value="",Text="Select One"},
+                                              new{Value="FPU",Text="FPU"},
+                                              new{Value="MIL",Text="MIL"}
+                                          },
+          "Value", "Text", ""), new { @Class = "CSSDropDownList", style = "width: 70%" })
+        </td>
+    </tr>
+    <tr>
+        <td valign="middle">
+            <label class="lblheader" style="width: 50%">
+                Contingent</label><br />
+        </td>
+        <td align="center">
+            @Html.DropDownList("Contingent1", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList", style = "width: 70%" })
+        </td>
+    </tr>*@
+    <tr>
+        <td valign="middle">
+            <label class="lblheader" style="width: 50%">
+                Period Year</label><br />
+        </td>
+        <td align="center">
+            @Html.DropDownList("PeriodYear1", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList", style = "width: 70%" })
+        </td>
+    </tr>
+    <tr>
+        <td valign="middle">
+            <label class="lblheader" style="width: 50%">
+                Period</label><br />
+        </td>
+        <td align="center">
+            @Html.DropDownList("Period1", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList", style = "width: 70%" })
+        </td>
+    </tr>
+    <tr>
+        <td valign="middle">
+            <label class="lblheader" style="width: 50%">
+                Week</label><br />
+        </td>
+        <td align="center">
+            @Html.DropDownList("Week1", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList", style = "width: 70%" })
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" valign="bottom">
+            <input type="button" id="btnGenerate" value="Generate" onclick="GenerateInvoice(); return false;" /><input
+                type="reset" id="btnReset" value="Reset" onclick="ResetGenerateInvoice(); return false;" />
+        </td>
+    </tr>
+</table>
+<div id="dvLoading"></div>

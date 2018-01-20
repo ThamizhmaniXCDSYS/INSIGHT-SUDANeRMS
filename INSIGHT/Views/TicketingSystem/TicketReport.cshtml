@@ -1,0 +1,408 @@
+﻿@model INSIGHT.Entities.TicketingSystem.TicketReport_vw
+@*@{
+    ViewBag.Title = "TicketReport";
+    //Layout = "~/Views/Shared/NewMaster.cshtml";
+    Layout = "~/Views/Shared/NewBootstrapMaster.cshtml";
+}*@
+
+@{
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<style type="text/css">
+    .coustom {
+        font-size: 24px;
+        height: 30px;
+        width: 20px;
+        border: none;
+        cursor: pointer;
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#PerformerDetails').hide();
+        $('#CategoryReportable').hide();
+        $('#ddlTktReport').change(function () {
+            $('#GeneralReportTable').hide();
+            $('#CategoryReportable').hide();
+            $('#PerformerDetails').show();
+            ddlTktReport();
+        });
+        $('#ddlTktCategory').change(function () {
+            $('#GeneralReportTable').hide();
+            $('#PerformerDetails').hide();
+            $('#CategoryReportable').show();
+            ddlTktCategoryReport();
+        });
+
+
+        $.getJSON('@Url.Content("~/TicketingSystem/getTktPerformerList")',
+         function (getPerformer) {
+             var ddlTktReport = $("#ddlTktReport");
+             ddlTktReport.empty();
+             ddlTktReport.append($('<option/>',
+{
+    value: "",
+    text: "--Select Performer--"
+
+}));
+             $.each(getPerformer, function (index, itemdata) {
+                 ddlTktReport.append($('<option/>',
+                     {
+                         value: itemdata.Value,
+                         text: itemdata.Text
+                     }));
+             });
+         });
+
+    });
+    function ddlTktReport() {
+        debugger;
+        var PerformerName = $('#ddlTktReport').val();
+        var urlink = null;
+        if (PerformerName != "" && PerformerName != null)
+            urlink ='@Url.Content("~/TicketingSystem/TicketReportByPerformer")?PerformerName=' + PerformerName;
+        else
+            window.location.href = '@Url.Action("TicketReport", "TicketingSystem")';
+    $.ajax({
+        type: 'GET',
+        async: false,
+        dataType: "json",
+        url: urlink,
+        success: function (result) {
+            //alert(result);
+            var RejectedCnt = 0;
+            var AssignedCnt = 0;
+            var ResolvedCnt = 0;
+            var CompletedCnt = 0;
+            if (result != false) {
+                var resultLenght = Object.keys(result).length;
+                //alert(resultLenght);
+                //var RejectedCnt = RejectedCnt = result[0].RejectedCount;
+                //var AssignedCnt = result[0].Assigned;
+                //var ResolvedCnt = result[0].Resolved;
+                //var CompletedCnt = result[0].Completed;
+                RejectedCnt = RejectedCnt = result[0].RejectedCount;
+                AssignedCnt = result[0].Assigned;
+                ResolvedCnt = result[0].Resolved;
+                CompletedCnt = result[0].Completed;
+                $('#txtAssigned').val(AssignedCnt);
+                $('#txtRejectedCnt').val(RejectedCnt);
+                $('#txtResolved').val(ResolvedCnt);
+                $('#txtCompleted').val(CompletedCnt);
+                //alert(AssignedCnt);
+                if (resultLenght > 0) {
+
+                    var PieChart = "<graph caption='' showValues='0'>";
+                    PieChart = PieChart + " <set name='Rejected' value='" + RejectedCnt + "' color='FF0000' />";
+                    PieChart = PieChart + " <set name='Assigned' value='" + AssignedCnt + "' color='0066FF' />";
+                    PieChart = PieChart + " <set name='Resolved' value='" + ResolvedCnt + "' color='4A0093' />";
+                    PieChart = PieChart + " <set name='Completed' value='" + CompletedCnt + "' color='007A00' /></graph>";
+                    var chart = new FusionCharts('@Url.Content("~/Charts/FCF_Pie2D.swf")', "Ticket Details", "350", "350");
+                    chart.setDataXML(PieChart);
+                    chart.render("PieChartDiv");
+                }
+                if (result[0].RejectedCount == 0 && result[0].Assigned == 0 && result[0].Resolved == 0 && result[0].Completed == 0) {
+                    var Empty1 = 10;
+                    var Empty2 = 0;
+                    var PieChart = "<graph caption='' showValues='0'>";
+                    PieChart = PieChart + " <set name='Empty' value='" + Empty1 + "' color='FF9900' />";
+                    PieChart = PieChart + " <set name='Empty' value='" + Empty2 + "' color='FF9900' /></graph>";
+                    var chart = new FusionCharts('@Url.Content("~/Charts/FCF_Pie2D.swf")', "Ticket Details", "350", "350");
+                    chart.setDataXML(PieChart);
+                    chart.render("PieChartDiv");
+                }
+            }
+            else {
+                $('#txtAssigned').val(AssignedCnt);
+                $('#txtRejectedCnt').val(RejectedCnt);
+                $('#txtResolved').val(ResolvedCnt);
+                $('#txtCompleted').val(CompletedCnt);
+
+                var Empty1 = 10;
+                var Empty2 = 0;
+                var PieChart = "<graph caption='' showValues='0'>";
+                PieChart = PieChart + " <set name='Empty' value='" + Empty1 + "' color='FF9900' />";
+                PieChart = PieChart + " <set name='Empty' value='" + Empty2 + "' color='FF9900' /></graph>";
+                var chart = new FusionCharts('@Url.Content("~/Charts/FCF_Pie2D.swf")', "Ticket Details", "350", "350");
+                chart.setDataXML(PieChart);
+                chart.render("PieChartDiv");
+            }
+        }
+    });
+}
+function ddlTktCategoryReport() {
+    var PerformerName = $('#ddlTktReport').val();
+    var ReportCategory = $('#ddlTktCategory').val();
+    //alert(PerformerName);
+    //alert(ReportCategory);
+    if (PerformerName != "" || PerformerName != null || ReportCategory != "" || ReportCategory != null)
+        urlink = '@Url.Content("~/TicketingSystem/TicketDashBoardReport")?PerformerName=' + PerformerName + '&ReportCategory=' + ReportCategory;
+    else
+        window.location.href = '@Url.Action("TicketReport", "TicketingSystem")';
+    $.ajax({
+        type: 'GET',
+        async: false,
+        dataType: "json",
+        url: urlink,
+        success: function (result) {
+            var PerformerRejectedCount = 0;
+            var PerformerAssignedCount = 0;
+            var PerformerResolvedCount = 0;
+            var PerformerCompletedCount = 0;
+            if (result != false) {
+                var resultLenght = Object.keys(result).length;
+                if (resultLenght > 0) {
+                    for (var i = 0; i <= resultLenght - 1; i++) {
+                        if (result[i].RejectedCount == '1') {
+                            PerformerRejectedCount++;
+                        }
+                        else if (result[i].Assigned == '1') {
+                            PerformerAssignedCount++;
+                        }
+                        else if (result[i].Resolved == '1') {
+                            PerformerResolvedCount++
+                        }
+                        else if (result[i].Completed == '1') {
+                            PerformerCompletedCount++;
+                        }
+                    }
+                    $('#txtPerformerRejectedCount').val(PerformerRejectedCount);
+                    $('#txtPerformerAssignedCount').val(PerformerAssignedCount);
+                    $('#txtPerformerResolvedCount').val(PerformerResolvedCount);
+                    $('#txtPerformerCompletedCount').val(PerformerCompletedCount);
+                    var PieChart = "<graph caption='' showValues='0'>";
+                    PieChart = PieChart + " <set name='Rejected' value='" + PerformerRejectedCount + "' color='FF0000' />";
+                    PieChart = PieChart + " <set name='Assigned' value='" + PerformerAssignedCount + "' color='0066FF' />";
+                    PieChart = PieChart + " <set name='Resolved' value='" + PerformerResolvedCount + "' color='4A0093' />";
+                    PieChart = PieChart + " <set name='Completed' value='" + PerformerCompletedCount + "' color='007A00' /></graph>";
+                    var chart = new FusionCharts('@Url.Content("~/Charts/FCF_Pie2D.swf")', "Ticket Details", "350", "350");
+                    chart.setDataXML(PieChart);
+                    chart.render("CategoryPieChart");
+                }
+            }
+            else {
+                $('#txtPerformerRejectedCount').val(PerformerRejectedCount);
+                $('#txtPerformerAssignedCount').val(PerformerAssignedCount);
+                $('#txtPerformerResolvedCount').val(PerformerResolvedCount);
+                $('#txtPerformerCompletedCount').val(PerformerCompletedCount);
+                var Empty1 = 10;
+                var Empty2 = 0;
+                var PieChart = "<graph caption='' showValues='0'>";
+                PieChart = PieChart + " <set name='Empty' value='" + Empty1 + "' color='FF9900' />";
+                PieChart = PieChart + " <set name='Empty' value='" + Empty2 + "' color='FF9900' /></graph>";
+                var chart = new FusionCharts('@Url.Content("~/Charts/FCF_Pie2D.swf")', "Ticket Details", "350", "350");
+                chart.setDataXML(PieChart);
+                chart.render("CategoryPieChart");
+            }
+        }
+    });
+}
+</script>
+<br />
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <i class="fa fa-lg fa-dashboard"></i>&nbsp;<label>TIcket Dashboard</label>
+        <div class="btn-group pull-right">
+            @*            @Html.DropDownListFor(model => model.Performer, new SelectList(Enumerable.Empty<SelectListItem>()), "", new { id = "ddlTktReport" })*@
+            @Html.DropDownList("ddlTktCategory", new SelectList(new[] {
+                                    new{Value="",Text="--Select Category--"},                    
+                                    new{Value="Today",Text="Today"},
+                                  new{Value="ThisWeek",Text="This Week"},
+                                  new{Value="LastWeek",Text="Last Week"},
+                                  new{Value="ThisMonth",Text="This Month"},
+                                   new{Value="LastMonth",Text="Last Month"},
+                                    new{Value="ThisYear",Text="ThisYear"},
+                                     new{Value="LastYear",Text="Last Year"}                                                 
+                                 }, "Value", "Text"), new { @Class = "form-control" })
+            @*}, "Value", "Text"), new { @Class = "form-control" })*@
+        </div>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+            <div class="btn-group pull-right">
+                @Html.DropDownListFor(model => model.Performer, new SelectList(Enumerable.Empty<SelectListItem>()), "", new { @Class = "form-control", id = "ddlTktReport" })
+                @*    @Html.DropDownList("ddlTktReport", new SelectList(new[] {
+                                  new{Value="",Text="--Select Performer--"},
+                                  new{Value="Anbu",Text="Anbarasan"},
+                                  new{Value="Arun",Text="Arun Kumar"},
+                                  new{Value="Desouza",Text="John Desouza"},
+                                  new{Value="Felix",Text="Felix Kinoniya"},
+                                  new{Value="Gobinath",Text="Gobinath"},
+                                  new{Value="Kingston",Text="Kingston"},
+                                  new{Value="Micheal",Text="Micheal Benadict"},
+                                  new{Value="Swathi",Text="Swathi Kumar"}                                                
+                                 }, "Value", "Text"), new { @Class = "form-control" })*@
+            </div>
+    </div>
+    <div class="panel-body" id="PerformerDetails">
+        <div class="col-md-6">
+            <br />
+            <br />
+            <br />
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <i class="fa fa-edit fa-5x" style="color: #0066ff;"></i>
+                        <input type="text" class="coustom" id="txtAssigned" readonly="readonly" style="width: 50px; background-color: white; border-color: white; box-shadow: none;" disabled="disabled" />
+                        Assigned
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <i class="fa fa-inbox fa-5x" style="color: #ff0000;"></i>
+                        <input type="text" class="coustom" id="txtRejectedCnt" readonly="readonly" style="width: 50px; background-color: white; border-color: white; box-shadow: none;" disabled="disabled" />
+                        Rejected
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <i class="fa fa-eye fa-5x" style="color: #4a0093;"></i>
+                        <input type="text" class="coustom" id="txtResolved" readonly="readonly" style="width: 50px; background-color: white; border-color: white; box-shadow: none;" disabled="disabled" />
+                        Resolved
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <i class="fa fa-check-square-o fa-5x" style="color: #007a00;"></i>
+                        <input type="text" class="coustom" id="txtCompleted" readonly="readonly" style="width: 50px; background-color: white; border-color: white; box-shadow: none;" disabled="disabled" />
+                        Completed
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="col-md-8" style="margin-top: 2px;">
+                <div id="PieChartDiv">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <img src='@Url.Content("~/Images/TicketReport/AssignedCount.JPG")' />&nbsp;&nbsp;-&nbsp;Assigned<br />
+                <img src='@Url.Content("~/Images/TicketReport/AvailableCount.jpg")' />&nbsp;&nbsp;-&nbsp;Rejected<br />
+                <img src='@Url.Content("~/Images/TicketReport/CompletedCount.jpg")' />&nbsp;&nbsp;-&nbsp;Completed<br />
+                <img src='@Url.Content("~/Images/TicketReport/ResolvedCount.JPG")' />&nbsp;&nbsp;-&nbsp;Resolved<br />
+                <img src='@Url.Content("~/Images/TicketReport/Empty.jpg")' />&nbsp;&nbsp;-&nbsp;Empty<br />
+            </div>
+        </div>
+    </div>
+    <div class="panel-body" id="GeneralReportTable">
+        <table width="1100" border="1" align="center">
+            <thead>
+                <tr>
+                    <td>&nbsp;<i class="fa fa-male fa-2x" style="color: #993399;"></i>&nbsp;&nbsp;Performer</td>
+                    <td>&nbsp;<i class="fa fa-arrow-circle-o-left fa-2x" style="color: #FF3333;"></i>&nbsp;&nbsp;Rejected Count</td>
+                    <td>&nbsp;<i class="fa fa-edit fa-2x" style="color: #0066ff;"></i>&nbsp;&nbsp;Assigned</td>
+                    <td>&nbsp;<i class="fa fa-eye fa-2x" style="color: #4a0093;"></i>&nbsp;&nbsp;Resolved</td>
+                    <td>&nbsp;<i class="fa fa-check-square-o fa-2x" style="color: #339933;"></i>&nbsp;&nbsp;Completed</td>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int GeneralAvail = 0;
+                }
+                @if (ViewBag.TicketDetails != null)
+                {
+
+                    foreach (var item in ViewBag.TicketDetails)
+                    {
+                        if (@item.Performer != null && @item.Performer != "null" && @item.Performer != "")
+                        {
+                    <tr>
+                        <td height="40" style="width: 200px;">
+                            @item.Performer
+                        </td>
+                        <td height="40" align="center" style="width: 200px;">
+                            @item.RejectedCount
+                        </td>
+                        @*<td height="40" align="center" style="width:200px;">
+                    @item.Available
+                </td>*@
+                        <td height="40" align="center" style="width: 200px;">
+                            @item.Assigned
+                        </td>
+                        <td height="40" align="center" style="width: 200px;">
+                            @item.Resolved
+                        </td>
+                        <td height="40" align="center" style="width: 200px;">
+                            @item.Completed
+                        </td>
+                    </tr>
+                        }
+                        GeneralAvail++;
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="panel-body" id="CategoryReportable">
+        <div class="col-md-6">
+            <br />
+            <br />
+            <br />
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <i class="fa fa-edit fa-5x" style="color: #0066ff;"></i>
+                        <input type="text" class="coustom" id="txtPerformerAssignedCount" readonly="readonly" style="width: 50px; background-color: white; border-color: white; box-shadow: none;" disabled="disabled" />
+                        Assigned
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <i class="fa fa-inbox fa-5x" style="color: #ff0000;"></i>
+                        <input type="text" class="coustom" id="txtPerformerRejectedCount" readonly="readonly" style="width: 50px; background-color: white; border-color: white; box-shadow: none;" disabled="disabled" />
+                        Rejected
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <i class="fa fa-eye fa-5x" style="color: #4a0093;"></i>
+                        <input type="text" class="coustom" id="txtPerformerResolvedCount" readonly="readonly" style="width: 50px; background-color: white; border-color: white; box-shadow: none;" disabled="disabled" />
+                        Resolved
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <i class="fa fa-check-square-o fa-5x" style="color: #007a00;"></i>
+                        <input type="text" class="coustom" id="txtPerformerCompletedCount" readonly="readonly" style="width: 50px; background-color: white; border-color: white; box-shadow: none;" disabled="disabled" />
+                        Completed
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="col-md-8" style="margin-top: 2px;">
+                <div id="CategoryPieChart">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <img src='@Url.Content("~/Images/TicketReport/AssignedCount.JPG")' />&nbsp;&nbsp;-&nbsp;Assigned<br />
+                <img src='@Url.Content("~/Images/TicketReport/AvailableCount.jpg")' />&nbsp;&nbsp;-&nbsp;Rejected<br />
+                <img src='@Url.Content("~/Images/TicketReport/ResolvedCount.JPG")' />&nbsp;&nbsp;-&nbsp;Resolved<br />
+                <img src='@Url.Content("~/Images/TicketReport/CompletedCount.jpg")' />&nbsp;&nbsp;-&nbsp;Completed<br />
+                <img src='@Url.Content("~/Images/TicketReport/Empty.jpg")' />&nbsp;&nbsp;-&nbsp;Empty<br />
+            </div>
+        </div>
+    </div>
+</div>

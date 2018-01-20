@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDetails>
+	<ResourceSet>
+		<Name>Default</Name> 
+
+    <CssFile>/COD/App_Themes/Default/validationEngine.jquery.css</CssFile>
+    <CssFile>/COD/App_Themes/Default/MasterPage.css</CssFile>
+    <CssFile>/COD/App_Themes/Default/SiteStyleSheet.css</CssFile>
+
+    <CssFile>/COD/App_Themes/Default/jquery-ui-1.7.2.custom.css</CssFile>
+    <CssFile>/COD/App_Themes/Default/ui.jqgrid.css</CssFile>
+    <CssFile>/COD/App_Themes/Default/calender/calendar-Newblue.css</CssFile>
+
+
+    <JsFile>/COD/Scripts/jquery-1.4.2.min.js</JsFile>
+    <JsFile>/COD/Scripts/jquery-1.3.2-vsdoc.js</JsFile>
+		<JsFile>/COD/Scripts/jquery-ui-1.7.2.custom.min.js</JsFile>
+		<JsFile>/COD/Scripts/IdleSessionMgmt.js</JsFile>
+		<JsFile>/COD/Scripts/JqueryGrid/i18n/grid.locale-en.js</JsFile>
+		<JsFile>/COD/Scripts/JqueryGrid/jquery.jqGrid.min.js</JsFile>
+		<JsFile>/COD/Scripts/ajaxfileupload.js</JsFile>
+		<JsFile>/COD/Scripts/PopUp/AgilityParentPopup.js</JsFile>
+		<JsFile>/COD/Scripts/PopUp/AgilityChildPopup.js</JsFile>
+		<JsFile>/COD/Scripts/Validations/jquery.alphanumeric.pack.js</JsFile>
+		<JsFile>/COD/Scripts/btn.js</JsFile>
+		<JsFile>/COD/Scripts/chrome.js</JsFile>
+		<JsFile>/COD/Scripts/calendar/calendar.js</JsFile>
+		<JsFile>/COD/Scripts/calendar/calendar-setup.js</JsFile>
+		<JsFile>/COD/Scripts/calendar/lang/calendar-en.js</JsFile>
+
+	</ResourceSet>
+</ResourceDetails>
+
+  

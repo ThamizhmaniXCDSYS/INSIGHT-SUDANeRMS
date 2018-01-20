@@ -1,0 +1,311 @@
+﻿@{
+    ViewBag.Title = "ActivePeriods";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+
+
+<script type="text/javascript">
+    function GetActivePeriodList() {
+        debugger;
+        $('#ActivePeriodList').jqGrid('GridUnload');
+        jQuery("#ActivePeriodList").jqGrid({
+            mtype: 'GET',
+            url: '@Url.Content("~/Invoice/ActivePeriodListJQGrid")',
+            datatype: 'json',
+            height: '335',
+            width: '1200',
+            shrinkToFit: true,
+            colNames: ['ActiveId', 'Period', 'PeriodYear', 'Generated Date', 'Total Orders', 'Active Status'],
+            colModel: [
+                { name: 'ActiveId', index: 'ActiveId', key: true, hidden: true },
+                { name: 'Period', index: 'Period', align: 'Center' },
+                { name: 'PeriodYear', index: 'PeriodYear', align: 'Center' },
+                { name: 'InvoiceDate', index: 'InvoiceDate', align: 'Center' },
+                { align: 'Center' },
+                { name: 'IsActive', index: 'IsActive', align: 'Center' }
+            ],
+            pager: '#ActivePeriodListPager',
+            rowNum: '100',
+            rowList: [100, 200, 300, 400],
+            viewrecords: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Active Period List',
+            multiselect: true,
+            loadComplete: function () {
+                debugger;
+                var ids = jQuery("#ActivePeriodList").jqGrid('getDataIDs');
+                for (var i = 0; i < ids.length; i++) {
+                    rowData = jQuery("#ActivePeriodList").jqGrid('getRowData', ids[i]);
+                    if (rowData.IsActive == "InProgress") {
+                        $("#ActivePeriodList").setCell(ids[i], "IsActive", "", { "color": "#3104B4", 'font-weight': 'bold' });
+                    }
+                    if (rowData.IsActive == "Completed") {
+                        $("#ActivePeriodList").setCell(ids[i], "IsActive", "", { "color": "#1A7F03", 'font-weight': 'bold' });
+                    }
+                }
+            },
+            viewrecords: true
+        });
+        jQuery("#ActivePeriodList")
+              .navGrid('#ActivePeriodListPager', { edit: false, add: false, del: false, search: false, refresh: false });
+
+    }
+
+    $(function () {
+        $('#dvLoading').hide()
+            .ajaxStart(function () {
+                $(this).hide(); // show on any Ajax event.
+            })
+        GetActivePeriodList();
+        FillSector();
+        FillContingent();
+        FillPeriod();
+        FillLocation();
+        FillPeriodYear();
+        //        $("#btnPDF").disable = "true";
+
+        $("#Sector").change(function () {
+            FillContingent($(this).val());
+        });
+
+        $("#Contingent").change(function () {
+            FillLocation($("#Sector").val(), $(this).val());
+
+            var Contigent = $("#Contingent").val();
+            if (Contigent != "") {
+                var result = Contigent.indexOf("FPU") > -1;
+                if (result == true) {
+                    $("#contingentType").val("FPU");
+                }
+                else
+                    $("#contingentType").val("MIL")
+            }
+        });
+        $("#Period").change(function () {
+            var Period = $("#Period").val();
+            if (Period != "") {
+                $('#btnPDF').attr('disabled', false);
+                $('#btnExcel').attr('disabled', false);
+            }
+            else {
+                $('#btnPDF').attr('disabled', true);
+                $('#btnExcel').attr('disabled', true);
+            }
+        });
+        $("#btnPeriodActive").click(function () {
+            var Id = $("#ActivePeriodList").jqGrid('getGridParam', 'selarrrow');
+
+            if (Id.length == 1) {
+                Period = $("#ActivePeriodList").jqGrid('getCell', Id, 'Period');
+                PeriodYear = $("#ActivePeriodList").jqGrid('getCell', Id, 'PeriodYear');
+                IsActive = $("#ActivePeriodList").jqGrid('getCell', Id, 'IsActive');
+                LoadPopupDynamicaly('@Url.Content("~/Invoice/ChangeActivePeriods")?Period=' + Period + "&PeriodYear=" + PeriodYear + "&IsActive=" + IsActive, $('#ChangeActivePeriods'), function () {
+                }, "", 350, 200, "Change Active Periods");
+               
+
+
+            }
+            else {
+                if (Id.length > 1) { ErrMsg("Please Select Only One Row"); }
+                else { ErrMsg("Please Select Any One Row"); }
+                
+            }
+
+        });
+    });
+
+    function reloadJQgrid() {
+
+        var searchItems = ',' + ',' + ',' + $('#Period').val() + ',' + $('#PeriodYear').val();
+        $("#ActivePeriodList").setGridParam(
+            {
+                datatype: "json",
+                url: '@Url.Content("~/Invoice/ActivePeriodListJQGrid")?searchItems=' + searchItems + '&IsActive=' + $('#IsActive').val(),
+                page: 0
+            }).trigger("reloadGrid");
+
+    }
+
+    function FillSector() {
+        $.getJSON('@Url.Content("~/Masters/FillSectorbyUser/")',
+    function (modelData) {
+        var select = $("#Sector");
+        select.empty();
+        select.append($('<option/>',
+    {
+        value: "",
+        text: "Select Sector"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+    function FillContingent(SectorCode) {
+        $.getJSON('@Url.Content("~/Masters/FillContingentbyUser/")?SectorCode=' + SectorCode,
+    function (modelData) {
+        var select = $("#Contingent");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Contingent"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillLocation(SectorCode, ContingentCode) {
+        $.getJSON('@Url.Content("~/Masters/FillLocationbyUser/")?SectorCode=' + SectorCode + '&ContingentCode=' + ContingentCode,
+    function (modelData) {
+        var select = $("#Location");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Location"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function FillPeriod() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriod/")',
+    function (modelData) {
+        var select = $("#Period");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Period"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function InvoiceSearch() {
+
+        var searchItems = ',' + ',' + ',' + $('#Period').val() + ',' + $('#PeriodYear').val();
+
+        $("#ActivePeriodList").setGridParam(
+            {
+                datatype: "json",
+                url: '@Url.Content("~/Invoice/ActivePeriodListJQGrid")?searchItems=' + searchItems + '&IsActive=' + $('#IsActive').val(),
+                page: 0
+            }).trigger("reloadGrid");
+    }
+    function ResetInvoiceSearch() {
+        var searchItems = "";
+        $('#Period').val(0);
+        $('#PeriodYear').val(0);
+        $('#IsActive').val(" ");
+        $("#OrdersList").clearGridData();
+    }
+
+    function FillPeriodYear() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriodYear")',
+    function (modelData) {
+        var select = $("#PeriodYear");
+        select.empty();
+        select.append($('<option/>'
+    , {
+        value: "",
+        text: "Select Year"
+    }));
+        $.each(modelData, function (index, itemData) {
+
+            select.append($('<option/>',
+    {
+        value: itemData.Value,
+        text: itemData.Text
+    }));
+        });
+    });
+    }
+
+    function ExcelDownload(Id) {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Content("~/Invoice/PeriodListCheck")?Period=' + Period + '&searchItems=' + searchItems,
+            success: function (data) {
+                if (data == true) {
+                    window.open('@Url.Content("~/PdfGeneration/InvoicePrint")?Period=' + Period + '&searchItems=' + searchItems, '_blank');
+                }
+                else {
+                    ErrMsg("The&nbsp;" + Period + "&nbsp;Period does Not contain Week&nbsp;" + data);
+                    $('#btnPDF').attr('disabled', true);
+                    return false;
+                }
+            },
+            dataType: "json"
+        });
+    }
+</script>
+<div id="divDocuments">
+    <table class="WithBorderOnly" width="100%">
+        <tr class="PanelHeading">
+            <td colspan="6" class="PanelHeading">
+                <i class="icon-chevron-right"></i>&nbsp;Active Period List&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td width="10%">
+                <label class="lblheader">
+                    Period</label><br />
+                @Html.DropDownList("Period", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td width="10%">
+                <label class="lblheader">
+                    Period Year</label><br />
+                @Html.DropDownList("PeriodYear", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+            </td>
+            <td width="10%">
+                <label class="lblheader">
+                    Active Status</label><br />
+                @Html.DropDownList("IsActive", new SelectList(new[]
+                                          {
+                                              new{Value="",Text="Select One"},
+                                              new{Value="0",Text="InProgress"},
+                                              new{Value="1",Text="Completed"}
+                                          },
+          "Value", "Text", ""), new { @Class = "CSSDropDownList" })
+            </td>
+            <td colspan="3" width="50%">
+                <input type="button" id="btnSearch" value="Search" onclick="InvoiceSearch(); return false;" /><input
+                    type="reset" id="btnReset" value="Reset" onclick="ResetInvoiceSearch(); return false;" />
+                <input type="button" id="btnPeriodActive" value="Period Active Change" />
+            </td>
+        </tr>
+    </table>
+</div>
+<table id="ActivePeriodList">
+</table>
+<div id="ActivePeriodListPager">
+</div>
+
+<div id="ChangeActivePeriods" title="Change Active Periods"></div>

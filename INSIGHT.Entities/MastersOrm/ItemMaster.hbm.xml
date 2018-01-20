@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.ItemMaster" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.ItemMaster, INSIGHT.Entities" table="UNAMIDItemsMaster" lazy="false" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="identity" />
+    </id>
+    <property name="UNCode" column="UNCode" type="Int64" />
+    <property name="Commodity" column="Commodity" type="string" />
+    <property name="UnitSizeReq" column="UnitSizeReq" type="string" />
+    <property name="APLCode" column="APLCode" type="decimal" />
+
+    <property name="DateCreated" column="DateCreated" type="datetime"/>
+    <property name="CreatedBy" column="CreatedBy" type="string"/>
+    <property name="DateModified" column="DateModified" type="datetime"/>
+    <property name="ModifiedBy" column="ModifiedBy" type="string"/>
+    <property name="Temperature" column="Temperature" type="string"/>
+    <property name="Subs" column="Subs" type="string"/>
+  </class>
+</hibernate-mapping>

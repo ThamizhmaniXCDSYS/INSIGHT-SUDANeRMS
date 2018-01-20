@@ -1,0 +1,259 @@
+﻿@{
+    ViewBag.Title = "ItemsPerOrderReport";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<h3>
+    Order Items Report</h3>
+<script type="text/javascript">
+    $(document).ready(function () {
+        FillSector();
+        FillContingent();
+        FillPeriod();
+        // MismatchedCountChart();
+        $("#Sector").change(function () {
+            FillContingent($(this).val());
+        });
+
+        $("#btnSearch").click(function () {
+            var Sector = $("#Sector").val();
+            var Contingent = $("#Contingent").val();
+            var Period = $("#Period").val();
+            $("#OrderItemsCount").clearGridData();
+            $("#OrderItemsCount").setGridParam(
+                {
+                    datatype: "json",
+                    url: '@Url.Content("~/Reports/OrderItemsReportCountJqGrid/")',
+                    postData: { Sector: Sector, Contingent: Contingent, Period: Contingent },
+                    page: 1
+                }).trigger("reloadGrid");
+
+            //  MismatchedCountChart(Sector, Contingent, Period);
+        });
+
+        jQuery("#OrderItemsCount").jqGrid({
+            url: '@Url.Content("~/Reports/OrderItemsReportCountJqGrid")',
+            datatype: 'json',
+            mtype: 'GET',
+            colNames: ['Id', 'Sector', 'Contingent', 'Period', 'Order Id', 'Line Items Ordered', 'Actual Items', 'Status'],
+            colModel: [
+              { name: 'Id', index: 'Id', hidden: true },
+              { name: 'Sector', index: 'Sector' },
+              { name: 'Contingent', index: 'Contingent' },
+              { name: 'Period', index: 'Period' },
+              { name: 'OrderId', index: 'OrderId' },
+              { name: 'LineItemsOrdered', index: 'LineItemsOrdered' , width:200 },
+              { name: 'ActualItems', index: 'ActualItems' },
+              { name: 'Status', index: 'Status' },
+              ],
+            pager: '#OrderItemsCountPager',
+            rowNum: '10',
+            rowList: [5, 10, 20, 50],
+            sortname: 'Id',
+            sortorder: 'Desc',
+            height: '200',
+            width: 750,
+            //  autowidth: true,
+            //   shrinkToFit: true,
+            viewrecords: true,
+            caption: 'Mismatch Count Report',
+            forceFit: true,
+            gridComplete: function () {
+                debugger;
+                var dataIds = $('#OrderItemsCount').jqGrid('getDataIDs');
+                var MismatchCount = 0;
+                if (dataIds != null) {
+                    for (var i = 0; i < dataIds.length; i++) {
+                        var rdata = $("#OrderItemsCount").getRowData(dataIds[i]);
+                        if ((rdata.Status).contains("Mismatch")) {
+                            MismatchCount = MismatchCount + 1;
+                        }
+                    }
+                    MismatchedCountChart(MismatchCount);
+                }
+                else {
+                    MismatchedCountChart(0);
+                }
+            }
+        });
+        $("#OrderItemsCount").navGrid('#OrderItemsCountPager', { add: false, edit: false, del: false, search: false, refresh: false });
+
+        $("#OrderItemsCount").jqGrid('navButtonAdd', '#OrderItemsCountPager', {
+            caption: "Export To Excel",
+            onClickButton: function () {
+                var Sector = $("#Sector").val();
+                var Contingent = $("#Contingent").val();
+                var Period = $("#Period").val();
+                var ExptType = 'Excel';
+                window.open("OrderItemsReportCountJqGrid" + '?Sector=' + Sector + '&Contingent=' + Contingent + '&Period=' + Period + '&rows=9999' + '&ExptType=' + ExptType);
+            }
+        });
+        $("#OrderItemsCount").jqGrid('filterToolbar', { stringResult: false, searchOnEnter: true, beforeSearch: function () {
+            $('#OrderItemsCount').clearGridData();
+            return false;
+        }
+        });
+
+
+        $("#btnReset").click(function () {
+            window.location.href = '@Url.Action("OrderItemsReport", "Reports")';
+        });
+
+
+    });
+
+    function FillSector() {
+        $.getJSON('@Url.Content("~/Masters/FillSector/")',
+            function (modelData) {
+                var select = $("#Sector");
+                select.empty();
+                select.append($('<option/>'
+                               , {
+                                   value: "",
+                                   text: "Select Sector"
+                               }));
+                $.each(modelData, function (index, itemData) {
+
+                    select.append($('<option/>',
+                                  {
+                                      value: itemData.Value,
+                                      text: itemData.Text
+                                  }));
+                });
+            });
+    }
+    function FillContingent(SectorCode) {
+        $.getJSON('@Url.Content("~/Masters/FillContingent/")', { SectorCode: SectorCode },
+            function (modelData) {
+                var select = $("#Contingent");
+                select.empty();
+                select.append($('<option/>'
+                               , {
+                                   value: "",
+                                   text: "Select Contingent"
+                               }));
+                $.each(modelData, function (index, itemData) {
+
+                    select.append($('<option/>',
+                                  {
+                                      value: itemData.Value,
+                                      text: itemData.Text
+                                  }));
+                });
+            });
+    }
+    function FillPeriod() {
+        $.getJSON('@Url.Content("~/Masters/FillPeriod/")',
+            function (modelData) {
+                var select = $("#Period");
+                select.empty();
+                select.append($('<option/>'
+                               , {
+                                   value: "",
+                                   text: "Select Period"
+                               }));
+                $.each(modelData, function (index, itemData) {
+
+                    select.append($('<option/>',
+                                  {
+                                      value: itemData.Value,
+                                      text: itemData.Text
+                                  }));
+                });
+            });
+    }
+
+    function MismatchedCountChart(MismatchCount) {
+        //  alert(MismatchCount);
+        var MismatchedCount = "<graph caption='' xAxisName='' yAxisName='' decimalPrecision='0' formatNumberScale='0' rotateNames='1' >";
+        MismatchedCount = MismatchedCount + " <set name='' value='" + MismatchCount + "' color='AFD8F8' /></graph>";
+        var chart = new FusionCharts('@Url.Content("~/Charts/FCF_Column3D.swf")', "Mismatch Count", "300", "230");
+        chart.setDataXML(MismatchedCount);
+        chart.render("MismatchedCountChart");
+    }
+    //    function MismatchedCountChart(Sector, Contingent, Period) {
+    //        $.ajax({
+    //            type: 'Get',
+    //            url: '@Url.Content("~/Reports/MismatchedCountForChart/")',
+    //            data: { Sector: Sector, Contingent: Contingent, Period: Period },
+    //            success: function (data) {
+    //                var chart = new FusionCharts("../../Charts/FCF_Column3D.swf", "OrdersCount", "350", "220");
+    //                chart.setDataXML(data);
+    //                chart.render("MismatchedCountChart");
+    //            },
+    //            async: false,
+    //            dataType: "text"
+    //        });
+    //    }
+</script>
+@using (Html.BeginForm("OrderItemsReport", "Reports", FormMethod.Post))
+{
+    <table class="WithBorderOnly" width="100">
+        <tr>
+            <td width="20" valign="top">
+                <table>
+                    <tr style="background-color: #B6B6B6; height: 25px; color: White;">
+                        <td colspan="4">
+                            Search Panel
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="lblheader">
+                                Sector</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.DropDownList("Sector", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="lblheader">
+                                Contingent</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.DropDownList("Contingent", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="lblheader">
+                                Period</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.DropDownList("Period", new SelectList(Enumerable.Empty<SelectListItem>()), "Select One", new { @Class = "CSSDropDownList" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button type="button" class="btn btn-mini btn-primary" id="btnSearch">
+                                <i class="icon-search" style="vertical-align: middle"></i>Search
+                            </button>
+                            <button type="button" class="btn btn-mini btn-primary" id="btnReset">
+                                <i class="icon-repeat" style="vertical-align: middle"></i>Reset
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td width="50%">
+                <table id="OrderItemsCount">
+                </table>
+                <div id="OrderItemsCountPager">
+                </div>
+            </td>
+            <td width="30" valign="bottom" align="center">
+                <label class="lblheader">
+                    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                   Total Mismatch Count</label><br />
+                <div id="MismatchedCountChart">
+                </div>
+            </td>
+        </tr>
+    </table>
+}

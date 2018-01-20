@@ -1,0 +1,54 @@
+﻿@{
+    ViewBag.Title = "DiscrepancyMaster";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#DiscrepancyMaster').jqGrid({
+            url: '@Url.Content("~/Masters/DiscrepancyMasterJqgrid")',
+            datatype: 'Json',
+            type: 'GET',
+            autowidth: true,
+            height: 300,
+            colNames: ['Id', 'DiscrepancyCode', 'Description'],
+            colModel: [
+            { name: 'Id', index: 'Id', hidden: true, key: true },
+            { name: 'DiscrepancyCode', index: 'DiscrepancyCode', editable: true },
+            { name: 'Description', index: 'Description', editable: true },
+            ],
+            rowNum: 20000,
+            rowList: [], // disable page size dropdown
+            pgbuttons: false, // disable page control like next, back button
+            pgtext: null, // disable pager text like 'Page 0 of 10'
+            sortname: 'Id',
+            sortorder: 'Asc',
+            pager: '#DiscrepancyMasterPager',
+            multiselect: true,
+            viewrecords: true,
+            shrinktofit: true,
+            caption: '&nbsp;<i class="icon-th-list"></i>&nbsp;Discrepancy List'
+        });
+        $('#DiscrepancyMaster').jqGrid('filterToolbar', { searchOnEnter: true });
+        jQuery("#DiscrepancyMaster").jqGrid('navGrid', '#DiscrepancyMasterPager', { add: true, edit: false, del: true, search: false, refresh: true },
+        //Edit options
+            { width: 'auto', url: '@Url.Content("~/Masters/EditDiscrepancyMasterDetails/")', left: '10%', top: '10%', height: '50%', width: 400 },
+        //Add options
+            { width: 'auto', url: '@Url.Content("~/Masters/AddDiscrepancyMasterDetails/")', left: '10%', top: '10%', height: '50%', width: 400 },
+        //Delete options
+            //{width: 'auto', url: '/Masters/DeleteDiscrepancyMasterDetails/', left: '10%', top: '10%', height: '50%', width: 400, beforeShowForm: function (params) { var gsr = $("#DiscrepancyMaster").getGridParam('selrow'); var sdata = $("#DiscrepancyMaster").getRowData(gsr); return { Id: sdata.Id} } });
+                       {
+                           width: 'auto', url: '@Url.Content("~/Masters/DeleteDiscrepancyMasterDetails/")', left: '10%', top: '10%', height: '50%', width: 400,
+                           beforeShowForm: function (params) { selectedrows = $("#DiscrepancyMaster").jqGrid("getGridParam", "selarrrow"); return { Id: selectedrows } }
+                       });
+    });
+</script>
+<table width="100%">
+    <tr>
+        <td>
+            <table id="DiscrepancyMaster">
+            </table>
+            <div id="DiscrepancyMasterPager">
+            </div>
+        </td>
+    </tr>
+</table>

@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.InsightReport" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.InsightReport, INSIGHT.Entities" table="InsightReport" lazy="false" >
+    <id name="ReportId" column="ReportId">
+      <generator class="identity" />
+    </id>
+    <property name="Description" column="Description" type="string" />
+    <property name="ReportCode" column="ReportCode" type="string" />
+    <property name="FileNames" column="FileNames" type="string" />
+    <property name="OrderId" column="OrderId" type="Int64" />
+
+    <property name="ControlId" column="ControlId" type="string" />
+    <property name="UNCode" column="UNCode" type="Int64" />
+    <property name="Commodity" column="Commodity" type="string" />
+    <property name="DeliveredQty" column="DeliveredQty" type="decimal" />
+
+
+    <property name="SubsCode" column="SubsCode" type="Int64" />
+    <property name="SubsName" column="SubsName" type="string" />
+    <property name="ReplacementCode" column="ReplacementCode" type="Int64" />
+    <property name="ReplacementName" column="ReplacementName" type="string" />
+
+    <property name="CreatedDate" column="CreatedDate" type="datetime" />
+    <property name="CreatedBy" column="CreatedBy" type="string" />
+    <property name="DeliveryNoteName" column="DeliveryNoteName" type="string" />
+  </class>
+</hibernate-mapping>

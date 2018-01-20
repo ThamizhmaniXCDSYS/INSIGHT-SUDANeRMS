@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.TicketingSystem" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.TicketingSystem.TicketComments, INSIGHT.Entities.TicketingSystem" table="TicketComments" lazy="false" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="identity" />
+    </id>
+    <property name="TicketId" column="TicketId" type="Int64" />
+    <property name="CommentedOn" column="CommentedOn" type="datetime" />
+    <property name="CommentedBy" column="CommentedBy" type="AnsiString" />
+    <property name="RejectionComments" column="RejectionComments" type="AnsiString" />
+    <property name="ResolutionComments" column="ResolutionComments" type="AnsiString" />
+    <property name="Note" column="Note" type="AnsiString" />
+    <property name="IsRejectionOrResolution" column="IsRejectionOrResolution" type="AnsiString" />
+    <property name="ActivityName" column="ActivityName" type="AnsiString" />
+  </class>
+</hibernate-mapping> 

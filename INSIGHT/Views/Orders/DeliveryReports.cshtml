@@ -1,0 +1,394 @@
+﻿@{
+    ViewBag.Title = "DeliveryReports";
+    Layout = "~/Views/Shared/NewMaster.cshtml";
+}
+<style>
+    p.serif
+    {
+        font-size: 10px;
+    }
+</style>
+<script type="text/javascript" language="javascript">
+
+    $(document).ready(function () {
+        var lastsel2;
+
+        $("#DeliveryReports").jqGrid({
+            url: '@Url.Content("~/Orders/JqGridDeliveryReports")?PODId=' + '@ViewBag.PodId',
+            datatype: 'json',
+            type: 'GET',
+            shrinkToFit: false,
+            colNames: ['PODId', 'PODItemsId', 'OrderId', 'LineId', 'OrderedQty', 'AcceptedQty', 'DeliveredQty', 'DeliveredDate', 'CreatedBy', 'CreatedDate', 'ModifiedBy', 'ModifiedDate'],
+            colModel: [
+                          { name: 'PODId', index: 'PODId', hidden: true, key: true, editable: true },
+                          { name: 'PODItemsId', index: 'PODItemsId', hidden: true },
+                          { name: 'OrderId', index: 'OrderId', hidden: true },
+                          { name: 'LineId', index: 'LineId', hidden: true },
+                          { name: 'OrderedQty', index: 'OrderedQty' },
+                          { name: 'AcceptedQty', index: 'AcceptedQty' },
+                           { name: 'DeliveredQty', index: 'DeliveredQty', editable: true },
+                          { name: 'DeliveredDate', index: 'DeliveredDate' },
+                          { name: 'CreatedBy', index: 'CreatedBy' },
+                          { name: 'CreatedDate', index: 'CreatedDate' },
+                          { name: 'ModifiedBy', index: 'ModifiedBy' },
+                           { name: 'ModifiedDate', index: 'ModifiedDate' }
+                          ],
+            onSelectRow: function (id) {
+                if (id && id !== lastsel2) {
+                    jQuery('#DeliveryReports').jqGrid('restoreRow', lastsel2);
+                    jQuery('#DeliveryReports').jqGrid('editRow', id, true);
+                    lastsel2 = id;
+                }
+            },
+            editurl: "/Orders/SaveDeliveryReports",
+            pager: '#DeliveryPager',
+            rowNum: '10',
+            rowList: [5, 10, 20, 50],
+            sortname: 'PODItemsId',
+            sortorder: 'Desc',
+            width: 850,
+            height: 250,
+            autowidth: true,
+            viewrecords: true,
+            multiselect: true,
+            caption: 'POD Items'
+        });
+        $("#DeliveryReports").jqGrid('navGrid', '#DeliveryPager', { del: false, add: false, edit: false, search: false });
+
+        $('#CreatePdf').click(function () {
+            window.location.href = '@Url.Action("PrintDeliveryReports", "PdfGeneration")?PoId=' + '@ViewBag.PodId';
+        });
+
+
+    });
+</script>
+<table width="100%" class="delivery">
+    <tr>
+        <td colspan="6">
+            <img src='@Url.Content("~/Images/main_logo.jpg")' />
+        </td>
+    </tr>
+    <tr>
+        <td colspan="6" align="center" style="background-color: #B6B6B6;">
+            DELIVERY REPORTS
+        </td>
+    </tr>
+    <tr>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                Delivery Reports
+            </p>
+        </td>
+        <td style="width: 16%;">
+            :
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                D/No3</p>
+        </td>
+        <td style="width: 16%;">
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                Shlpment Date</p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                : @DateTime.Now</p>
+        </td>
+    </tr>
+    <tr>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                Request No</p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                : Request value</p>
+        </td>
+        <td style="width: 16%;">
+        </td>
+        <td style="width: 16%;">
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                Unit Control No</p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                : EGYFPU01-SN-FSC</p>
+        </td>
+    </tr>
+    <tr>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                WareHouse</p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                : EI Fresher Warehouse</p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                Consumption Week</p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                : 3</p>
+        </td>
+        <td style="width: 16%;">
+        </td>
+        <td style="width: 16%;">
+        </td>
+    </tr>
+    <tr>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                Contingent Strength</p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                : 140</p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">Delevery Week </p>
+        </td>
+        <td style="width: 16%;">
+           <p style="font-size: 12px;"> : 2</p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">UN Food Order</p>
+        </td>
+        <td style="width: 16%;">
+        </td>
+    </tr>
+    <tr>
+        <td style="width: 16%;">
+           <p style="font-size: 12px;"> DOSI</p>
+        </td>
+        <td style="width: 16%;">
+            :
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">Delevery By</p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">: WareHouse Pick</p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">UN Week </p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">: 3</p>
+        </td>
+    </tr>
+    <tr>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">Man Days</p>
+        </td>
+        <td style="width: 16%;">
+        </td>
+        <td style="width: 16%;">
+           <p style="font-size: 12px;"> Seal No</p> 
+        </td>
+        <td style="width: 16%;">
+        </td>
+        <td style="width: 16%;">
+           <p style="font-size: 12px;"> Period </p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">:2</p>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="6" with="100%">
+            <table id="DeliveryReports">
+            </table>
+            <div id="DeliveryPager">
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                Representative</p>
+        </td>
+        <td style="width: 16%;">
+            :
+        </td>
+        <td style="width: 16%;">
+        </td>
+        <td style="width: 16%;">
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                UN Representative</p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                : Good Recieved Full and in good condition</p>
+        </td>
+    </tr>
+    <tr>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                Name</p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                <p style="font-size: 12px;">
+                    : ..........................</p>
+            </p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                Name</p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                <p style="font-size: 12px;">
+                    : ..........................</p>
+            </p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                Name</p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                <p style="font-size: 12px;">
+                    : ..........................</p>
+            </p>
+        </td>
+    </tr>
+    <tr>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                Signature</p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                : ..........................</p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                Signature</p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                : ..........................</p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                Rank</p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                : ..........................</p>
+        </td>
+    </tr>
+    <tr>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                Date</p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                : ..........................</p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                Date</p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                : ..........................</p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                Unit
+            </p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                : ..........................</p>
+        </td>
+    </tr>
+    <tr>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                ID</p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                : ..........................</p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                ID</p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                : ..........................</p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                Signature
+            </p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                : ..........................</p>
+        </td>
+    </tr>
+    <tr>
+        <td style="width: 16%;">
+        </td>
+        <td style="width: 16%;">
+        </td>
+        <td style="width: 16%;">
+        </td>
+        <td style="width: 16%;">
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                Date Recieved</p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                : ..........................</p>
+        </td>
+    </tr>
+    <tr>
+        <td style="width: 16%;">
+        </td>
+        <td style="width: 16%;">
+        </td>
+        <td style="width: 16%;">
+        </td>
+        <td style="width: 16%;">
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                ID
+            </p>
+        </td>
+        <td style="width: 16%;">
+            <p style="font-size: 12px;">
+                : ..........................</p>
+        </td>
+    </tr>
+    <tr>
+        <td style="width: 16%;" colspan="6">
+        </td>
+    </tr>
+</table>
+<table width="100%">
+    <tr>
+        <td align="right">
+            <input type="button" id="CreatePdf" value="Print POD Items" />
+        </td>
+    </tr>
+    <tr>
+    </tr>
+</table>

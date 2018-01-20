@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping assembly="INSIGHT.Entities.PeriodMaster" namespace="INSIGHT.Entities" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="INSIGHT.Entities.PeriodMaster, INSIGHT.Entities" table="PeriodMaster" lazy="false" >
+    <id name="Id" column="Id" type="Int64">
+      <generator class="identity" />
+    </id>
+    <property name="Week" column="Week" type="Int32" />
+    <property name="StartDay" column="StartDay" type="string" />
+    <property name="EndDay" column="EndDay" type="string" />
+    <property name="Period" column="Period" type="string" />
+    <property name="Year" column="Year" type="string" />
+    <property name="StartDate" column="StartDate" type="string"/>
+    <property name="EndDate" column="EndDate" type="string"/>
+    <property name="DateCreated" column="DateCreated" type="datetime"/>
+    <property name="CreatedBy" column="CreatedBy" type="string"/>
+    <property name="DateModified" column="DateModified" type="datetime"/>
+    <property name="ModifiedBy" column="ModifiedBy" type="string"/>
+  </class>
+</hibernate-mapping>
